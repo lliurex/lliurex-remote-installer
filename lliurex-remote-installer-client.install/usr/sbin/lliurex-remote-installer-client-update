@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import xmlrpclib
+import ssl
+import imp
+import syslog
+import time
+import sys
+
+
+DEBUG=True
+
+def dprint(data):
+	
+	if DEBUG:
+		syslog.syslog("[LliureXRemoteInstallerClientUpdate] %s"%data)
+		
+#def dprint
+
+def check_root():
+	
+	try:
+		f=open("/run/lliurex-remote-installer-client-update","w")
+		f.close()
+		return True
+	except:
+		return False
+		
+#def check_root		
+
+
+class LliurexRemoteSystemd:
+	
+	def __init__(self):
+		
+		RIC=imp.load_source("LliureXRemoteInstallerClient","/usr/share/n4d/python-plugins/LliurexRemoteInstallerClient.py")
+		self.lri=RIC.LliureXRemoteInstallerClient()
+		
+	#def init
+	
+	def run(self):
+		
+		c=xmlrpclib.ServerProxy("https://localhost:9779")
+		ok=False
+		
+		for i in range(0,10):
+			try:
+				c.get_methods()
+				ok=True
+				break
+			except:
+				time.sleep(2)
+	
+		if not ok:
+			return
+	
+		try:
+			dprint("Init LRIC")
+			self.lri.test_system()
+		except Exception as e:
+			dprint("Error: [%s]"%e)
+
+	#def run
+	
+#class LRS
+
+
+if __name__=="__main__":
+
+	if check_root:
+		try:
+			dprint("Init LRIC")
+			lrs=LliurexRemoteSystemd()
+			lrs.run()
+		except Exception as e:
+			dprint("Something went wrong:\n\t%s"%e)
+			
+	else:
+		print("[!] You need root privileges to run this program [!]")
+		

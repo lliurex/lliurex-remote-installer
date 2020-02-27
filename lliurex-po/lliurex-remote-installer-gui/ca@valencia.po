@@ -1,0 +1,362 @@
+# Pilar Embid Giner <embid_mar@gva.es>, 2017.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-13 10:22+0100\n"
+"PO-Revision-Date: 2017-11-15 14:24+0200\n"
+"Last-Translator: Pilar Embid Giner <embid_mar@gva.es>\n"
+"Language-Team: LliureX\n"
+"Language: ca@valencia\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:23
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:693
+msgid "Source"
+msgstr "Font"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:53
+msgid "Packages"
+msgstr "Paquets"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:101
+msgid "Add package"
+msgstr "Afig un paquet"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:164
+msgid "DEB List to install"
+msgstr "Llista de DEB per instal·lar"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:285
+msgid "Executables List to install"
+msgstr "Llista d'executables per instal·lar"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:416
+msgid "Username"
+msgstr "Usuari"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:435
+msgid "Password"
+msgstr "Contrasenya"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:452
+msgid "Server IP    (Default value : server)"
+msgstr "IP del servidor    (valor per defecte: server)"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:461
+msgid "Login"
+msgstr "Inicia la sessió"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:576
+msgid "APT"
+msgstr "APT"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:589
+msgid "DEBS"
+msgstr "DEB"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:602
+msgid "EXECUTABLES"
+msgstr "EXECUTABLES"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:615
+msgid "UPDATE"
+msgstr "ACTUALITZACIÓ"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:681
+msgid "Name"
+msgstr "Nom"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:809
+msgid "Package name:"
+msgstr "Nom del paquet:"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:839
+msgid "<i>You can input several packages separated by commas.</i>"
+msgstr "<i>Podeu introduir diversos paquets separats per comes.</i>"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1079
+msgid "Current sheduled update:"
+msgstr "Actualització programada actualment:"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1134
+msgid "Schedule new update on boot:"
+msgstr "Programa una nova actualització en l'inici:"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1147
+msgid "Each sheduled update will only be executed once per client."
+msgstr "Cada actualització programada només s'executarà una vegada per client."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1166
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1182
+msgid "radiobutton"
+msgstr "botó lliscant"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1199
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:1210
+msgid "label"
+msgstr "etiqueta"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:429
+msgid "Updating repositories and testing packages..."
+msgstr "S'estan actualitzant els repositoris i verificant els paquets..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:517
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:532
+msgid "Delete apt list"
+msgstr "Elimina la llista d'apt"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:517
+#, python-format
+msgid "Do you want to delete '%s' packages list?"
+msgstr "Voleu eliminar la llista de paquets «%s»?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:532
+#, python-format
+msgid ""
+"This pakage list is unavaiable from your repos:\n"
+"%s\n"
+"Do you want delete it?"
+msgstr ""
+"Aquesta llista de paquets no està disponible en els vostres repositoris:\n"
+"%s\n"
+"Voleu eliminar-la?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:546
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:419
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:433
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:447
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:444
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:458
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:472
+msgid "Delete package"
+msgstr "Elimina el paquet"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:546
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:419
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:444
+#, python-format
+msgid "Do you want to delete '%s'?"
+msgstr "Voleu eliminar «%s»?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:561
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:488
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:513
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/LliurexRemoteInstaller.py:309
+msgid "Changes detected"
+msgstr "Canvis detectats"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/AptBox.py:561
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:488
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:513
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/LliurexRemoteInstaller.py:309
+msgid "There are unsaved changes. Do you want to discard them?"
+msgstr "Hi ha canvis sense guardar. Voleu descartar-los?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:140
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/Dialog.py:101
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:139
+msgid "Please choose a file"
+msgstr "Trieu un fitxer"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:256
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:267
+msgid "Deleting files......."
+msgstr "S'estan eliminant fitxers..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:273
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:286
+#, python-format
+msgid "The file %s cannot be deleted"
+msgstr "El fitxer %s no es pot eliminar."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:313
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:317
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:324
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:328
+msgid "Applying changes......."
+msgstr "S'estan aplicant els canvis..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:315
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:326
+msgid "Updating files and applying changes......."
+msgstr "S'estan actualitzant els fitxers i aplicant els canvis..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:406
+msgid "Error in Extension"
+msgstr "Hi ha un error en l'extensió."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:406
+#, python-format
+msgid ""
+"This %s package has not the extension required.\n"
+"Please only DEB packages in this list."
+msgstr ""
+"El paquet %s no té l'extensió requerida.\n"
+"Només s'admeten paquets DEB en la llista."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:433
+#, python-format
+msgid ""
+"IMPORTANT\n"
+"Do you want to delete this DEB from your server?\n"
+"'%s'"
+msgstr ""
+"IMPORTANT\n"
+"Voleu eliminar aquest DEB del servidor?\n"
+"'%s'"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:458
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:472
+msgid "DEB not in Server"
+msgstr "El DEB no es troba al servidor."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:458
+#, python-format
+msgid "Do you want to send to the server this DEB '%s' ?"
+msgstr "Voleu enviar al servidor aquest DEB «%s»?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:472
+#, python-format
+msgid ""
+"Do you want to send to the server this DEB list?\n"
+"%s\n"
+msgstr ""
+"Voleu enviar al servidor aquesta llista de DEB?\n"
+"%s\n"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:508
+msgid "Delete deb list"
+msgstr "Elimina la llista de deb"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/DebBox.py:508
+#, python-format
+msgid ""
+"This DEB list is unavaiable from your server:\n"
+"%s\n"
+"Do you want delete it?"
+msgstr ""
+"Aquesta llista de DEB no està disponible en el servidor:\n"
+"%s\n"
+"Voleu eliminar-la?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/Dialog.py:72
+msgid "Applying changes..."
+msgstr "S'estan aplicant els canvis..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:430
+msgid "Sending Package Error"
+msgstr "S'ha produït un error en enviar els paquets."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:430
+#, python-format
+msgid ""
+"This list %s cannot be sended to server\n"
+"Please review your share directory\n"
+"\n"
+"/var/www/llx-remote"
+msgstr ""
+"La llista %s no s'ha pogut enviar al servidor.\n"
+"Reviseu el vostre directori compartit\n"
+"\n"
+"/var/www/llx-remote"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:458
+#, python-format
+msgid ""
+"IMPORTANT\n"
+"Do you want to delete this Executable from your server?\n"
+"'%s'"
+msgstr ""
+"IMPORTANT\n"
+"Voleu eliminar aquest executable del servidor?\n"
+"'%s'"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:483
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:497
+msgid "Executable not in Server"
+msgstr "L'executable no es troba al servidor."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:483
+#, python-format
+msgid "Do you want to send to the server this Executable '%s' ?"
+msgstr "Voleu enviar al servidor aquest executable «%s»?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:497
+#, python-format
+msgid ""
+"Do you want to send to the server this Executable list?\n"
+"%s\n"
+msgstr ""
+"Voleu enviar al servidor aquesta llista d'executables?\n"
+"%s\n"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:536
+msgid "Delete Executable list"
+msgstr "Elimina la llista d'executables"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/ExecBox.py:536
+#, python-format
+msgid ""
+"This Executable list is unavaiable from your server:\n"
+"%s\n"
+"Do you want delete it?"
+msgstr ""
+"Aquesta llista d'executables no es troba al servidor:\n"
+"%s\n"
+"Voleu eliminar-la?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/LliurexRemoteInstaller.py:296
+msgid "LliureX Remote Installer Summary"
+msgstr "Resumen del LliureX Remote Installer"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/LliurexRemoteInstaller.py:296
+#, python-format
+msgid ""
+"You published this list to install:\n"
+"\n"
+"%s"
+msgstr ""
+"Heu publicat aquesta llista per a instal·lar-la:\n"
+"\n"
+"%s"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/UpdateBox.py:294
+msgid "New sheduled are programed, applying changes......."
+msgstr "Nova actualització programada, s'estan aplicant els canvis..."
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/UpdateBox.py:392
+msgid "Delete Update"
+msgstr "Elimina l'actualització"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/UpdateBox.py:392
+msgid "Do you want to delete scheduled update?"
+msgstr "Voleu eliminar l'actualització programada?"
+
+#: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/UpdateBox.py:406
+msgid "Repositories Testing"
+msgstr "S'estan comprovant els repositoris"
+
+#: ../lliurex-remote-installer-indicator.install/usr/bin/lliurex-remote-installer-indicator:189
+msgid "LliureX Remote Installer is running: "
+msgstr "El LliureX Remote Installer està en execució: "
+
+#: ../lliurex-remote-installer-indicator.install/usr/bin/lliurex-remote-installer-indicator:192
+msgid "EXECUTABLE Mode"
+msgstr "Mode EXECUTABLES"
+
+#: ../lliurex-remote-installer-indicator.install/usr/bin/lliurex-remote-installer-indicator:201
+msgid "DEB Mode"
+msgstr "Mode DEB"
+
+#: ../lliurex-remote-installer-indicator.install/usr/bin/lliurex-remote-installer-indicator:210
+msgid "APT Mode"
+msgstr "Mode APT"
+
+#: ../lliurex-remote-installer-indicator.install/usr/bin/lliurex-remote-installer-indicator:231
+msgid "LliureX Remote Installer has finished"
+msgstr "El LliureX Remote Installer ha finalitzat."

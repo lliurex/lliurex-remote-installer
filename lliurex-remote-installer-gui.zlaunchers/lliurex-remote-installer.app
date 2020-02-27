@@ -1,0 +1,15 @@
+Name=lliurex-remote-installer
+Name[en]=LliureX Remote Installer
+Name[qcv]=LliureX Remote Installer
+Name[ca_ES@valencia]=LliureX Remote Installer
+Name[es]=LliureX Remote Installer
+Comment=LliureX Remote Installer
+Comment[en]=LliureX Remote Installer
+Comment[es]=LliureX Remote Installer
+Comment[qcv]=LliureX Remote Installer
+Comment[ca]=LliureX Remote Installer
+Icon=lliurex-remote-installer
+Category=System
+ScriptPath=lliurex-remote-installer.zmd
+Service=False
+Groups=admins;adm

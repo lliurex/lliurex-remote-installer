@@ -1,0 +1,108 @@
+
+	GtkLabel {
+		font: 12pt Roboto;
+		
+	}
+	
+	#OPTION_LABEL {
+		font: 12pt Roboto Light;
+
+	}
+
+	#ERROR_LABEL {
+		font: 12pt Roboto Light;
+		color: rgba(250,10,10,0.8);
+	}
+
+	#OPTION_BUTTON {
+		
+		border: 0px;
+		background-color: #ffffff;
+		box-shadow: -0.5px 2px 3px #cdcdcd;
+		
+	}
+
+	#OPTION_BUTTON:hover {
+		border: 0px;
+		background-color: #ff9400	;
+		box-shadow: -0.5px 4px 4px #cecece;
+	}
+
+	#OPTION_BUTTON .label {
+		color: rgba(0,0,0,0.5);
+	}
+	
+	
+	#SELECTED_OPTION_BUTTON {
+		border: 0px;
+		background-color: #ff6600;
+		
+		
+		
+	}
+
+	#SELECTED_OPTION_BUTTON:hover {
+		border: 0px;
+		background-color: #ff9400;
+		box-shadow: -0.5px 2px 4px #9d9d9d;
+	}
+
+	#SELECTED_OPTION_BUTTON .label {
+		color: rgba(255,255,255,0.8);
+
+	}	
+	
+    #WINDOW{
+		
+		background-color: #f1f1f1;
+		
+	}
+
+
+	#DELETE_ITEM_BUTTON {
+			border-width: 5px;
+			border-radius: 0px;
+			padding: 0px 0px;
+			box-shadow: none;
+			border-color: #ff3b30;
+			
+			color: white;
+			background-image:-gtk-gradient (linear,	left top, left bottom, from (#ff3b30),  to (#ff3b30));
+			text-shadow: none;
+			
+		}
+		
+	#DELETE_ITEM_BUTTON:hover {
+		border-color: #ff6c30;
+		background-image:-gtk-gradient (linear,	left top, left bottom, from (#ff6c30),  to (#ff6c30));
+		box-shadow: -0.5px 3px 3px #aaaaaa;
+	}
+
+	#PKG_BOX {
+		
+		
+		background-color: #ffffff	;
+		box-shadow: -0.5px 3px 2px #cdcdcd;
+		
+	}
+	
+	#PKG_BOX:hover {
+		box-shadow: -0.5px 3px 2px #cacaca;
+	}
+	
+	
+	#ITEM_LIST {
+		background-image:-gtk-gradient (linear,	0 0, 0 1, 
+			
+				color-stop(0, rgba(255,255,255,1)),
+				color-stop(0.1, rgba(255,0,0,1)),
+				color-stop(0.2, rgba(0,255,0,1)),
+				color-stop(0.3, rgba(0,0,255,1)),
+				color-stop(0.4, rgba(255,255,0,1)),
+				color-stop(0.5, rgba(255,0,255,1)),
+				color-stop(0.6, rgba(0,255,255,1)),
+				color-stop(0.7, rgba(0,0,0,1)),
+				
+				color-stop(1, rgba(255,255,255,1))
+			);
+	}

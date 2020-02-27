@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<component type="desktop-application">
+<id>lliurex-remote-installer</id>
+<metadata_license>CC0-1.0</metadata_license>
+<name>LliureX Remote Installer</name>
+<name xml:lang="es">LliureX Remote Installer</name>
+<name xml:lang="ca_ES.UTF-8@valencia">LliureX Remote Installer</name>
+<name xml:lang="ca_ES@valencia">LliureX Remote Installer</name>
+<name xml:lang="ca">LliureX Remote Installer</name>
+<summary>LliureX Remote Installer</summary>
+<summary xml:lang="es">Instalador remoto de aplicaciones de Lliurex</summary>
+<summary xml:lang="ca_ES.UTF-8@valencia">Instal·lador remot d'aplicacions del LliureX</summary>
+<summary xml:lang="ca_ES@valencia">Instal·lador remot d'aplicacions del LliureX</summary>
+<summary xml:lang="ca">Instal·lador remot d'aplicacions del LliureX</summary>
+<description>
+<p>LliureX Remote Installer allows to install apps from several sources (on line repositories, deb packages or shell executables) remotely to all clients connected to the server. </p>
+<p xml:lang="es">LliureX Remote Installer permite instalar aplicaciones (desde repositorios online, paquetes deb o ejecutables) desde un servidor a todos los clientes que tenga conectados.</p>
+<p xml:lang="ca_ES.UTF-8@valencia">LliureX Remote Installer permet instal·lar aplicacions des de diverses fonts (en repositoris de línia, paquets deb o executables) de forma remota a tots els clients connectats al servidor.</p>
+<p xml:lang="ca_ES@valencia">LliureX Remote Installer permet instal·lar aplicacions des de diverses fonts (en repositoris de línia, paquets deb o executables) de forma remota a tots els clients connectats al servidor.</p>
+<p xml:lang="ca">LliureX Remote Installer permet instal·lar aplicacions des de diverses fonts (en repositoris de línia, paquets deb o executables) de forma remota a tots els clients connectats al servidor.</p>
+</description>
+<categories>
+<category>Administration</category>
+<category>LliureX</category>
+
+</categories>
+<icon type="stock">lliurex-remote-installer</icon>
+<provides><binary>lliurex-remote-installer</binary></provides>
+<keywords>
+<keyword>lliurex</keyword>
+<keyword>remote</keyword>
+<keyword>installer</keyword>
+</keywords>
+<keywords xml:lang="es">
+<keyword>Instalador</keyword>
+<keyword>aplicaciones</keyword>
+<keyword>remoto</keyword>
+</keywords>
+<keywords xml:lang="ca_ES.UTF-8@valencia">
+<keyword>Instal·lador</keyword>
+<keyword>aplicacions</keyword>
+<keyword>remot</keyword>
+</keywords>
+</component>

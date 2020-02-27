@@ -1,0 +1,13 @@
+[SETUP]
+type=python
+path=LliurexRemoteInstallerClient.py
+class=LliureXRemoteInstallerClient
+[METHODS]
+read_var=anonymous
+test_system=admins,admin,sudo,teachers
+repo_add=admins,admin,sudo,teachers
+repo_restore=admins,admin,sudo,teachers
+repo_update=admins,admin,sudo,teachers
+apt_install=admins,admin,sudo,teachers
+sh_install=admins,admin,sudo,teachers
+deb_install=admins,admin,sudo,teachers

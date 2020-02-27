@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=LliureX Remote Installer Indicator
+Comment=LliureX Remote Installer Indicator
+Exec=/usr/bin/lliurex-remote-installer-indicator
+Terminal=false
+Type=Application

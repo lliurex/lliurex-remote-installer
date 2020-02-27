@@ -1,0 +1,301 @@
+#!/usr/bin/env python
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Pango, GdkPixbuf, Gdk, Gio, GObject, GLib
+gi.require_version('AppIndicator3', '0.1')
+from gi.repository import AppIndicator3 as appindicator
+
+import os
+import sys
+import time
+import threading
+gi.require_version('Notify', '0.7')
+from gi.repository import Notify
+
+
+import pyinotify
+from pyinotify import WatchManager, Notifier, ThreadedNotifier, EventsCodes, ProcessEvent
+
+import signal
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+
+import gettext
+gettext.textdomain('lliurex-remote-installer-gui')
+_ = gettext.gettext
+
+
+
+RSRC="/usr/share/lliurex-remote-installer/rsrc/"
+SP1=RSRC+"indicator/sp1.png"
+SP2=RSRC+"indicator/sp2.png"
+SP3=RSRC+"indicator/sp3.png"
+SP4=RSRC+"indicator/sp4.png"
+SP5=RSRC+"indicator/sp5.png"
+SP6=RSRC+"indicator/sp6.png"
+SP7=RSRC+"indicator/sp7.png"
+SP8=RSRC+"indicator/sp8.png"
+
+
+FRECUENCY=1200
+
+
+class LlxRemoteIndicator:
+
+	ID="net.lliurex.Remoteindicator"
+	#GROUPS=["admins","adm"]
+	WATCH_DIR=os.path.expanduser("/tmp/.LLXRemoteInstallerClient")
+	TARGET_FILE_SH="/tmp/.LLXRemoteInstallerClient/llxremote_sh_token"
+	TARGET_FILE_DEB="/tmp/.LLXRemoteInstallerClient/llxremote_deb_token"
+	TARGET_FILE_APT="/tmp/.LLXRemoteInstallerClient/llxremote_apt_token"
+
+	def __init__(self,icon_name):
+
+
+		self.sp_cont=0
+		self.sp_img=0
+
+		self.is_working=False
+
+		if not os.path.exists("/tmp/.LLXRemoteInstallerClient"):
+			os.mkdir("/tmp/.LLXRemoteInstallerClient")
+
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_SH) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_DEB) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_APT):
+			self.RemoteInstaller_running=True
+		else:
+			self.RemoteInstaller_running=False
+
+	
+		self.app_indicator=appindicator.Indicator.new(LlxRemoteIndicator.ID,icon_name,appindicator.IndicatorCategory.APPLICATION_STATUS)
+		self.app_indicator.set_status(appindicator.IndicatorStatus.PASSIVE)
+		self.app_indicator.set_title("LliureX Remote Installer")
+		self.menu = Gtk.Menu()
+		
+		self.menu.add_events(Gdk.EventMask.ALL_EVENTS_MASK)
+		self.app_indicator.set_menu(self.menu)
+		
+		Notify.init(LlxRemoteIndicator.ID)
+
+		self.populate_menu()
+		self.start_inotify()
+		self.last_check=0
+		
+		GLib.timeout_add_seconds(5, self.worker)
+
+	#def __init__	
+			
+
+
+	#def menuMode		
+
+	def worker(self):
+		""" Timeout thread """
+		
+		if(self.is_working==False):
+			if self.RemoteInstaller_running: 
+				self.is_alive()
+			else:
+				if self.last_check>FRECUENCY:
+					self.quit()
+				else:
+					self.last_check+=5	
+		
+		return True	
+
+	#def worker	
+		
+					
+	def populate_menu(self):
+	
+
+		label_item=""
+		item=Gtk.ImageMenuItem()
+		item.set_label(label_item)
+		img=Gtk.Image.new_from_file(SP1)
+		item.set_image(img)
+		item.set_always_show_image(True)
+		self.menu.insert(item,0)
+
+		
+	#def populate_menu		
+
+	def start_inotify(self):
+
+		t=threading.Thread(target=self._inotify)
+		t.daemon=True
+		t.start()		
+
+	#def start_inotify	
+
+	def _inotify(self):
+		
+		
+		wm=WatchManager()
+		mask=pyinotify.IN_CREATE
+			
+		class Process_handler(ProcessEvent):
+				
+			def __init__(self,main):
+				
+				self.main=main
+				
+			def process_IN_CREATE(self,event):
+
+				tmp=os.path.expanduser(event.pathname)
+				try:
+					if tmp==LlxRemoteIndicator.TARGET_FILE_SH or tmp==LlxRemoteIndicator.TARGET_FILE_DEB or tmp==LlxRemoteIndicator.TARGET_FILE_APT:
+						
+						self.main.RemoteInstaller_running=True
+					
+				except Exception as e:
+					print e
+
+			
+		notifier=Notifier(wm,Process_handler(self))
+		wdd=wm.add_watch(LlxRemoteIndicator.WATCH_DIR,mask,rec=True)
+			
+		while True:
+			try:
+					
+				notifier.process_events()
+				if notifier.check_events():
+					notifier.read_events()
+				
+			except Exception as e:
+				notifier.stop()
+					
+		return False	
+
+	#def _inotify	
+
+	def is_alive(self):
+
+		#if os.path.exists(TARGET_FILE):
+		self.is_working=True
+		self.menu.show_all()
+		self.app_indicator.set_status(appindicator.IndicatorStatus.ACTIVE)
+		self.apt_token=False
+		self.deb_token=False
+		self.sh_token=False
+		self.live=True
+		GLib.timeout_add(100,self.check_status)	
+				
+		return
+
+	#def is_alive	
+		
+	def check_status(self):
+
+		label_item=_("LliureX Remote Installer is running: ")
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_SH):
+			if not self.sh_token:
+				label_item=label_item + _("EXECUTABLE Mode")
+				for item in self.menu.get_children():
+					item.set_label(label_item)
+				self.sh_token=True
+		else:
+			self.sh_token=False
+		
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_DEB):
+			if not self.deb_token:
+				label_item=label_item + _("DEB Mode")
+				for item in self.menu.get_children():
+					item.set_label(label_item)
+				self.deb_token=True
+		else:
+			self.deb_token=False
+			
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_APT):
+			if not self.apt_token:
+				label_item=label_item + _("APT Mode")
+				for item in self.menu.get_children():
+					item.set_label(label_item)
+				self.apt_token=True
+		else:
+			self.apt_token=False
+		
+		if self.sh_token or self.deb_token or self.apt_token:
+		
+			self.spinner_sync()
+			for item in self.menu.get_children():
+				item.set_image(self.sp_img)
+				self.sp_cont=self.sp_cont+1	
+			return True
+			
+		else:
+						
+			img=Gtk.Image.new_from_file(SP1)
+			for item in self.menu.get_children():
+				item.set_image(img)
+			
+			message=_("LliureX Remote Installer has finished")
+			self.show_message(message)
+			self.app_indicator.set_status(appindicator.IndicatorStatus.PASSIVE)
+			time.sleep(2)
+			self.notify.close()
+
+			self.RemoteInstaller_running=False
+			self.is_working=False
+			
+			return False		
+
+	#def check_status	
+	
+	def spinner_sync(self):
+	
+		if self.sp_cont>80:
+			self.sp_cont=0
+			
+		if self.sp_cont==0:
+			img=Gtk.Image.new_from_file(SP1)
+			self.sp_img=img
+		elif self.sp_cont==10:
+			img=Gtk.Image.new_from_file(SP2)
+			self.sp_img=img			
+		elif self.sp_cont==20:
+			img=Gtk.Image.new_from_file(SP3)
+			self.sp_img=img
+		elif self.sp_cont==30:
+			img=Gtk.Image.new_from_file(SP4)
+			self.sp_img=img
+		elif self.sp_cont==40:
+			img=Gtk.Image.new_from_file(SP5)
+			self.sp_img=img	
+		elif self.sp_cont==50:
+			img=Gtk.Image.new_from_file(SP6)
+			self.sp_img=img		
+		elif self.sp_cont==60:
+			img=Gtk.Image.new_from_file(SP7)
+			self.sp_img=img		
+		elif self.sp_cont==70:
+			img=Gtk.Image.new_from_file(SP8)
+			self.sp_img=img		
+				
+	#def spinner_sync		
+
+
+
+	def show_message(self,message):
+
+		
+		self.notify=Notify.Notification.new("Lliurex Remote Installer",message, "lliurex-remote-installer-indicator")
+		self.notify.set_hint("transient", GLib.Variant.new_boolean(True))
+		self.notify.show()
+
+	#def _show_message	
+
+	def quit(self):
+
+		Gtk.main_quit()	
+
+	#def quit	
+	
+#class LlxRemoteIndicator
+
+if __name__=="__main__":
+
+
+	llxremoteindicator=LlxRemoteIndicator("lliurex-remote-installer-indicator")
+	GObject.threads_init()
+	Gtk.main()

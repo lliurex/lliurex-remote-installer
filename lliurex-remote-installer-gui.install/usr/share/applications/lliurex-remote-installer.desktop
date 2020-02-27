@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.0
+Name=LliureX Remote Installer
+Name[es]=LliureX Remote Installer
+Name[ca_ES.UTF-8@valencia]=LliureX Remote Installer
+Name[ca_ES]=LliureX Remote Installer
+Name[ca]=LliureX Remote Installer
+Comment=LliureX Remote Installer
+Comment[es]=LliureX Remote Installer
+Comment[ca_ES.UTF-8@valencia]=LliureX Remote Installer
+Comment[ca_ES]=LliureX Remote Installer
+Comment[ca]=LliureX Remote Installer
+Exec=lliurex-remote-installer
+Terminal=false
+Icon=lliurex-remote-installer
+Type=Application
+GenericName=LliureXRemoteInstaller
+Categories=LliureX-Administration;GTK
