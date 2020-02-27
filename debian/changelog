@@ -1,0 +1,246 @@
+lliurex-remote-installer (0.5.9) bionic; urgency=medium
+
+  * Fixed desktop icon
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 18 Jul 2019 09:26:54 +0200
+
+lliurex-remote-installer (0.5.8) bionic; urgency=high
+
+  * Adding path to bionic mirror 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 21 Jun 2019 13:34:30 +0200
+
+lliurex-remote-installer (0.5.7) bionic; urgency=medium
+
+  * Changed the style of the icons
+  * Fixed valencian translations
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Tue, 18 Jun 2019 13:22:31 +0200
+
+lliurex-remote-installer (0.5.6) bionic; urgency=medium
+
+  * Adding sudo group to n4d plugins
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 15 Feb 2019 12:11:52 +0100
+
+lliurex-remote-installer (0.5.5) bionic; urgency=high
+
+  * Fix bug in files who don't have read permission to all people
+  * Files and debs can send from client to server
+  * Now only netadmin users can be login 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 07 Dec 2018 12:01:32 +0100
+
+lliurex-remote-installer (0.5.3) bionic; urgency=high
+
+  * First version to Bionic 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 19 Nov 2018 09:48:45 +0100
+
+lliurex-remote-installer (0.5.3) xenial; urgency=high
+
+  * Updated banner art
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Tue, 04 Sep 2018 12:54:26 +0200
+
+lliurex-remote-installer (0.5.2) xenial; urgency=high
+
+  * added zero-center files
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Thu, 09 Aug 2018 12:56:37 +0200
+
+lliurex-remote-installer (0.5.1) xenial; urgency=medium
+
+  * Fix control file
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Fri, 15 Jun 2018 08:23:08 +0200
+
+lliurex-remote-installer (0.5) xenial; urgency=medium
+
+  * Code fixes
+  * Added systemd support to lliurex-remote-installer-client update process
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Fri, 22 Dec 2017 09:24:59 +0100
+
+lliurex-remote-installer (0.4.7) xenial; urgency=high
+
+  * New version to save variable with updated false option 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 18 Dec 2017 12:14:50 +0100
+
+lliurex-remote-installer (0.4.6) xenial; urgency=high
+
+  * Fix bug to save variable with updated false option 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 18 Dec 2017 11:00:14 +0100
+
+lliurex-remote-installer (0.4.5) xenial; urgency=medium
+
+  * Fix functions to menu indicator
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Mon, 18 Dec 2017 09:16:23 +0100
+
+lliurex-remote-installer (0.4.4) xenial; urgency=high
+
+  * Updating for remove objects functions in n4d plugins and added debug function to remove messages in n4d server 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 15 Dec 2017 12:29:53 +0100
+
+lliurex-remote-installer (0.4.3) xenial; urgency=medium
+
+  * Add indicator to menu bar
+
+ -- Juan Ramon Pelegrina <juapesai@hotmail.com>  Thu, 16 Nov 2017 12:24:56 +0100
+
+lliurex-remote-installer (0.4.2) xenial; urgency=high
+
+  * Fix new bug adding new apt packages because none is not defined
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 09 Nov 2017 14:06:43 +0100
+
+lliurex-remote-installer (0.4.1) xenial; urgency=high
+
+  *Now admins users can upload files to deb and executables 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 25 Oct 2017 14:22:45 +0200
+
+lliurex-remote-installer (0.4.0) xenial; urgency=high
+
+  * Updating for eliminate bug when test apt failed in server and new comentaries in client debug
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 06 Oct 2017 13:02:08 +0200
+
+lliurex-remote-installer (0.3.9) xenial; urgency=medium
+
+  * Removed deprecated locale
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Thu, 22 Jun 2017 09:17:44 +0200
+
+lliurex-remote-installer (0.3.8) xenial; urgency=high
+
+  * Fixed valencian translation
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 05 Jun 2017 15:01:28 +0200
+
+lliurex-remote-installer (0.3.7-1) xenial; urgency=medium
+
+  * Added metainfo 
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 17 May 2017 09:07:34 +0200
+
+lliurex-remote-installer (0.3.7) xenial; urgency=high
+
+  * Updated is new option to GUI and client, you can sheduled new minimum version to upgraded 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 15 May 2017 17:01:48 +0200
+
+lliurex-remote-installer (0.3.6) xenial; urgency=high
+
+  * Now if server has Mirror, GUI show it in APT options
+  * Now Lliurex.net is a permanent ppa
+  * Client set n4d/controlled-startups with a file. 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Mon, 08 May 2017 13:03:31 +0200
+
+lliurex-remote-installer (0.3.5) xenial; urgency=medium
+
+  * Fixed ppa build (now truly)
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Thu, 27 Apr 2017 09:06:05 +0200
+
+lliurex-remote-installer (0.3.4) xenial; urgency=medium
+
+  * Fixed ppa build
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Thu, 27 Apr 2017 08:59:13 +0200
+
+lliurex-remote-installer (0.3.3) xenial; urgency=medium
+
+  * Localized GUI
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 26 Apr 2017 18:23:20 +0200
+
+lliurex-remote-installer (0.3.2) xenial; urgency=medium
+
+  * Refactorized client
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Wed, 05 Apr 2017 12:00:31 +0200
+
+lliurex-remote-installer (0.3.1) xenial; urgency=high
+
+  * Change cache-update method in client
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 29 Mar 2017 15:56:33 +0200
+
+lliurex-remote-installer (0.3.0) xenial; urgency=high
+
+  * Fix bug to update APT sources cache 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 29 Mar 2017 14:02:15 +0200
+
+lliurex-remote-installer (0.2.9) xenial; urgency=high
+
+  * Adding new dependence to remote-client with pyton-apt libray
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 29 Mar 2017 13:37:57 +0200
+
+lliurex-remote-installer (0.2.8) xenial; urgency=high
+
+  * Set current folder Desktop in serch files or debs 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 29 Mar 2017 11:50:46 +0200
+
+lliurex-remote-installer (0.2.7) xenial; urgency=high
+
+  * Eliminate excesive print-info 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Wed, 29 Mar 2017 09:58:15 +0200
+
+lliurex-remote-installer (0.2.6) xenial; urgency=high
+
+  * Fix bug in apt to apply changes adding more apt applications 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 28 Mar 2017 14:23:42 +0200
+
+lliurex-remote-installer (0.2.5) xenial; urgency=high
+
+  * Show resume msg at the end 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 28 Mar 2017 13:52:21 +0200
+
+lliurex-remote-installer (0.2.4) xenial; urgency=high
+
+  * Changing messages updating in GUI 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 28 Mar 2017 13:17:43 +0200
+
+lliurex-remote-installer (0.2.3) xenial; urgency=high
+
+  * Fix bug in capital letters in postisntall filename client 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 28 Mar 2017 12:58:53 +0200
+
+lliurex-remote-installer (0.2.2) xenial; urgency=high
+
+  * Fix Bug in delete package button upgrading n4d variable 
+  * Added Ubuntu repos by defect in server and client
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 21 Mar 2017 12:49:19 +0100
+
+lliurex-remote-installer (0.2.1) xenial; urgency=high
+
+  * Fix bug in adding exec
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 16 Mar 2017 13:48:39 +0100
+
+lliurex-remote-installer (0.2) xenial; urgency=high
+
+  * Registry in n4d controlled services at boot
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Thu, 16 Mar 2017 13:36:30 +0100
+
+lliurex-remote-installer (0.1) xenial; urgency=high
+
+  * Initial release.
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Fri, 13 Feb 2017 12:46:16 +0200
