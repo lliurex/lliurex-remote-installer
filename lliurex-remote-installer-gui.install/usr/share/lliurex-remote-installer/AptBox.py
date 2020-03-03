@@ -426,7 +426,7 @@ class AptBox(Gtk.VBox):
 		self.thread.start()
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ApplyingChangesDialog(main_window,"Lliurex Remote installer",_(u"Updating repositories and testing packages..."))
+		dialog=Dialog.ApplyingChangesDialog(main_window,"Lliurex Remote installer",_("Updating repositories and testing packages..."))
 		dialog.show()
 		GLib.timeout_add(500,self.check_apply_thread,dialog)
 		
@@ -454,7 +454,7 @@ class AptBox(Gtk.VBox):
 			
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 		
@@ -514,7 +514,7 @@ class AptBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete apt list"),_(u"Do you want to delete '%s' packages list?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete apt list"),_("Do you want to delete '%s' packages list?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -529,7 +529,7 @@ class AptBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		pkg_name='\n'.join(pkg_name_orig)
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete apt list"),_(u"This pakage list is unavaiable from your repos:\n%s\nDo you want delete it?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete apt list"),_("This pakage list is unavaiable from your repos:\n%s\nDo you want delete it?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -543,7 +543,7 @@ class AptBox(Gtk.VBox):
 	def delete_package_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete package"),_(u"Do you want to delete '%s'?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete package"),_("Do you want to delete '%s'?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -558,7 +558,7 @@ class AptBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		
-		dialog=Dialog.QuestionDialog(main_window,_(u"Changes detected"),_(u"There are unsaved changes. Do you want to discard them?"))
+		dialog=Dialog.QuestionDialog(main_window,_("Changes detected"),_("There are unsaved changes. Do you want to discard them?"))
 		response=dialog.run()
 		dialog.destroy()
 		

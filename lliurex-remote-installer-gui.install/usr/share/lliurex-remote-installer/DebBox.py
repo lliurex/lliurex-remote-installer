@@ -127,7 +127,7 @@ class DebBox(Gtk.VBox):
 					
 					
 		except Exception as e:
-			print e,"!!!"
+			print(e,"!!!")
 			
 			
 		return path
@@ -137,7 +137,7 @@ class DebBox(Gtk.VBox):
 		
 		path=self.check_user_desktop()
 		#print path
-		fcb=Dialog.FileDialog(self.core.lri.main_window,_(u"Please choose a file"), path)
+		fcb=Dialog.FileDialog(self.core.lri.main_window,_("Please choose a file"), path)
 		response=fcb.run()
 		
 		self.deb_list_init()
@@ -253,7 +253,7 @@ class DebBox(Gtk.VBox):
 					self.thread.start()
 					
 					main_window=self.core.lri.main_window
-					dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_(u"Deleting files......."))
+					dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_("Deleting files......."))
 					dialog.show()
 					GLib.timeout_add(500,self.check_delete_thread,dialog)
 			
@@ -270,13 +270,13 @@ class DebBox(Gtk.VBox):
 			url_dest="/var/www/llx-remote/"+str(pkg)
 			self.deleted=self.core.n4d.remove_file(url_dest)
 			if not self.deleted[0]:
-				comment=_(u"The file %s cannot be deleted")%pkg
+				comment=_("The file %s cannot be deleted")%pkg
 				self.remove_file_info_dialog(comment)
 				
 			self.thread_ret={"status":True,"msg":"BROKEN"}
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 			
 	#def delete_package_thread
@@ -310,11 +310,11 @@ class DebBox(Gtk.VBox):
 		self.thread.start()
 		
 		#Se crea el mensaje de Apply segun si sse suben ficheros o no.
-		self.msg1=_(u"Applying changes.......")
+		self.msg1=_("Applying changes.......")
 		if  self.new_debs not in [None,"",[]]:
-			self.msg1=_(u"Updating files and applying changes.......")
+			self.msg1=_("Updating files and applying changes.......")
 		else:
-			self.msg1=_(u"Applying changes.......")
+			self.msg1=_("Applying changes.......")
 		
 		main_window=self.core.lri.main_window
 		dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=self.msg1)
@@ -329,7 +329,7 @@ class DebBox(Gtk.VBox):
 		
 		try:
 			
-			print "Testing....."
+			print("Testing.....")
 			if  self.new_debs not in [None,"",[]]:
 				self.core.dprint("Sending files to server...")
 				for deb in self.new_debs:
@@ -351,7 +351,7 @@ class DebBox(Gtk.VBox):
 
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 		
@@ -404,7 +404,7 @@ class DebBox(Gtk.VBox):
 	def error_extension_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ErrorDialog(main_window,_(u"Error in Extension"),_(u"This %s package has not the extension required.\nPlease only DEB packages in this list.")%pkg_name)
+		dialog=Dialog.ErrorDialog(main_window,_("Error in Extension"),_("This %s package has not the extension required.\nPlease only DEB packages in this list.")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -417,7 +417,7 @@ class DebBox(Gtk.VBox):
 	def delete_package_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete package"),_(u"Do you want to delete '%s'?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete package"),_("Do you want to delete '%s'?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -431,7 +431,7 @@ class DebBox(Gtk.VBox):
 	def remove_file_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete package"),_(u"IMPORTANT\nDo you want to delete this DEB from your server?\n'%s'")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete package"),_("IMPORTANT\nDo you want to delete this DEB from your server?\n'%s'")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -445,7 +445,7 @@ class DebBox(Gtk.VBox):
 	def remove_file_info_dialog(self,comment):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ErrorDialog(main_window,_(u"Delete package"),comment)
+		dialog=Dialog.ErrorDialog(main_window,_("Delete package"),comment)
 		response=dialog.run()
 		dialog.destroy()
 				
@@ -456,7 +456,7 @@ class DebBox(Gtk.VBox):
 	def send_file_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"DEB not in Server"),_(u"Do you want to send to the server this DEB '%s' ?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("DEB not in Server"),_("Do you want to send to the server this DEB '%s' ?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -470,7 +470,7 @@ class DebBox(Gtk.VBox):
 	def send_list_dialog(self,pkg_name_orig):
 		main_window=self.core.lri.main_window
 		pkg_name='\n'.join(pkg_name_orig)
-		dialog=Dialog.QuestionDialog(main_window,_(u"DEB not in Server"),_(u"Do you want to send to the server this DEB list?\n%s\n")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("DEB not in Server"),_("Do you want to send to the server this DEB list?\n%s\n")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -486,7 +486,7 @@ class DebBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		
-		dialog=Dialog.QuestionDialog(main_window,_(u"Changes detected"),_(u"There are unsaved changes. Do you want to discard them?"))
+		dialog=Dialog.QuestionDialog(main_window,_("Changes detected"),_("There are unsaved changes. Do you want to discard them?"))
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -506,7 +506,7 @@ class DebBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		pkg_name='\n'.join(pkg_name_orig)
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete deb list"),_(u"This DEB list is unavaiable from your server:\n%s\nDo you want delete it?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete deb list"),_("This DEB list is unavaiable from your server:\n%s\nDo you want delete it?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		

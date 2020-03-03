@@ -291,7 +291,7 @@ class UpdateBox(Gtk.VBox):
 		self.thread.start()
 					
 		#Se crea el mensaje de Apply segun:
-		self.msg1=_(u"New sheduled are programed, applying changes.......")
+		self.msg1=_("New sheduled are programed, applying changes.......")
 		
 		main_window=self.core.lri.main_window
 		dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=self.msg1)
@@ -352,7 +352,7 @@ class UpdateBox(Gtk.VBox):
 
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 		
@@ -389,7 +389,7 @@ class UpdateBox(Gtk.VBox):
 	def delete_update_dialog(self):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete Update"),_(u"Do you want to delete scheduled update?"))
+		dialog=Dialog.QuestionDialog(main_window,_("Delete Update"),_("Do you want to delete scheduled update?"))
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -403,7 +403,7 @@ class UpdateBox(Gtk.VBox):
 	def error_repos_dialog(self, repo):
 		comment=("%s repositorie not is accesible, please wait to connect with it or select other one"%repo)
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ErrorDialog(main_window,_(u"Repositories Testing"),comment)
+		dialog=Dialog.ErrorDialog(main_window,_("Repositories Testing"),comment)
 		response=dialog.run()
 		dialog.destroy()
 				

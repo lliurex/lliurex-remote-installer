@@ -69,7 +69,7 @@ class InfoDialog(Gtk.Dialog):
 	
 class ApplyingChangesDialog(Gtk.Dialog):
 	
-	def __init__(self, parent,title="Lliurex Remote Installer",msg=_(u"Applying changes...")):
+	def __init__(self, parent,title="Lliurex Remote Installer",msg=_("Applying changes...")):
 		
 		Gtk.Dialog.__init__(self, title, parent, 0, ())
 		#self.set_default_size(150, 100)
@@ -98,7 +98,7 @@ class ApplyingChangesDialog(Gtk.Dialog):
 class FileDialog(Gtk.FileChooserDialog):
 	
 	
-	def __init__(self,parent,title=_(u"Please choose a file"), path="/home"):
+	def __init__(self,parent,title=_("Please choose a file"), path="/home"):
 		
 
 		Gtk.FileChooserDialog.__init__(self,title, parent, Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
