@@ -293,7 +293,7 @@ class LliurexRemoteInstaller:
 			COMMENT.append("")
 		if COMMENT not in [None,"",[]]:
 			COMMENT='\n'.join(COMMENT)
-			dialog=Dialog.InfoDialog(self.main_window,_(u"LliureX Remote Installer Summary"),_(u"You published this list to install:\n\n%s")%(COMMENT))
+			dialog=Dialog.InfoDialog(self.main_window,_("LliureX Remote Installer Summary"),_("You published this list to install:\n\n%s")%(COMMENT))
 			response=dialog.run()
 			dialog.destroy()
 		
@@ -306,7 +306,7 @@ class LliurexRemoteInstaller:
 	def changes_detected_dialog(self):
 		
 		
-		dialog=Dialog.QuestionDialog(self.main_window,_(u"Changes detected"),_(u"There are unsaved changes. Do you want to discard them?"))
+		dialog=Dialog.QuestionDialog(self.main_window,_("Changes detected"),_("There are unsaved changes. Do you want to discard them?"))
 		response=dialog.run()
 		dialog.destroy()
 		

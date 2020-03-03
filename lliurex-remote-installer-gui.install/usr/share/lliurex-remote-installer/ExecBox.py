@@ -126,7 +126,7 @@ class ExecBox(Gtk.VBox):
 					
 					
 		except Exception as e:
-			print e,"!!!"
+			print(e,"!!!")
 			
 			
 		return path
@@ -136,7 +136,7 @@ class ExecBox(Gtk.VBox):
 		
 		path=self.check_user_desktop()
 		
-		fcb=Dialog.FileDialog(self.core.lri.main_window,_(u"Please choose a file"), path)
+		fcb=Dialog.FileDialog(self.core.lri.main_window,_("Please choose a file"), path)
 		response=fcb.run()
 		#Creo las listas de ayuda para anyadir paquetes si no existen antes
 		self.exec_list_init()
@@ -264,7 +264,7 @@ class ExecBox(Gtk.VBox):
 					self.thread.start()
 					
 					main_window=self.core.lri.main_window
-					dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_(u"Deleting files......."))
+					dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_("Deleting files......."))
 					dialog.show()
 					GLib.timeout_add(500,self.check_delete_thread,dialog)
 			else:
@@ -283,13 +283,13 @@ class ExecBox(Gtk.VBox):
 			url_dest="/var/www/llx-remote/"+str(pkg)
 			self.deleted=self.core.n4d.remove_file(url_dest)
 			if not self.deleted[0]:
-				comment=_(u"The file %s cannot be deleted")%pkg
+				comment=_("The file %s cannot be deleted")%pkg
 				self.remove_file_info_dialog(comment)
 				
 			self.thread_ret={"status":True,"msg":"SE HA ROTO"}
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 			
 	#def delete_package_thread
@@ -321,11 +321,11 @@ class ExecBox(Gtk.VBox):
 		self.thread.start()
 		
 		#Se crea el mensaje de Apply segun si sse suben ficheros o no.
-		self.msg1=_(u"Applying changes.......")
+		self.msg1=_("Applying changes.......")
 		if  self.new_execs not in [None,"",[]]:
-			self.msg1=_(u"Updating files and applying changes.......")
+			self.msg1=_("Updating files and applying changes.......")
 		else:
-			self.msg1=_(u"Applying changes.......")
+			self.msg1=_("Applying changes.......")
 		
 		main_window=self.core.lri.main_window
 		dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=self.msg1)
@@ -340,7 +340,7 @@ class ExecBox(Gtk.VBox):
 		
 		try:
 			
-			print "Testing....."
+			print("Testing.....")
 			self.not_sended_execs=[]
 			
 
@@ -373,7 +373,7 @@ class ExecBox(Gtk.VBox):
 
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 		
@@ -428,7 +428,7 @@ class ExecBox(Gtk.VBox):
 	def error_send_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ErrorDialog(main_window,_(u"Sending Package Error"),_(u"This list %s cannot be sended to server\nPlease review your share directory\n\n/var/www/llx-remote")%pkg_name)
+		dialog=Dialog.ErrorDialog(main_window,_("Sending Package Error"),_("This list %s cannot be sended to server\nPlease review your share directory\n\n/var/www/llx-remote")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -442,7 +442,7 @@ class ExecBox(Gtk.VBox):
 	def delete_package_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete package"),_(u"Do you want to delete '%s'?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete package"),_("Do you want to delete '%s'?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -456,7 +456,7 @@ class ExecBox(Gtk.VBox):
 	def remove_file_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete package"),_(u"IMPORTANT\nDo you want to delete this Executable from your server?\n'%s'")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete package"),_("IMPORTANT\nDo you want to delete this Executable from your server?\n'%s'")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -470,7 +470,7 @@ class ExecBox(Gtk.VBox):
 	def remove_file_info_dialog(self,comment):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.ErrorDialog(main_window,_(u"Delete package"),comment)
+		dialog=Dialog.ErrorDialog(main_window,_("Delete package"),comment)
 		response=dialog.run()
 		dialog.destroy()
 				
@@ -481,7 +481,7 @@ class ExecBox(Gtk.VBox):
 	def send_file_dialog(self,pkg_name):
 		
 		main_window=self.core.lri.main_window
-		dialog=Dialog.QuestionDialog(main_window,_(u"Executable not in Server"),_(u"Do you want to send to the server this Executable '%s' ?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Executable not in Server"),_("Do you want to send to the server this Executable '%s' ?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -495,7 +495,7 @@ class ExecBox(Gtk.VBox):
 	def send_list_dialog(self,pkg_name_orig):
 		main_window=self.core.lri.main_window
 		pkg_name='\n'.join(pkg_name_orig)
-		dialog=Dialog.QuestionDialog(main_window,_(u"Executable not in Server"),_(u"Do you want to send to the server this Executable list?\n%s\n")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Executable not in Server"),_("Do you want to send to the server this Executable list?\n%s\n")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -511,7 +511,7 @@ class ExecBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		
-		dialog=Dialog.QuestionDialog(main_window,_(u"Changes detected"),_(u"There are unsaved changes. Do you want to discard them?"))
+		dialog=Dialog.QuestionDialog(main_window,_("Changes detected"),_("There are unsaved changes. Do you want to discard them?"))
 		response=dialog.run()
 		dialog.destroy()
 		
@@ -534,7 +534,7 @@ class ExecBox(Gtk.VBox):
 		for (pkg_name_orig,md5) in pkg_list_tupla:
 			lista.append(pkg_name_orig)
 		pkg_name='\n'.join(lista)
-		dialog=Dialog.QuestionDialog(main_window,_(u"Delete Executable list"),_(u"This Executable list is unavaiable from your server:\n%s\nDo you want delete it?")%pkg_name)
+		dialog=Dialog.QuestionDialog(main_window,_("Delete Executable list"),_("This Executable list is unavaiable from your server:\n%s\nDo you want delete it?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
 		

@@ -1,4 +1,5 @@
-import xmlrpclib
+import xmlrpc.client 
+import ssl
 
 class N4dManager:
 	
@@ -16,11 +17,11 @@ class N4dManager:
 		
 		try:
 		
-			print self.client.lliurex_version("","LliurexVersion")
+			print(self.client.lliurex_version("","LliurexVersion"))
 			return True
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 			
 			
@@ -34,7 +35,7 @@ class N4dManager:
 			return[True,variable]
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def lliurex_mirror
@@ -49,7 +50,7 @@ class N4dManager:
 			return[True,version]
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def lliurex_mirror
@@ -64,7 +65,7 @@ class N4dManager:
 			return[True,version]
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def net_lliurex_mirror
@@ -76,7 +77,7 @@ class N4dManager:
 			return[True,self.variable]
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def ge
@@ -90,7 +91,7 @@ class N4dManager:
 			return[True,self.variable]
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def get_value
@@ -110,7 +111,7 @@ class N4dManager:
 				return False
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def set_variable
@@ -129,7 +130,7 @@ class N4dManager:
 				return list_apt_ok
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def set_variable
@@ -145,7 +146,7 @@ class N4dManager:
 				return list_deb_ok
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def set_variable
@@ -154,11 +155,11 @@ class N4dManager:
 		
 		try:
 			list_deb_ok=self.client.test_list(self.user,"LliureXRemoteInstaller",dict,type)
-			print list_deb_ok
+			print(list_deb_ok)
 			return list_deb_ok
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def test_list
@@ -169,15 +170,15 @@ class N4dManager:
 			return app_deb_tested
 			
 		except Exception as e:
-			print e
+			print(e)
 			return False
 			
 		
 	def send_file(self,ip,url_source,url_dest):
 		
 		try:
-			
-			local_n4d=xmlrpclib.ServerProxy("https://localhost:9779")
+			context=ssl._create_unverified_context()
+			local_n4d=xmlrpc.client.ServerProxy("https://localhost:9779",allow_none=True,context=context)
 			file_sent=local_n4d.send_file(self.user,"ScpManager",self.user[0],self.user[1],ip,url_source,url_dest)
 			
 			#list_apt_ok.wait()
@@ -187,7 +188,7 @@ class N4dManager:
 				return False
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def set_variable
@@ -200,7 +201,7 @@ class N4dManager:
 			return file_sended
 		
 		except Exception as e:
-			print e
+			print(e)
 			return False
 		
 	#def set_variable
@@ -209,16 +210,17 @@ class N4dManager:
 	def validate_user(self,username,password,server_ip):
 		
 		try:
+			context=ssl._create_unverified_context()
 			if server_ip in {'',None}:
 				server_ip="server"
 			if server_ip in {'localhost'}:
 				proxy="https://localhost:9779"
 				#print proxy
-				self.client=xmlrpclib.ServerProxy(proxy)
+				self.client=xmlrpc.client.ServerProxy(proxy,allow_none=True,context=context)
 			else:
 				proxy="https://%s:9779"%server_ip
 				#print proxy
-				self.client=xmlrpclib.ServerProxy(proxy)
+				self.client=xmlrpc.client.ServerProxy(proxy,allow_none=True,context=context)
 			
 			self.server=server_ip
 				
@@ -233,7 +235,7 @@ class N4dManager:
 			return [False,"Wrong user and/or password"]
 			
 		except Exception as e:
-			print e
+			print(e)
 			return [False,str(e)]
 		
 		
