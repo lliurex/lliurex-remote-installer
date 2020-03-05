@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.10) bionic; urgency=medium
+
+  * Migrate to python3 except n4d-plugin 
+
+ -- Daniel Duran Vecino <daduve@gmail.com>  Tue, 03 Mar 2020 08:37:29 +0100
+
 lliurex-remote-installer (0.5.9) bionic; urgency=medium
 
   * Fixed desktop icon
