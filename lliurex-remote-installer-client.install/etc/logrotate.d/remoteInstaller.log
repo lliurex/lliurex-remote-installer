@@ -1,0 +1,11 @@
+#
+#	Logrotate fragment for lliurex-remote-installer.
+#
+/var/log/remoteInstaller.log {
+	daily
+	compress
+	delaycompress
+	rotate 15
+	missingok
+	nocreate
+}
