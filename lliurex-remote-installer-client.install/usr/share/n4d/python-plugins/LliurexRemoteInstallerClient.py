@@ -6,12 +6,14 @@ import apt.debfile
 import types
 import datetime
 import threading
+import datetime
 
 class LliureXRemoteInstallerClient:
 	
 	dir_tmp="/tmp/.LLXRemoteInstallerClient"
 	N4D_VAR="LLX_REMOTE_INSTALLER"
 	N4D_INSTALLED="LLX_REMOTE_INSTALLER_INSTALLED"
+	logFile="/var/log/remoteInstaller.log"
 	
 	#REPO ADDAPLICATION_SOURCES value
 	dir_sources="/etc/apt/sources.list.d/"
@@ -34,6 +36,7 @@ class LliureXRemoteInstallerClient:
 	
 	def __init__(self):
 		self.dbg=0
+		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
 			print ("-----------------------------------------------------" )
@@ -42,6 +45,7 @@ class LliureXRemoteInstallerClient:
 			print ("")
 			print ("-----------------------------------------------------" )
 			print ("-----------------------------------------------------" )
+			
 		pass
 	#def __init__
 
@@ -52,23 +56,20 @@ class LliureXRemoteInstallerClient:
 		self._log(message)
 		if self.dbg==1:
 			print("RemoteInstallerClient: "+str(message))
-			self._log(message)
 
 	def _log(self, message):
-		logFile="/tmp/remoteInstall.log"
-		if os.path.exists(logFile):
-			f=open (logFile,"a")
+		
+		if os.path.exists(self.logFile):
+			f=open (self.logFile,"a")
 		else:
 			#os.system(touch /tmp/remoteInstall.log)
-			f=open (logFile,"w")
+			f=open (self.logFile,"w")
 		f.write(str(message)+"\n")
 		f.close()
 
 	def startup(self,options):
-		
-		if os.path.exists(self.file_sources):
-			os.remove(self.file_sources)
-
+		COMMENT="[LLXRemoteInstallerClient] (startup) Process startup, do nothing don't worry"
+		self._debug(COMMENT)
 		return True
 		# update process moved to lliurex-remote-installer-client.service in systemd
 
@@ -259,7 +260,7 @@ class LliureXRemoteInstallerClient:
 			if sources_private not in ["",None,[]]:
 				COMMENT="(repo_add) REPO IS PARTICULAR %s" %sources_private
 				self._debug(COMMENT)
-				mode = 'a' if os.path.exists(self.file_sources) else 'w'
+				mode = 'a'if os.path.exists(self.file_sources) else 'w'
 				f_used=open(self.file_sources,mode)
 				self._debug("open("+self.file_sources+","+mode+")")
 				f_used.write(sources_private+'\n')
@@ -283,9 +284,9 @@ class LliureXRemoteInstallerClient:
 	#def_repo_add
 	
 	def repo_restore (self,f=None):
-		self._debug("repo_restore")
+		self._debug("repo_restore DO NOTHING:::::::::::::::::::::::::")
 		try:
-			
+			self._debug("repo_restore")
 			COMMENT="(repo_restore) Repo %s to test APT Aplications is deleted and restore to initial state"%f
 			self._debug(COMMENT)
 			if os.path.exists(f):
@@ -306,12 +307,16 @@ class LliureXRemoteInstallerClient:
 	def repo_update (self):
 		self._debug("repo_update")
 		try:
-			self._debug("(repo_restore) Updating indices, please wait........")
+			#if os.path.exists(self.file_sources):
+			#	COMMENT="[LLXRemoteInstallerClient] (repo_update) Exists %s CORRECTOOOOOOOOO!!!"%(self.file_sources)
+			#	os.path.copy(self.file_sources,'/home')
+			self._debug("(repo_update) Updating indices, please wait........")
 			proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
 			proc.wait()
 			#self.cache.update()
 			self.cache=apt.Cache()
-			COMMENT="[LLXRemoteInstallerClient](repo_restore) Your APT CACHE has updated with new indices"
+			#self.cache.update()
+			COMMENT="[LLXRemoteInstallerClient](repo_update) Your APT CACHE has updated with new indices"
 			#self._debug(COMMENT)
 			return [True,str(COMMENT)]
 			
@@ -528,6 +533,8 @@ class LliureXRemoteInstallerClient:
 						list_apt_system.append(app)
 					else:
 						self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" will be installed soon")
+						versiones=self.cache[app].versions
+						self._debug("[LLXRemoteInstallerClient](apt_install) Versions:%s"%versiones)
 						pkg.mark_install()
 						list_apt_ok.append(app)
 #						list_apt_system.append(app)
@@ -709,7 +716,8 @@ class LliureXRemoteInstallerClient:
 
 
 	def _refine_apt_repoList(self,appDict,dictOrig):
-		self._debug("_refine_apt_repoList")
+		self._debug("[LLXRemoteInstallerClient] (_refine_apt_repoList)")
+		self._debug("[LLXRemoteInstallerClient] (_refine_apt_repoList)   --- Starting Function ----")
 		repoList=[]
 		list_apt=[]
 		lliurex_net=["deb http://lliurex.net/bionic bionic main restricted universe multiverse","deb http://lliurex.net/bionic bionic-security main restricted universe multiverse","deb http://lliurex.net/bionic bionic-updates main restricted universe multiverse"]
@@ -737,6 +745,8 @@ class LliureXRemoteInstallerClient:
 			else:
 				repoList.append(url)
 		appsRepoDict={'apt':list_apt,'repos':repoList}
+		self._debug("[LLXRemoteInstallerClient](_refine_apt_repoList) RESUME to install APT: %s "%appsRepoDict['apt'])
+		self._debug("")
 		return appsRepoDict
 	#def _refine_apt_repoList
 
@@ -774,15 +784,27 @@ class LliureXRemoteInstallerClient:
 			return result_apt
 			#Proceed with the list, repos are updated
 		self._debug("[LLXRemoteInstallerClient](apt_test) Calling apt_install with "+str(list_apt))
-		result_apt=self.apt_install(list_apt)[2]
+		result_apt_solved=self.apt_install(list_apt)
+		result_apt=result_apt_solved[2]
+		result_apt_system=result_apt_solved[4]
 		#Delete token to indicator
 		self._manage_indicator_token("apt","delete")
+		#Adding apps to install wich are installed in the system previously.
+		if result_apt_system:
+			for app in result_apt_system:
+				COMMENT="Adding to installed APP: %s"%app
+				self._debug(COMMENT)
+				list_apt_resume.append(app)
+				#Delete repo if was created by us
+			
+			
+		#Adding apps installed in the system by remote installer.
 		if result_apt:
 			for app in result_apt:
 				list_apt_resume.append(app)
 				#Delete repo if was created by us
 			self._debug("Call repo_restore")
-			self.repo_restore(self.file_sources)
+			#self.repo_restore(self.file_sources)
 		else:
 			self._debug( "[LLXRemoteInstallerClient](apt_test) No apps installed")
 			result_apt=["","","","",""]
@@ -858,13 +880,30 @@ class LliureXRemoteInstallerClient:
 
 	def test_system(self):
 		try:
-			logFile="/tmp/remoteInstall.log"
-			if os.path.exists(logFile):
-				f=open (logFile,"a")
+			#logFile="/tmp/remoteInstall.log"
+			if os.path.exists(self.logFile):
+				f=open (self.logFile,"a")
 				f.write("\n")
 				f.write("\n")
-				f.write("-----------------------INIT--------------------\n")
+				f.write("\n")
 				f.close()
+			self._debug("")
+			self._debug("-----------------------------------")
+			self._debug("")
+			self._debug("        Start Llx Remote           ")
+			self._debug("      "+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+			self._debug("")
+			self._debug("-----------------------------------")
+			self._debug("")
+			COMMENT="[LLXRemoteInstallerClient] (test_system) First test if exists this file %s"%(self.file_sources)
+			self._debug(COMMENT)
+			if os.path.exists(self.file_sources):
+				COMMENT="[LLXRemoteInstallerClient] (test_system) Exists %s DELETE IT!!!"%(self.file_sources)
+				os.remove(self.file_sources)
+			else:
+				COMMENT="[LLXRemoteInstallerClient] (test_system) NOT exists %s"%(self.file_sources)
+			self._debug(COMMENT)	
+			self._debug('++++++ FIN ++++++++')
 			#Get installed apps dict
 			self.test_var(self.N4D_INSTALLED,"localhost")
 			dict_orig=self.read_var(self.N4D_INSTALLED,"localhost")[2]
@@ -937,6 +976,17 @@ class LliureXRemoteInstallerClient:
 			#print log
 			self._debug(log)
 			self._debug("[LLXRemoteInstallerClient] (test_system) Updating N4D Variable.......")
+			
+			#Delete system if it's necessary
+			COMMENT="[LLXRemoteInstallerClient] (test_system) First test if exists this file %s"%(self.file_sources)
+			self._debug(COMMENT)
+			if os.path.exists(self.file_sources):
+				COMMENT="[LLXRemoteInstallerClient] (test_system) Exists %s DELETE IT!!!"%(self.file_sources)
+				os.remove(self.file_sources)
+			else:
+				COMMENT="[LLXRemoteInstallerClient] (test_system) NOT exists %s"%(self.file_sources)
+			self._debug(COMMENT)
+			
 			#Add installed apps to N4D
 			self.update_var_dict (self.N4D_INSTALLED,dict_new,"localhost")
 			if updated == 'False':
