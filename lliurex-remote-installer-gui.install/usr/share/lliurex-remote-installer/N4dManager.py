@@ -22,11 +22,10 @@ class N4dManager:
 			
 		except Exception as e:
 			print(e)
-			return False
-			
-			
-		
+			return False		
 	#def
+
+
 	
 	def lliurex_mirror(self):
 		try:
@@ -240,6 +239,32 @@ class N4dManager:
 		
 		
 	#def validate_user
+
+	def list_available_epis(self):
+		
+		try:
+			file_sended=self.client.list_available_epis(self.user,"LliureXRemoteInstaller")
+			#list_apt_ok.wait()
+			return file_sended
+		
+		except Exception as e:
+			print(e)
+			return False
+		
+	#def list_available_epis
+
+	def epi_deb(self,epi_pkg):
+		
+		try:
+			file_sended=self.client.epi_deb(self.user,"LliureXRemoteInstaller",epi_pkg)
+			#list_apt_ok.wait()
+			return file_sended
+		
+		except Exception as e:
+			print(e)
+			return False
+		
+	#def epi_deb
 	
 	
 #class n4dmanager

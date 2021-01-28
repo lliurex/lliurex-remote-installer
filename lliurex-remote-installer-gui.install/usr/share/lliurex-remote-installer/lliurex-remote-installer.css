@@ -1,3 +1,16 @@
+@define-color arc-blue #209ddd;
+@define-color arc-blue-light #209ddd;
+@define-color arc-blue-light-hover #20c5dd;
+@define-color arc-black #2d323d;
+@define-color arc-red #000000;
+@define-color arc-blue-hover #629de2;
+@define-color arc-blue-active #3aa3e2;
+@define-color default-grey #656565;
+@define-color install #209ddd;
+@define-color install-hover #20c5dd;
+@define-color arc-blue-light-light #8ae4ee;
+@define-color uninstall #cc0000;
+@define-color uninstall-hover #cc5555;
 
 	GtkLabel {
 		font: 12pt Roboto;
@@ -22,24 +35,25 @@
 		
 	}
 
-	#OPTION_BUTTON:hover {
-		border: 0px;
-		background-color: #ff9400	;
-		box-shadow: -0.5px 4px 4px #cecece;
+	#OPTION_BUTTON label {
+		color: rgba(0,0,0,0.7);
 	}
 
-	#OPTION_BUTTON .label {
-		color: rgba(0,0,0,0.5);
+	#OPTION_BUTTON:hover {
+		border: 10px;
+		background-color: #ff9400	;
+		box-shadow: -0.5px 4px 4px #cecece;
 	}
 	
 	
 	#SELECTED_OPTION_BUTTON {
 		border: 0px;
 		background-color: #ff6600;
-		
-		
-		
 	}
+
+	#SELECTED_OPTION_BUTTON label {
+		color: rgba(255,255,255,0.8);
+	}	
 
 	#SELECTED_OPTION_BUTTON:hover {
 		border: 0px;
@@ -47,10 +61,6 @@
 		box-shadow: -0.5px 2px 4px #9d9d9d;
 	}
 
-	#SELECTED_OPTION_BUTTON .label {
-		color: rgba(255,255,255,0.8);
-
-	}	
 	
     #WINDOW{
 		
@@ -88,6 +98,18 @@
 	
 	#PKG_BOX:hover {
 		box-shadow: -0.5px 3px 2px #cacaca;
+	}
+
+	#MOUSE_OVER
+	{
+
+		background-color: @arc-blue-light-light;
+	}
+
+	#MOUSE_LEFT
+	{
+		background-color: #f1f1f1;
+
 	}
 	
 	

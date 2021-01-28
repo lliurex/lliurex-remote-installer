@@ -184,14 +184,15 @@ class AptBox(Gtk.VBox):
 			new_source_name=source_name[0:7]+"..."
 		
 		b=Gtk.Button(new_source_name)
+		b.set_name("OPTION_BUTTON")
 		b.connect("clicked",self.apt_clicked,source_name)
 		b.set_size_request(100,100)
 		b.set_halign(Gtk.Align.START)
-		b.set_name("OPTION_BUTTON")
+		b.set_tooltip_text(source_name)
 		b.show_all()
 		self.list_box.pack_start(b,False,False,5)
 		b.queue_draw()
-		b.set_tooltip_text(source_name)
+		
 		
 		return b
 		

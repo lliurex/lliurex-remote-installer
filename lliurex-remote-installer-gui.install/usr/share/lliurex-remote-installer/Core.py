@@ -2,6 +2,7 @@ import LliurexRemoteInstaller
 import AptBox
 import DebBox
 import ExecBox
+import ZeroBox
 import UpdateBox
 import N4dManager
 import os
@@ -42,8 +43,11 @@ class Core:
 		self.dprint("Creating DebBox...")
 		self.deb_box=DebBox.DebBox()
 		
-		self.dprint("Creating DebBox...")
+		self.dprint("Creating ExecBox...")
 		self.exec_box=ExecBox.ExecBox()
+
+		self.dprint("Creating ZeroBox...")
+		self.zero_box=ZeroBox.ZeroBox()
 		
 		self.dprint("Creating UpdateBox...")
 		self.update_box=UpdateBox.UpdateBox()
