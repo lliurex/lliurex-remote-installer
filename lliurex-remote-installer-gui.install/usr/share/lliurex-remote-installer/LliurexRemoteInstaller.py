@@ -49,6 +49,7 @@ class LliurexRemoteInstaller:
 		self.apt_button=builder.get_object("apt_button")
 		self.debs_button=builder.get_object("debs_button")
 		self.exes_button=builder.get_object("exes_button")
+		self.zero_button=builder.get_object("zero_button")
 		self.update_button=builder.get_object("update_button")
 		
 		
@@ -96,6 +97,8 @@ class LliurexRemoteInstaller:
 		self.stack.add_titled(self.deb_box,"debs","Debs")
 		self.exec_box=self.core.exec_box
 		self.stack.add_titled(self.exec_box,"exes","Executables")
+		self.zero_box=self.core.zero_box
+		self.stack.add_titled(self.zero_box,"zero","Zomandos")
 		self.update_box=self.core.update_box
 		self.stack.add_titled(self.update_box,"update","Update")
 		
@@ -149,6 +152,7 @@ class LliurexRemoteInstaller:
 		self.apt_box.set_info(var)
 		self.deb_box.set_info(var)
 		self.exec_box.set_info(var)
+		self.zero_box.set_info(var)
 		self.update_box.set_info(var)
 		
 		
@@ -166,6 +170,7 @@ class LliurexRemoteInstaller:
 		self.apt_button.set_name("SELECTED_OPTION_BUTTON")
 		self.debs_button.set_name("OPTION_BUTTON")
 		self.exes_button.set_name("OPTION_BUTTON")
+		self.zero_button.set_name("OPTION_BUTTON")
 		self.update_button.set_name("OPTION_BUTTON")
 		self.login_msg_label.set_name("ERROR_LABEL")
 			
@@ -178,6 +183,7 @@ class LliurexRemoteInstaller:
 		self.apt_button.connect("clicked",self.apt_button_clicked)
 		self.debs_button.connect("clicked",self.debs_button_clicked)
 		self.exes_button.connect("clicked",self.exes_button_clicked)
+		self.zero_button.connect("clicked",self.zero_button_clicked)
 		self.update_button.connect("clicked",self.update_button_clicked)
 		self.main_window.connect("delete_event",self.check_changes)
 		
@@ -286,6 +292,13 @@ class LliurexRemoteInstaller:
 			for (pkg,md5) in self.core.var['sh']['packages']:
 				pkg_list.append(pkg)
 			COMMENT=COMMENT+pkg_list
+		if self.core.var['epi']['packages'] not in [None,"",[],"[]"]:
+			COMMENT.append("ZMD:")
+			pkg_list=[]
+			for (pkg) in self.core.var['epi']['packages']:
+				pkg_list.append(pkg)
+			COMMENT=COMMENT+pkg_list
+			COMMENT.append("")
 		if self.core.var['update']['activate'] == "True":
 			COMMENT.append("UPDATE: Sheduled from "+self.core.var['update']['url'])
 			COMMENT.append("Minimum update version: "+(self.core.var['update']['version']))
@@ -333,6 +346,8 @@ class LliurexRemoteInstaller:
 			selected="deb"
 		if self.stack.get_visible_child_name()=="exes":
 			selected="sh"
+		if self.stack.get_visible_child_name()=="zero":
+			selected="epi"
 		if self.stack.get_visible_child_name()=="update":
 			selected="update"
 			
@@ -360,6 +375,18 @@ class LliurexRemoteInstaller:
 			
 					for x in self.core.var[selected]["packages"]:
 						self.exec_box.new_package_button("%s"%x)
+
+		if self.stack.get_visible_child_name()=="zero":
+			if self.zero_box.check_changes():
+				change_child=self.zero_box.changes_detected_dialog()
+				if change_child:
+					self.zero_box.set_info(self.core.var)
+					
+					for c in self.zero_box.package_list_box.get_children():
+						self.zero_box.package_list_box.remove(c)
+			
+					for x in self.core.var["epi"]["packages"]:
+						self.zero_box.new_package_button(self.core.current_var["epi"]["packages"][x][1],x)
 					
 					
 					#self.apt_box.stack.set_visible_child_name("empty
@@ -369,6 +396,7 @@ class LliurexRemoteInstaller:
 			self.apt_button.set_name("SELECTED_OPTION_BUTTON")
 			self.debs_button.set_name("OPTION_BUTTON")
 			self.exes_button.set_name("OPTION_BUTTON")
+			self.zero_button.set_name("OPTION_BUTTON")
 			self.update_button.set_name("OPTION_BUTTON")
 		
 	#def apt_button_clicked
@@ -402,6 +430,18 @@ class LliurexRemoteInstaller:
 			
 					for x in self.core.var["sh"]["packages"]:
 						self.exec_box.new_package_button("%s"%x)
+
+		if self.stack.get_visible_child_name()=="zero":
+			if self.zero_box.check_changes():
+				change_child=self.zero_box.changes_detected_dialog()
+				if change_child:
+					self.zero_box.set_info(self.core.var)
+					
+					for c in self.zero_box.package_list_box.get_children():
+						self.zero_box.package_list_box.remove(c)
+			
+					for x in self.core.var["epi"]["packages"]:
+						self.zero_box.new_package_button(self.core.current_var["epi"]["packages"][x][1],x)
 			
 					
 					
@@ -415,6 +455,7 @@ class LliurexRemoteInstaller:
 			self.apt_button.set_name("OPTION_BUTTON")
 			self.debs_button.set_name("SELECTED_OPTION_BUTTON")
 			self.exes_button.set_name("OPTION_BUTTON")
+			self.zero_button.set_name("OPTION_BUTTON")
 			self.update_button.set_name("OPTION_BUTTON")
 		
 	#def debs_button_clicked
@@ -448,6 +489,18 @@ class LliurexRemoteInstaller:
 			
 					for x in self.core.var["deb"]["packages"]:
 						self.deb_box.new_package_button("%s"%x)
+
+		if self.stack.get_visible_child_name()=="zero":
+			if self.zero_box.check_changes():
+				change_child=self.zero_box.changes_detected_dialog()
+				if change_child:
+					self.zero_box.set_info(self.core.var)
+					
+					for c in self.zero_box.package_list_box.get_children():
+						self.zero_box.package_list_box.remove(c)
+			
+					for x in self.core.var["epi"]["packages"]:
+						self.zero_box.new_package_button(self.core.current_var["epi"]["packages"][x][1],x)
 			
 					
 					
@@ -461,9 +514,70 @@ class LliurexRemoteInstaller:
 			self.apt_button.set_name("OPTION_BUTTON")
 			self.debs_button.set_name("OPTION_BUTTON")
 			self.exes_button.set_name("SELECTED_OPTION_BUTTON")
+			self.zero_button.set_name("OPTION_BUTTON")
 			self.update_button.set_name("OPTION_BUTTON")
 		
 	#def exes_button_clicked
+
+
+	def zero_button_clicked(self,widget):
+		
+		change_child=True
+		
+		if self.stack.get_visible_child_name()=="apt":
+			if self.apt_box.check_changes():
+				change_child=self.apt_box.changes_detected_dialog()
+				if change_child:
+					self.apt_box.set_info(self.core.var)
+					apt_id=self.apt_box.current_id
+					self.apt_box.url_entry.set_text(self.core.var["apt"][apt_id]["url"])
+					
+					for x in self.apt_box.package_list_box.get_children():
+						self.apt_box.package_list_box.remove(x)
+			
+					for x in self.core.var["apt"][apt_id]["packages"]:
+						self.apt_box.new_package_button("%s"%x)
+						
+		if self.stack.get_visible_child_name()=="debs":
+			if self.deb_box.check_changes():
+				change_child=self.deb_box.changes_detected_dialog()
+				if change_child:
+					self.deb_box.set_info(self.core.var)
+					
+					for c in self.deb_box.package_list_box.get_children():
+						self.deb_box.package_list_box.remove(c)
+			
+					for x in self.core.var["deb"]["packages"]:
+						self.deb_box.new_package_button("%s"%x)
+
+		if self.stack.get_visible_child_name()=="exes":
+			if self.exec_box.check_changes():
+				change_child=self.exec_box.changes_detected_dialog()
+				if change_child:
+					self.exec_box.set_info(self.core.var)
+					
+					for c in self.exec_box.package_list_box.get_children():
+						self.exec_box.package_list_box.remove(c)
+			
+					for x in self.core.var["sh"]["packages"]:
+						self.exec_box.new_package_button("%s"%x)
+			
+					
+					
+					#self.apt_box.stack.set_visible_child_name("empty")
+			
+			
+		
+		if change_child:
+		
+			self.stack.set_visible_child_name("zero")
+			self.apt_button.set_name("OPTION_BUTTON")
+			self.debs_button.set_name("OPTION_BUTTON")
+			self.exes_button.set_name("OPTION_BUTTON")
+			self.zero_button.set_name("SELECTED_OPTION_BUTTON")
+			self.update_button.set_name("OPTION_BUTTON")
+		
+	#def zero_button_clicked
 	
 	
 	def update_button_clicked(self,widget):
@@ -507,6 +621,18 @@ class LliurexRemoteInstaller:
 			
 					for x in self.core.var["sh"]["packages"]:
 						self.exec_box.new_package_button("%s"%x)
+
+		if self.stack.get_visible_child_name()=="zero":
+			if self.zero_box.check_changes():
+				change_child=self.zero_box.changes_detected_dialog()
+				if change_child:
+					self.zero_box.set_info(self.core.var)
+					
+					for c in self.zero_box.package_list_box.get_children():
+						self.zero_box.package_list_box.remove(c)
+			
+					for x in self.core.var["epi"]["packages"]:
+						self.zero_box.new_package_button(self.core.current_var["epi"]["packages"][x][1],x)
 			
 					
 					
@@ -520,6 +646,7 @@ class LliurexRemoteInstaller:
 			self.apt_button.set_name("OPTION_BUTTON")
 			self.debs_button.set_name("OPTION_BUTTON")
 			self.exes_button.set_name("OPTION_BUTTON")
+			self.zero_button.set_name("OPTION_BUTTON")
 			self.update_button.set_name("SELECTED_OPTION_BUTTON")
 		
 	#def update_button_clicked
