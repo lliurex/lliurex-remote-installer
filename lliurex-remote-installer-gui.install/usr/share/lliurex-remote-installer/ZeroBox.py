@@ -82,6 +82,7 @@ class ZeroBox(Gtk.VBox):
 		
 		self.add_zero_button.connect("clicked",self.add_zero_button_clicked)
 		self.apply_zero_button.connect("clicked",self.apply_changes_button_clicked)
+		self.entry_zero.connect("changed",self.entry_zero_changed)
 
 		self.new_zero_window.connect("delete_event",self.hide_window)
 		self.accept_add_zero_button.connect("clicked",self.accept_add_zero_button_clicked)
@@ -257,6 +258,43 @@ class ZeroBox(Gtk.VBox):
 		return False
 		
 	#def check_add_zero_button_clicked_thread
+
+
+
+
+
+	def entry_zero_changed(self,widget):
+		try:
+			#Borramos los elementos del Hbox de la pantalla principal
+			for i in self.zero_list_available_box:
+				self.zero_list_available_box.remove(i)
+
+			search_txt=self.entry_zero.get_text().lower().strip()
+
+			if self.list_available[0]:
+				for key in self.list_available[4]:
+					epi_name=key
+					zomando=self.list_available[4][key]['zomando']
+					custom_name=self.list_available[4][key]['custom_name']
+					custom_name_searched=custom_name.lower().strip()
+					zmd_value=[epi_name,zomando,custom_name]
+					if search_txt in custom_name_searched:
+						self.generate_element_list(zmd_value)
+				self.new_zero_window.show()
+			else:
+				#show error dialog
+				#implement
+				self.core.dprint("[LliureXRemoteInstaller][ZeroBox](entry_zero_changed) self.list_available variable remains unset")
+
+		except Exception as e:
+			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](entry_zero_changed) Error: %s"%e)
+			return False
+
+
+	#def self.entry_zero_changed
+
+
+
 
 
 
