@@ -7,11 +7,14 @@ import datetime
 import json
 from urllib2 import urlopen
 
+
+
 class LliureXRemoteInstaller:
 	
 	N4D_VAR="LLX_REMOTE_INSTALLER"
-	initial_dict={'deb': {'url': 'http://server/llx-remote/', 'packages': []}, 'sh': {'url': 'http://server/llx-remote/', 'packages': []}, 'apt': {'Mirror':{'url':'mirror', 'packages': []},'LliureX':{'url':'lliurex', 'packages': []}},'update':{'activate':'False', 'url':'Mirror', 'version':'0','datetime':'0'}}
+	initial_dict={'deb': {'url': 'http://server/llx-remote/', 'packages': []}, 'epi': {'packages': {}}, 'sh': {'url': 'http://server/llx-remote/', 'packages': []}, 'apt': {'Mirror':{'url':'mirror', 'packages': []},'LliureX':{'url':'lliurex', 'packages': []}},'update':{'activate':'False', 'url':'Mirror', 'version':'0','datetime':'0'}}
 	
+
 	#VALOR VARIABLE DEL REPO ADDAPLICATION_SOURCES
 	dir_sources="/etc/apt/sources.list.d/"
 	file_sources="llxremoteinstaller_sources.list"
@@ -724,4 +727,56 @@ class LliureXRemoteInstaller:
 			return [False,str(e)]
 		
 	#def_dict_ok
+
+
+
+	# Functions for Epi Installers
+
+	def list_available_epis(self):
+		try:
+			epi_list=[]
+			zmds=[]
+			custom_names=[]
+
+			output=subprocess.Popen(['python3 /usr/share/lliurex-remote-installer/helper_epi.py "remote_available_epis"'],shell=True,stdout=subprocess.PIPE).communicate()[0]
+			if 'False' in output:
+				return [False,epi_list]
+
+			epi_list_dict=json.loads(output)
+
+			zero_epi_dict={}
+
+			for element in epi_list_dict:
+				#print (element)
+				#print (epi_list_dict[element])
+				for key in element:
+					epi_list.append(key)
+					zmds.append(element[key]['zomando'])
+					custom_names.append(element[key]['pkg_list'][0]['custom_name'])
+					zero_epi_dict[key]={}
+					zero_epi_dict[key]['zomando']=element[key]['zomando']
+					zero_epi_dict[key]['custom_name']=element[key]['pkg_list'][0]['custom_name']
+					zero_epi_dict[key]['check']=False
+
+			return [True,epi_list,zmds,custom_names,zero_epi_dict]
+
+		except Exception as e:
+			self._debug ("[LLXRemoteInstaller] (list_available_epis) %s" %(str(e)))
+			return [False,"[LLXRemoteInstaller] (list_available_epis) %s" %(str(e))]
+	#list_available_epis
+
+
+	def epi_deb(self,epi_pkg):
+		try:
+			output=subprocess.Popen(['python3 /usr/share/lliurex-remote-installer/helper_epi.py "get_epi_deb(\''+epi_pkg+'\')"'],shell=True,stdout=subprocess.PIPE).communicate()[0]
+			result=output.strip('\n')
+			result=result.replace('"','')
+			return [True,result]
+
+		except Exception as e:
+			self._debug ("[LLXRemoteInstaller] (epi_deb) %s" %(str(e)))
+			return [False,"[LLXRemoteInstaller] (epi_deb) %s" %(str(e))]
+	#epi_deb
+
+	
 	

@@ -189,6 +189,7 @@ class ZeroBox(Gtk.VBox):
 	def add_zero_button_clicked(self,widget):
 		
 		try:
+			self.search_activate=False
 			#Borramos los elementos del Hbox de la pantalla principal
 			for i in self.zero_list_available_box:
 				self.zero_list_available_box.remove(i)
@@ -265,19 +266,21 @@ class ZeroBox(Gtk.VBox):
 
 	def entry_zero_changed(self,widget):
 		try:
+			self.search_activate=True
 			#Borramos los elementos del Hbox de la pantalla principal
 			for i in self.zero_list_available_box:
 				self.zero_list_available_box.remove(i)
 
 			search_txt=self.entry_zero.get_text().lower().strip()
-
+			
 			if self.list_available[0]:
 				for key in self.list_available[4]:
 					epi_name=key
 					zomando=self.list_available[4][key]['zomando']
 					custom_name=self.list_available[4][key]['custom_name']
 					custom_name_searched=custom_name.lower().strip()
-					zmd_value=[epi_name,zomando,custom_name]
+					checking=self.list_available[4][key]['check']
+					zmd_value=[epi_name,zomando,custom_name,checking]
 					if search_txt in custom_name_searched:
 						self.generate_element_list(zmd_value)
 				self.new_zero_window.show()
@@ -312,6 +315,7 @@ class ZeroBox(Gtk.VBox):
 			cb.set_halign(Gtk.Align.END)
 			#cb.label=label.get_text()
 			cb.data=zmd_value[0]
+			cb.connect("clicked",self.check_clicked)
 			hbox.pack_start(label,True,True,0)
 			hbox.pack_end(cb,True,True,0)
 			hbox.set_margin_left(10)
@@ -319,8 +323,16 @@ class ZeroBox(Gtk.VBox):
 			hbox.show_all()
 			if zmd_value[0] in self.core.current_var["epi"]["packages"]:
 				cb.set_active(True)
+				self.list_available[4][zmd_value[0]]['check']=True
+			else:
+				try:
+					if zmd_value[3]:
+						cb.set_active(True)
+					else:
+						cb.set_active(False)
+				except Exception as e:
+					cb.set_active(False)
 
-						
 			tmp=Gtk.EventBox()
 			tmp.add(hbox)
 			tmp.show_all()
@@ -333,6 +345,19 @@ class ZeroBox(Gtk.VBox):
 			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](generate_element_list) Error: %s"%e)
 	#def generate_element_list
 
+	
+	def check_clicked(self,widget):
+
+		if widget.get_active():
+			self.list_available[4][widget.data]['check']=True
+		else:
+			self.list_available[4][widget.data]['check']=False
+			if widget.data in self.core.current_var["epi"]["packages"]:
+				del self.core.current_var["epi"]["packages"][widget.data]
+
+	#def check_clicked
+
+
 
 
 	def mouse_over_zmd(self,eb,event):
@@ -340,6 +365,7 @@ class ZeroBox(Gtk.VBox):
 		eb.set_name("MOUSE_OVER")
 
 	#def mouse_over_zmd
+
 
 
 	def mouse_left_zmd(self,eb,event):
@@ -359,23 +385,23 @@ class ZeroBox(Gtk.VBox):
 	def accept_add_zero_button_clicked(self,widget):
 		
 		try:
-			count=0
-			#Borrar package_list_box antes de introducir los EPIS seleccionados.
 			for c in self.package_list_box.get_children():
 				self.package_list_box.remove(c)
 
-			for i in self.zero_list_available_box:
-				#print(self.zero_list_available_box.child_get(i))
-				hbox=i.get_children()[0]
-				label,cbox=hbox.get_children()
+			for key in self.list_available[4]:
+				epi_name=key
+				zomando=self.list_available[4][key]['zomando']
+				custom_name=self.list_available[4][key]['custom_name']
+				zmd_check=self.list_available[4][key]['check']
 				#Add or delete items from dictionary
-				if cbox.get_active():
-					self.zero_list_selected[cbox.data]=[label.get_text()]
-					self.new_package_button(label.get_text(),cbox.data)
-					self.core.current_var['epi']['packages'][cbox.data]=['',label.get_text()]
-				elif cbox.data in self.zero_list_selected:
-					del self.zero_list_selected[cbox.data]
-					del self.core.current_var['epi']['packages'][cbox.data]
+				if zmd_check:
+					self.new_package_button(custom_name,epi_name)
+					self.core.current_var['epi']['packages'][epi_name]=['',custom_name]
+				else:
+					if epi_name in self.core.current_var['epi']['packages']:
+						del self.core.current_var['epi']['packages'][epi_name]
+
+
 			self.new_zero_window.hide()
 
 		except Exception as e:
@@ -461,7 +487,7 @@ class ZeroBox(Gtk.VBox):
 			self.list_epi_deb_failed={}
 			#Para probar que falla la publicacion de la variable por fallo de un paquete uso la instruccion siguiente
 			#self.list_epi_deb_failed['highschool.epi']=False
-			for item in self.zero_list_selected:
+			for item in self.core.current_var['epi']['packages']:
 				epi_deb=self.core.n4d.epi_deb(item)
 				#epi_deb[TRUE/FALSE,"Nomb_paquete"\n]
 				if epi_deb[0]:
@@ -501,8 +527,6 @@ class ZeroBox(Gtk.VBox):
 			d.run()
 			d.destroy()
 
-		print ('Thread del apply terminado')
-
 		try:
 			#Si hubo elementos fallidos	deberemos eliminar los zomandos que no se puden publicar
 			#Mostramos un mensaje de fallo comunicandolo y preguntamos que hacer.
@@ -511,16 +535,13 @@ class ZeroBox(Gtk.VBox):
 				for key in self.list_epi_deb_failed:
 					delete_epi_list.append(key)
 				comment=_("This package list can't be published '%s'\nCan I delete it?")%delete_epi_list
-				#Si se aceptan borrar los zomandos que no se pueden publicar deberemos borrarlos de la box principal y de la secundaria
+				#Si se aceptan borrar los zomandos que no se pueden publicar deberemos borrarlos de la box principal y de la secundaria en la current_var
 				if self.error_epi_deb_dialog(comment):
 					for c in self.package_list_box.get_children():
 						if c.epi in self.list_epi_deb_failed:
 							self.package_list_box.remove(c)
-				#Box secundaria... quitando el checking, necesito un backup del diccionario para poder borrar los elementos.
-					zero_list_selected_backup=self.zero_list_selected
-					for d in self.list_epi_deb_failed:
-						if d in zero_list_selected_backup:
-							del self.zero_list_selected[d]
+							del self.core.current_var['epi']['packages'][c.epi]
+
 				# Una vez borrados podemos actualizar la variabel global.
 				# Daremos un mensaje como que la hemos actualizado.
 				else:
