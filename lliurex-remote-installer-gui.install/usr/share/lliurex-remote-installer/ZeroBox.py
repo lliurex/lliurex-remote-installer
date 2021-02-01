@@ -190,12 +190,15 @@ class ZeroBox(Gtk.VBox):
 		
 		try:
 			self.search_activate=False
+			self.entry_zero.set_text('')
 			#Borramos los elementos del Hbox de la pantalla principal
 			for i in self.zero_list_available_box:
 				self.zero_list_available_box.remove(i)
 		except Exception as e:
 			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](generate_element_list) Error: %s"%e)
 			return False
+
+		self.search_activate=True
 
 		self.thread_zero=threading.Thread(target=self.add_zero_button_clicked_thread)
 		self.thread_zero.daemon=True
@@ -266,28 +269,29 @@ class ZeroBox(Gtk.VBox):
 
 	def entry_zero_changed(self,widget):
 		try:
-			self.search_activate=True
-			#Borramos los elementos del Hbox de la pantalla principal
-			for i in self.zero_list_available_box:
-				self.zero_list_available_box.remove(i)
+			#Si estamos en la pantalla de busqueda sobre el listado cualquier cambio en la entrada debe hacer la acotacion de la busqueda sino no hara nada.
+			if self.search_activate:
+				#Borramos los elementos del Hbox de la pantalla principal
+				for i in self.zero_list_available_box:
+					self.zero_list_available_box.remove(i)
 
-			search_txt=self.entry_zero.get_text().lower().strip()
-			
-			if self.list_available[0]:
-				for key in self.list_available[4]:
-					epi_name=key
-					zomando=self.list_available[4][key]['zomando']
-					custom_name=self.list_available[4][key]['custom_name']
-					custom_name_searched=custom_name.lower().strip()
-					checking=self.list_available[4][key]['check']
-					zmd_value=[epi_name,zomando,custom_name,checking]
-					if search_txt in custom_name_searched:
-						self.generate_element_list(zmd_value)
-				self.new_zero_window.show()
-			else:
-				#show error dialog
-				#implement
-				self.core.dprint("[LliureXRemoteInstaller][ZeroBox](entry_zero_changed) self.list_available variable remains unset")
+				search_txt=self.entry_zero.get_text().lower().strip()
+				
+				if self.list_available[0]:
+					for key in self.list_available[4]:
+						epi_name=key
+						zomando=self.list_available[4][key]['zomando']
+						custom_name=self.list_available[4][key]['custom_name']
+						custom_name_searched=custom_name.lower().strip()
+						checking=self.list_available[4][key]['check']
+						zmd_value=[epi_name,zomando,custom_name,checking]
+						if search_txt in custom_name_searched:
+							self.generate_element_list(zmd_value)
+					self.new_zero_window.show()
+				else:
+					#show error dialog
+					#implement
+					self.core.dprint("[LliureXRemoteInstaller][ZeroBox](entry_zero_changed) self.list_available variable remains unset")
 
 		except Exception as e:
 			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](entry_zero_changed) Error: %s"%e)
@@ -376,7 +380,8 @@ class ZeroBox(Gtk.VBox):
 
 
 	def cancel_add_zero_button_clicked(self,widget):
-		
+
+		self.search_activate=False
 		self.new_zero_window.hide()
 		
 	#def cancel_add_package_button_clicked
@@ -401,7 +406,7 @@ class ZeroBox(Gtk.VBox):
 					if epi_name in self.core.current_var['epi']['packages']:
 						del self.core.current_var['epi']['packages'][epi_name]
 
-
+			self.search_activate=False
 			self.new_zero_window.hide()
 
 		except Exception as e:
