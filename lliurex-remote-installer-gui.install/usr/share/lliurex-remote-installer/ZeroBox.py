@@ -103,12 +103,11 @@ class ZeroBox(Gtk.VBox):
 			
 		self.core.var=info
 		self.core.current_var=copy.deepcopy(self.core.var)
+		self.epi_list_dict={}
 		try:
 			for key in self.core.current_var["epi"]["packages"]:
-				#Esta lista contiene los paquetes preseleccionados para la ventana del add zmds
-				self.zero_list_selected[key]=key
-				#generamos los botonoes con la info de la variable {epi:{packages:{nombre_epi.epi:[nombre.deb,custom_name]}}}
-				self.new_package_button(self.core.current_var["epi"]["packages"][key][1],key)
+				#generamos los botones con la info de la variable {epi:{packages:{nombre_epi.epi:[nombre.deb,custom_name]}}}
+				self.new_package_button(self.core.current_var["epi"]["packages"][key]['custom_name'],key)
 		except Exception as e:
 			self.core.dprint("Global variable has error, delete & initialize it in ZMD values.")
 			self.core.current_var["epi"]={}
@@ -219,8 +218,10 @@ class ZeroBox(Gtk.VBox):
 			self.core.dprint("Generating list ZMDs availables...")
 
 			self.list_available=self.core.n4d.list_available_epis()
-			# SOLUTION -> self.list_availabe=[True,epi_list,zmds,custom_names,zero_epi_dict]
-			# zero_epi_dict -> Dictionary {epi_name{'zomando':"Name_zomando", 'custom_name':"Custon_name_zomando"}}
+			# SOLUTION -> self.list_availabe=[True,epi_list_dict]
+			# epi_list_dict -> Dictionary {'openboard.epi': {'selection_enabled': {'active': False, 'all_selected': False}, 'zomando': 'zero-lliurex-openboard', 'pkg_list': [{'custom_icon': '/usr/share/icons/lliurex/apps/48/openboard.svg', 'name': 'openboard', 'custom_name': 'openboard', 'default_pkg': False}]}}]
+
+			#print (self.list_available[1])
 			
 			self.thread_ret_zero={"status":True,"msg":"BROKEN"}
 			
@@ -238,32 +239,58 @@ class ZeroBox(Gtk.VBox):
 		#if thread ends dialog is destroyed
 		dialog.destroy()
 
-		if not self.thread_ret_zero["status"]:
-			mw=self.core.lri.main_window
-			d=Dialog.ErrorDialog(mw,"",self.thread_ret_zero["msg"])
-			d.run()
-			d.destroy()
-
 
 		if self.list_available[0]:
-			for key in self.list_available[4]:
-				epi_name=key
-				zomando=self.list_available[4][key]['zomando']
-				custom_name=self.list_available[4][key]['custom_name']
-				zmd_value=[epi_name,zomando,custom_name]
-				self.generate_element_list(zmd_value)
+			for element in self.list_available[1]:
+				for key in element:
+					#Dentro del EPI hay listas, si las hay debo ver todos sus elementos.
+					for pkg in element[key]['pkg_list']:
+						clave_name=str(key)+'_'+pkg['name']
+						epi_name=key
+						pkg_name=pkg['name']
+						custom_name=pkg['custom_name']
+						self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
+						zmd_value=[clave_name,pkg_name,custom_name,epi_name]
+						self.generate_element_list(zmd_value)
+						#### Ahora tengo que modificar generate element_list y todo lo que conlleva llevando como referencia self.list_available CUIDADO con esto.
+
 			self.new_zero_window.show()
+
 		else:
 			#show error dialog
 			#implement
 			self.core.dprint("Test Error: variable remains unset")
 		
 
+		if not self.thread_ret_zero["status"]:
+			mw=self.core.lri.main_window
+			d=Dialog.ErrorDialog(mw,"",self.thread_ret_zero["msg"])
+			d.run()
+			d.destroy()
+
 		return False
 		
 	#def check_add_zero_button_clicked_thread
 
 
+
+
+
+	def add_element_to_epi_list_dict(self,clave_name,epi_name,pkg_name,custom_name):
+		try:
+			self.epi_list_dict[clave_name]={}
+			self.epi_list_dict[clave_name]['epi_name']=epi_name
+			self.epi_list_dict[clave_name]['pkg_name']=pkg_name
+			self.epi_list_dict[clave_name]['custom_name']=custom_name
+			self.epi_list_dict[clave_name]['epi_deb_name']=''
+			self.epi_list_dict[clave_name]['check']=''
+
+		except Exception as e:
+			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](add_element_to_epi_list_dict) Error: %s"%e)
+			return False
+
+
+	# add_element_to_epi_list_dict
 
 
 
@@ -277,14 +304,16 @@ class ZeroBox(Gtk.VBox):
 
 				search_txt=self.entry_zero.get_text().lower().strip()
 				
+				#self.epi_list_dict[clave_name]={epi_name,pkg_name,custom_name,epi_deb_name,check}
 				if self.list_available[0]:
-					for key in self.list_available[4]:
-						epi_name=key
-						zomando=self.list_available[4][key]['zomando']
-						custom_name=self.list_available[4][key]['custom_name']
+					for key in self.epi_list_dict:
+						clave_name=key
+						epi_name=self.epi_list_dict[key]['epi_name']
+						pkg_name=self.epi_list_dict[key]['pkg_name']
+						custom_name=self.epi_list_dict[key]['custom_name']
 						custom_name_searched=custom_name.lower().strip()
-						checking=self.list_available[4][key]['check']
-						zmd_value=[epi_name,zomando,custom_name,checking]
+						checking=self.epi_list_dict[key]['check']
+						zmd_value=[clave_name,pkg_name,custom_name,epi_name,checking]
 						if search_txt in custom_name_searched:
 							self.generate_element_list(zmd_value)
 					self.new_zero_window.show()
@@ -306,6 +335,7 @@ class ZeroBox(Gtk.VBox):
 
 
 	def generate_element_list(self,zmd_value):
+		#zmd_value=[clave_name,pkg_name,custom_name,epi_name,checking]
 		try:
 			hbox=Gtk.HBox()
 			zomando=zmd_value[2]
@@ -327,10 +357,10 @@ class ZeroBox(Gtk.VBox):
 			hbox.show_all()
 			if zmd_value[0] in self.core.current_var["epi"]["packages"]:
 				cb.set_active(True)
-				self.list_available[4][zmd_value[0]]['check']=True
+				self.epi_list_dict[zmd_value[0]]['check']=True
 			else:
 				try:
-					if zmd_value[3]:
+					if self.epi_list_dict[zmd_value[0]]['check']:
 						cb.set_active(True)
 					else:
 						cb.set_active(False)
@@ -353,9 +383,9 @@ class ZeroBox(Gtk.VBox):
 	def check_clicked(self,widget):
 
 		if widget.get_active():
-			self.list_available[4][widget.data]['check']=True
+			self.epi_list_dict[widget.data]['check']=True
 		else:
-			self.list_available[4][widget.data]['check']=False
+			self.epi_list_dict[widget.data]['check']=False
 			if widget.data in self.core.current_var["epi"]["packages"]:
 				del self.core.current_var["epi"]["packages"][widget.data]
 
@@ -393,18 +423,19 @@ class ZeroBox(Gtk.VBox):
 			for c in self.package_list_box.get_children():
 				self.package_list_box.remove(c)
 
-			for key in self.list_available[4]:
-				epi_name=key
-				zomando=self.list_available[4][key]['zomando']
-				custom_name=self.list_available[4][key]['custom_name']
-				zmd_check=self.list_available[4][key]['check']
+			for key in self.epi_list_dict:
+				clave_name=key
+				zomando=self.epi_list_dict[key]['pkg_name']
+				custom_name=self.epi_list_dict[key]['custom_name']
+				epi_name=self.epi_list_dict[key]['epi_name']
+				zmd_check=self.epi_list_dict[key]['check']
 				#Add or delete items from dictionary
 				if zmd_check:
-					self.new_package_button(custom_name,epi_name)
-					self.core.current_var['epi']['packages'][epi_name]=['',custom_name]
+					self.new_package_button(custom_name,clave_name)
+					self.core.current_var['epi']['packages'][clave_name]=self.epi_list_dict[clave_name]
 				else:
-					if epi_name in self.core.current_var['epi']['packages']:
-						del self.core.current_var['epi']['packages'][epi_name]
+					if clave_name in self.core.current_var['epi']['packages']:
+						del self.core.current_var['epi']['packages'][clave_name]
 
 			self.search_activate=False
 			self.new_zero_window.hide()
@@ -453,16 +484,18 @@ class ZeroBox(Gtk.VBox):
 	
 	def delete_package_clicked(self,button,hbox):
 		
-		pkg=hbox.get_children()[0].get_text()
+		try:
+			pkg=hbox.get_children()[0].get_text()
 		
-		#Si borramos un zomando deberemos tambien de borrarlo de la lista inicial
-		if self.delete_package_dialog(pkg):
-			epi_pkg=hbox.epi
-			self.package_list_box.remove(hbox)
-			del self.zero_list_selected[epi_pkg]
-			del self.core.current_var['epi']['packages'][epi_pkg]
-		#Una vez eliminado el paquete debemos de bloquear el cambio de pantalla hasta el apply o regresar al estado inicial que se tenia.
-			
+			#Si borramos un zomando deberemos tambien de borrarlo de la lista inicial
+			if self.delete_package_dialog(pkg):
+				epi_pkg=hbox.epi
+				self.package_list_box.remove(hbox)
+				del self.epi_list_dict[epi_pkg]
+				del self.core.current_var['epi']['packages'][epi_pkg]
+			#Una vez eliminado el paquete debemos de bloquear el cambio de pantalla hasta el apply o regresar al estado inicial que se tenia.
+		except Exception as e:
+			self.core.dprint("[LliureXRemoteInstaller][ZeroBox](delete_package_clicked) Error: %s"%e)	
 			# ######### #
 	#def delete_package_clicked
 
@@ -491,16 +524,17 @@ class ZeroBox(Gtk.VBox):
 			self.list_epi_deb_selecteds={}
 			self.list_epi_deb_failed={}
 			#Para probar que falla la publicacion de la variable por fallo de un paquete uso la instruccion siguiente
-			#self.list_epi_deb_failed['highschool.epi']=False
+			#self.list_epi_deb_failed['stellarium.epi_stellarium']=False
 			for item in self.core.current_var['epi']['packages']:
-				epi_deb=self.core.n4d.epi_deb(item)
+				epi_name=self.core.current_var['epi']['packages'][item]['epi_name']
+				epi_deb=self.core.n4d.epi_deb(epi_name)
 				#epi_deb[TRUE/FALSE,"Nomb_paquete"\n]
 				if epi_deb[0]:
 					self.list_epi_deb_selecteds[item]=epi_deb[1]
-					self.core.current_var['epi']['packages'][item][0]=epi_deb[1]
+					self.core.current_var['epi']['packages'][item]['epi_deb_name']=epi_deb[1]
 				else:
 					self.list_epi_deb_failed[item]=False
-					self.core.current_var['epi']['packages'][item][0]=False
+					self.core.current_var['epi']['packages'][item]['epi_deb_name']=False
 			#Si no hay elementos fallidos publicamos la variable	
 			if not self.list_epi_deb_failed:
 				#print('Añadimos esto a la variable global en la seccion de epi-packages: %s'%self.list_epi_deb_selecteds)
@@ -508,6 +542,7 @@ class ZeroBox(Gtk.VBox):
 				self.core.n4d.set_variable(self.core.var)
 			else:
 				self.core.dprint("Sorry any ZMD can't determinate the DEB file %s"%self.list_epi_deb_failed)
+
 			self.thread_changes_ret={"status":True,"msg":"BROKEN"}	
 			
 		except Exception as e:
