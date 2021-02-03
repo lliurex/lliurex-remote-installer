@@ -244,7 +244,18 @@ class ZeroBox(Gtk.VBox):
 			for element in self.list_available[1]:
 				for key in element:
 					#Dentro del EPI hay listas, si las hay debo ver todos sus elementos.
-					for pkg in element[key]['pkg_list']:
+					if element[key]['selection_enabled']['active']:
+						for pkg in element[key]['pkg_list']:
+							clave_name=str(key)+'_'+pkg['name']
+							epi_name=key
+							pkg_name=pkg['name']
+							custom_name=pkg['custom_name']
+							self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
+							zmd_value=[clave_name,pkg_name,custom_name,epi_name]
+							self.generate_element_list(zmd_value)
+							#### Ahora tengo que modificar generate element_list y todo lo que conlleva llevando como referencia self.list_available CUIDADO con esto.
+					else:
+						pkg=element[key]['pkg_list'][0]
 						clave_name=str(key)+'_'+pkg['name']
 						epi_name=key
 						pkg_name=pkg['name']
@@ -252,7 +263,6 @@ class ZeroBox(Gtk.VBox):
 						self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
 						zmd_value=[clave_name,pkg_name,custom_name,epi_name]
 						self.generate_element_list(zmd_value)
-						#### Ahora tengo que modificar generate element_list y todo lo que conlleva llevando como referencia self.list_available CUIDADO con esto.
 
 			self.new_zero_window.show()
 
