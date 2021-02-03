@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.12) bionic; urgency=medium
+
+  * Zmds add to Remote Installer 
+
+ -- Daniel Duran <daduve@gmail.com>  Wed, 03 Feb 2021 15:02:18 +0100
+
 lliurex-remote-installer (0.5.11) bionic; urgency=medium
 
   * Fix bug in external ppa
