@@ -7,6 +7,7 @@ import types
 import datetime
 import threading
 import datetime
+import shlex
 
 class LliureXRemoteInstallerClient:
 	
@@ -27,6 +28,7 @@ class LliureXRemoteInstallerClient:
 	LIST='packages'
 	URL='url'
 	UPDATE='update'
+	EPI='epi'
 	
 	#Essential package for provides
 	pack_provide="dctrl-tools"
@@ -35,7 +37,7 @@ class LliureXRemoteInstallerClient:
 	LIST_APP_FINAL=[]
 	
 	def __init__(self):
-		self.dbg=0
+		self.dbg=1
 		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
@@ -164,7 +166,7 @@ class LliureXRemoteInstallerClient:
 #			if  VALOR in [None,'','None']:
 			if  not VALOR:
 				list_dict=[self.APT,self.DEB,self.SH,self.UPDATE]
-				VALOR=self.create_dict ([self.APT,self.DEB,self.SH,self.UPDATE])[2]				
+				VALOR=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]			
 				#if objects["VariablesManager"].add_variable(namevar,VALOR,"",namevar,[],False,False)[0]:
 				if c.add_variable(u,"VariablesManager",namevar,VALOR,"",namevar,[],False,False)[0]:
 					COMMENT = ("[LLXRemoteInstallerClient] (test_var) Added variable %s to VariablesManager with valor %s" %(namevar,VALOR))
@@ -523,6 +525,7 @@ class LliureXRemoteInstallerClient:
 			list_apt_ok=[]
 			list_apt_not=[]
 			list_apt_system=[]
+			list_apt_installed_total=[]
 			self._debug("[LLXRemoteInstallerClient](apt_install) Apps list: "+str(list_apt))
 			for app in list_apt:
 				self._debug("[LLXRemoteInstallerClient](apt_install) Checking if app "+app+" is available and installable")
@@ -531,12 +534,14 @@ class LliureXRemoteInstallerClient:
 					if pkg.is_installed:
 						self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" is intalled in your system")
 						list_apt_system.append(app)
+						list_apt_installed_total.append(app)
 					else:
 						self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" will be installed soon")
 						versiones=self.cache[app].versions
 						self._debug("[LLXRemoteInstallerClient](apt_install) Versions:%s"%versiones)
 						pkg.mark_install()
 						list_apt_ok.append(app)
+						list_apt_installed_total.append(app)
 #						list_apt_system.append(app)
 				else:
 					self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" is not in your repositories")
@@ -564,8 +569,8 @@ class LliureXRemoteInstallerClient:
 					self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" is intalled in your system.....Adding to installed list")
 #					list_apt_ok.append(app)
 			self._debug(COMMENT)
-			self._debug("APT installed:"+str(list_apt_ok)+"  ---  APT not installed"+str(list_apt_not)+"  ---  APT in system:"+str(list_apt_system))
-			return [True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system]
+			self._debug("APT installed:"+str(list_apt_ok)+"  ---  APT not installed"+str(list_apt_not)+"  ---  APT in system:"+str(list_apt_system)+"  ---  APT TOTAL in system:"+str(list_apt_installed_total))
+			return [True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system,list_apt_installed_total]
 				
 		except Exception as e:
 			return[False,str(e)]
@@ -607,6 +612,88 @@ class LliureXRemoteInstallerClient:
 			result_deb=["","","","",""]
 		return(result_deb)
 	#def deb_test
+
+	def epi_test(self,appDict,dictOrig):
+		try:
+			self._debug("epi_test")
+			#Get dict values
+			list_epi=appDict['packages']
+
+			#Check if the EPI is installed
+			epi_aux=[]
+			epi_deb_aux=[]
+			epi_unavailable=[]
+			epi_installed=[]
+			result_epi=[]
+
+			self._debug("(test_system) Checking if all EPI on the list are already installed "+str(list_epi))
+			for key in list_epi:
+				if key not in dictOrig:
+					self._debug("(test_system)EPI: "+key+" marked for install")
+					epi_aux.append(key)
+					epi_deb_aux.append(list_epi[key]['epi_deb_name'])
+				else:
+					self._debug("(test_system)EPI: "+key+" is already installed")
+					pass
+			#Install needed debs
+			#if list_deb not in ["",None,[]]:
+			if epi_aux:
+				#Create token to indicator
+				self._manage_indicator_token("epi","create")
+				self._debug("(test_system) EPI list to install is: %s "%epi_aux)
+				#Compruebo que los EPI no instalados existen en el sistema sino tendre que instalar el DEB que los provee
+				self._debug("(test_system) EPI DEBS list to install is: %s "%epi_deb_aux)
+				epi_deb_aux_solved=self.apt_install(epi_deb_aux)
+				#return [True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system]
+
+				#Si el resultado ha sido satisfactorio, tendremos una solucion factible
+				self._debug("(test_system) epi_deb_aux_solved: %s "%epi_deb_aux_solved)
+				if epi_deb_aux_solved[0]:
+					#Cada Epi programado para instalarse, si esta en la lista de debs instalados se istala con EPIC, el resto se marca como no instalados
+					for key in list_epi:
+						if list_epi[key]['epi_deb_name'] in epi_deb_aux_solved[4]:
+							self._debug("(test_system)EPI: Installing EPI: %s"%key)
+							#epic install -u <nombre_epi> <pkg1> <pkg2>
+							epi_name=list_epi[key]['epi_name']
+							pkg_name=list_epi[key]['pkg_name']
+							command="HOME='/root' epic install -u %s %s" %(epi_name,pkg_name)
+							self._debug('Command: %s'%(command))
+
+							self._debug(command)
+							p=subprocess.call(command,shell=True)
+							solved_code =p
+
+							self._debug('Epic instruction solved_code: %s'%(solved_code))
+
+							if solved_code==0 :
+								epi_installed.append(key)
+							else:
+								epi_unavailable.append(key)
+							#Descomentar esto cuando lo tengamos todo claro.
+							#dictOrig.append(key)
+							#epi_install_solved=self.epi_install_epic(key)
+						else:
+							epi_unavailable.append(key)
+				else:
+					self._debug("(test_system)EPI: Sorry but some EPI-deb has been problems and crash funcion")
+					
+
+				#Delete token to indicator
+				self._manage_indicator_token("epi","delete")
+				
+			else:
+				self._debug("(test_system) EPI list is empty")
+				result_epi=['']
+
+			self._debug("(test_system) EPI Epi Installed: %s and Epi unavailable: %s"%(epi_installed,epi_unavailable))
+			dictOrig=epi_installed
+			self._debug('epi_installed_system: %s'%dictOrig)
+			return(dictOrig)
+
+		except Exception as e:
+			self._debug("(test_system) EPI error %s"%e)
+			return[False,str(e)]
+	#def epi_test
 
 	def sh_test(self,appDict,dictOrig):
 		self._debug("sh_test")
@@ -816,13 +903,14 @@ class LliureXRemoteInstallerClient:
 		return(result_apt)
 	#def apt_test
 
-	def _update_results(self,dict_orig,result_deb,result_sh,result_apt,result_update,updated):
+	def _update_results(self,dict_orig,result_deb,result_epi,result_sh,result_apt,result_update,updated):
 		if not dict_orig:
 			#Create dict if doesn't exists
 			self._debug("[LLXRemoteInstallerClient](_update_results) Creando el diccionario.......")
-			dict_new=self.create_dict ([self.APT,self.DEB,self.SH,self.UPDATE])[2]
+			dict_new=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]
 			dict_new[self.APT]=list(result_apt)
 			dict_new[self.DEB]=list(result_deb[2])
+			dict_net[self.EPI]=list(result_epi)
 			dict_new[self.SH]=list(result_sh[2])
 			dict_new[self.UPDATE]=result_update
 			self.update_var_dict (self.N4D_INSTALLED,dict_new,"localhost")
@@ -843,9 +931,10 @@ class LliureXRemoteInstallerClient:
 			log="[LLXRemoteInstallerClient](_update_results) Will add APT: %s ** DEBS: %s ** SH: %s ** UPDATE: %s "%(result_apt,result_deb[2],result_sh[2],result_update)
 			self._debug(log)
 			#Check the dict against a tuple
-			dict_help=self.create_dict ([self.APT,self.DEB,self.SH,self.UPDATE])[2]
+			dict_help=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]
 			dict_help[self.APT]=list(result_apt)
 			dict_help[self.DEB]=list(result_deb[2])
+			dict_help[self.EPI]=list(result_epi)
 			dict_help[self.SH]=list(result_sh[2])
 			#dict_help[self.UPDATE]=result_update
 			#self._debug("[LLXRemoteInstallerClient](test_system) dict to compare is "+str(dict_help))
@@ -927,21 +1016,40 @@ class LliureXRemoteInstallerClient:
 				os.makedirs(self.dir_tmp)
 			
 			#TEST Debs
+			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call DEB_test")
 			result_deb=self.deb_test(appDict[self.DEB],dict_orig[self.DEB])
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end DEB_test <-----")
+			#TEST EPIs
+			self._debug("")
+			self._debug("------------------------------------------------------------------")
+			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call EPI_test")
+			try:
+				if dict_orig[self.EPI]:
+					pass
+				else:
+					dict_orig[self.EPI]=[]
+			except Exception as e:
+					dict_orig[self.EPI]=[]
+					self._debug("Create intial dictionary for EPI")
+			self.repo_update()
+			result_epi=self.epi_test(appDict[self.EPI],dict_orig[self.EPI])
+			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end EPI_test <-----")
 			#TEST SH
+			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call SH_test")
 			result_sh=self.sh_test(appDict[self.SH],dict_orig[self.SH])
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end SH_test <-----")
 			#TEST Apt
+			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call APT_test")
 			result_apt=self.apt_test(appDict,dict_orig)
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end APT_test <-----")
 			#TEST UPDATE
+			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call UPDATE_test")
 			#self._debug(appDict[self.UPDATE]['activate'])
@@ -970,7 +1078,7 @@ class LliureXRemoteInstallerClient:
 			#Check that it's a list
 			sh_installed=list(result_sh[2])
 			#Add results to N4D dict
-			dict_new=self._update_results(dict_orig,result_deb,result_sh,result_apt,result_update,updated)
+			dict_new=self._update_results(dict_orig,result_deb,result_epi,result_sh,result_apt,result_update,updated)
 #			if dict_orig in ["",None,{}]:
 			log="[LLXRemoteInstallerClient] (test_system) Dict now is %s"%dict_new
 			#print log
@@ -1006,6 +1114,8 @@ class LliureXRemoteInstallerClient:
 		
 		if action_type=="deb":
 			f=os.path.join(self.dir_tmp,"llxremote_deb_token")
+		elif action_type=="epi":
+			f=os.path.join(self.dir_tmp,"llxremote_epi_token")
 		elif action_type=="sh":
 			f=os.path.join(self.dir_tmp,"llxremote_sh_token")
 		elif action_type=="apt":
