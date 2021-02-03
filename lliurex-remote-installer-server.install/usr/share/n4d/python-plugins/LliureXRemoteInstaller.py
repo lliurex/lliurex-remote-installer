@@ -744,21 +744,7 @@ class LliureXRemoteInstaller:
 
 			epi_list_dict=json.loads(output)
 
-			zero_epi_dict={}
-
-			for element in epi_list_dict:
-				#print (element)
-				#print (epi_list_dict[element])
-				for key in element:
-					epi_list.append(key)
-					zmds.append(element[key]['zomando'])
-					custom_names.append(element[key]['pkg_list'][0]['custom_name'])
-					zero_epi_dict[key]={}
-					zero_epi_dict[key]['zomando']=element[key]['zomando']
-					zero_epi_dict[key]['custom_name']=element[key]['pkg_list'][0]['custom_name']
-					zero_epi_dict[key]['check']=False
-
-			return [True,epi_list,zmds,custom_names,zero_epi_dict]
+			return [True,epi_list_dict]
 
 		except Exception as e:
 			self._debug ("[LLXRemoteInstaller] (list_available_epis) %s" %(str(e)))
