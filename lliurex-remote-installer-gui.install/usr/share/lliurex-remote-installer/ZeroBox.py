@@ -502,7 +502,7 @@ class ZeroBox(Gtk.VBox):
 				epi_pkg=hbox.epi
 				self.package_list_box.remove(hbox)
 				if epi_pkg in self.epi_list_dict:
-					self.epi_list_dict[clave_name]['check']=False
+					self.epi_list_dict[epi_pkg]['check']=False
 				del self.core.current_var['epi']['packages'][epi_pkg]
 			#Una vez eliminado el paquete debemos de bloquear el cambio de pantalla hasta el apply o regresar al estado inicial que se tenia.
 		except Exception as e:
