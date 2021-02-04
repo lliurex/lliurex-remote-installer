@@ -292,7 +292,7 @@ class LliurexRemoteInstaller:
 			for (pkg,md5) in self.core.var['sh']['packages']:
 				pkg_list.append(pkg)
 			COMMENT=COMMENT+pkg_list
-		if self.core.var['epi']['packages'] not in [None,"",[],"[]"]:
+		if self.core.var['epi']['packages'] not in [None,"",{},"{}"]:
 			COMMENT.append("ZMD:")
 			pkg_list=[]
 			for (pkg) in self.core.var['epi']['packages']:
