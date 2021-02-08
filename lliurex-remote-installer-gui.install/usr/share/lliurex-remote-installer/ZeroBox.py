@@ -548,7 +548,7 @@ class ZeroBox(Gtk.VBox):
 					self.core.current_var['epi']['packages'][item]['epi_deb_name']=False
 			#Si no hay elementos fallidos publicamos la variable	
 			if not self.list_epi_deb_failed:
-				#print('Añadimos esto a la variable global en la seccion de epi-packages: %s'%self.list_epi_deb_selecteds)
+				#print('Anyadimos esto a la variable global en la seccion de epi-packages: %s'%self.list_epi_deb_selecteds)
 				self.core.var=copy.deepcopy(self.core.current_var)
 				self.core.n4d.set_variable(self.core.var)
 			else:
