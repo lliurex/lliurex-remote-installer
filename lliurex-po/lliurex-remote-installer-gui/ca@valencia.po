@@ -4,15 +4,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-02-08 10:15+0100\n"
-"PO-Revision-Date: 2017-11-15 14:24+0200\n"
-"Last-Translator: Pilar Embid Giner <embid_mar@gva.es>\n"
-"Language-Team: LliureX\n"
+"PO-Revision-Date: 2021-02-27 12:41+0000\n"
+"Last-Translator: Angels <gimenez_angcam@gva.es>\n"
+"Language-Team: Valencian <http://weblate.lliurex.net/projects/"
+"lliurex-remote-installer/lliurex-remote-installer/ca@valencia/>\n"
 "Language: ca@valencia\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.3.1\n"
 
 #: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:23
 #: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:712
@@ -29,11 +30,11 @@ msgstr "Afig un paquet"
 
 #: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:164
 msgid "DEB List to install"
-msgstr "Llista de DEB per instal·lar"
+msgstr "Llista de DEB per a instal·lar"
 
 #: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:285
 msgid "Executables List to install"
-msgstr "Llista d'executables per instal·lar"
+msgstr "Llista d'executables per a instal·lar"
 
 #: ../lliurex-remote-installer-gui.install/usr/share/lliurex-remote-installer/lliurex-remote-installer.ui:416
 msgid "Username"
