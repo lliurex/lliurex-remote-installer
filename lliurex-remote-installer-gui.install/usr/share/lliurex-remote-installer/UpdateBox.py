@@ -153,7 +153,7 @@ class UpdateBox(Gtk.VBox):
 		self.update_spinner_2.stop()
 		
 		#If local mirror exists show the version for it, if not exist is not avaiable from GUI
-		if ( local_mirror[0] and local_mirror[1] not in ['False'] ):
+		if ( str(local_mirror[0]) and str(local_mirror[1]) not in ['False'] ):
 			version=local_mirror[1]
 			version='Current version: '+version
 			self.update_label_4.set_label(version)
@@ -168,7 +168,7 @@ class UpdateBox(Gtk.VBox):
 			self.update_radiobutton_1.set_active(True)
 			
 		#If NET mirror exists show the version for it, if not exist is not avaiable from GUI
-		if ( net_mirror[0] and net_mirror[1] not in ['False'] ):
+		if ( str(net_mirror[0]) and str(net_mirror[1]) not in ['False'] ):
 			version=net_mirror[1]
 			version='Current version: '+version
 			self.update_label_3.set_label(version)

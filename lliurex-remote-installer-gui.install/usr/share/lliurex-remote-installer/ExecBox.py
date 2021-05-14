@@ -147,7 +147,7 @@ class ExecBox(Gtk.VBox):
 			pkg=os.path.basename(exec_url)
 			lines=subprocess.Popen(["LAGUAGE=en_EN; md5sum %s | awk '{print $1}'"%exec_url],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 			for line in lines.splitlines():
-				md5=line
+				md5=line.decode('utf-8')
 			pkg_tupla=[pkg,md5]
 			#Compruebo si existe el paquete en la lista
 			if any(pkg in element for element in self.core.current_var["sh"]["packages"]):
@@ -340,20 +340,21 @@ class ExecBox(Gtk.VBox):
 		
 		try:
 			
-			print("Testing.....")
+			print("(ExecBox)(apply_changes_thread) Testing.....")
 			self.not_sended_execs=[]
 			
 
 			if  self.new_execs not in [None,"",[]]:
 				self.core.dprint("Sending files to server...")
 				for sh in self.new_execs:
+					self.core.dprint("(ExecBox)(apply_changes_thread) Sending: %s"%sh)
 					pkg=sh[0]
 					exec_url=sh[1]
 					if self.core.current_var["sh"]["url"] in [None,"",[]]:
 						self.core.current_var["sh"]["url"]="http://server/llx-remote/"
 					url_dest=self.core.current_var["sh"]["url"].split('http://server/')[1]
 					url_dest="/var/www/"+str(url_dest)
-					ip_dest=self.core.n4d.server
+					ip_dest=self.core.n4d.server_ip
 					response=self.core.n4d.send_file(ip_dest,exec_url,url_dest)
 					#Ha fallado la subida del fichero
 					if not response:
@@ -366,7 +367,7 @@ class ExecBox(Gtk.VBox):
 				self.new_execs=[]
 				self.list_new_execs=[]
 			
-			self.core.dprint("Applying changes...")
+			self.core.dprint("(ExecBox)(apply_changes_thread) Applying changes...%s"%self.core.current_var)
 			self.test_exec=self.core.n4d.test_list(self.core.current_var,'sh')
 			self.core.var=copy.deepcopy(self.core.current_var)
 			self.thread_ret={"status":True,"msg":"SE HA ROTO"}

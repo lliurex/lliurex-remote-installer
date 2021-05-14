@@ -1,0 +1,167 @@
+{
+    "SETUP": {
+        "type": "python",
+        "path": "LliureXRemoteInstaller.py",
+        "class": "LliureXRemoteInstaller"
+    },
+    "METHODS": {
+        "set_var_remote": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "test_var": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "reset_var": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "mirror_version": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "net_mirror_version": {
+            "allowed_groups": [
+                "sudo",
+                "admins"
+            ]
+        },
+        "write_log": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "update_var_dict": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "update2version": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "app_repo_exist": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "app_deb_exist": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "repo_add": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "remove_file": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "repo_restore": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "repo_update": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "test_apt_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "test_deb_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "test_list": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "dict_ok": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "list_available_epis": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        },
+        "epi_deb": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+		"admin",
+		"teachers"
+            ]
+        }
+    }
+}

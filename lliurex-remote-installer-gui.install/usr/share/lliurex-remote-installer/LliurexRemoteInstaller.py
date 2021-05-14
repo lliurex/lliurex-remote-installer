@@ -190,58 +190,59 @@ class LliurexRemoteInstaller:
 		self.user_entry.connect("activate",self.entries_press_event)
 		self.password_entry.connect("activate",self.entries_press_event)
 		self.server_ip_entry.connect("activate",self.entries_press_event)
-		self.login_button.connect("clicked",self.validate_user)
+		self.login_button.connect("clicked",self.login_clicked)
 		
 	#def connect_signals
 	
 	def entries_press_event(self,widget):
 		
-		self.validate_user(None)
+		#self.validate_user(None)
+		self.login_clicked(None)
 		
 	#def entries_press_event
 
 	
-	
-	def validate_user_thread(self):
+	def login_clicked(self,button):
+		
+		self.login_button.set_sensitive(False)
+		self.login_msg_label.set_text(_("Validating user..."))
 		
 		user=self.user_entry.get_text()
 		password=self.password_entry.get_text()
-		
-		
-		# DELETE ME
-		'''if user=="":
-			user="lliurex"
-		if password=="":
-			password="lliurex"
-		'''
-		self.login_ret=self.core.n4d.validate_user(user,password,self.server_ip_entry.get_text())
-		
-	#def validate_user_thread
-		
-	
-	def validate_user(self,widget):
-		
-		self.login_msg_label.hide()
-		self.validate_spinner.show()
-		
-		self.login_button.set_sensitive(False)
-		
-		self.thread=threading.Thread(target=self.validate_user_thread)
-		self.thread.daemon=True
-		self.thread.start()
+		self.user_val=(user,password)
+		server=self.server_ip_entry.get_text()
 
-		GLib.timeout_add(500,self.validate_user_thread_listener)
+		# DELETE ME
+		#if user=="":
+			#user="lliurex"
+		#if password=="":
+			#password="lliurex"
+		#
+		self.validate_user(user,password,server)
 		
+	#def login_clicked
+
+
+	def validate_user(self,user,password,server):
+		
+		t=threading.Thread(target=self.core.n4d.validate_user,args=(user,password,server,))
+		t.daemon=True
+		t.start()
+		GLib.timeout_add(500,self.validate_user_listener,t)
 		
 	#def validate_user
+
 	
-	def validate_user_thread_listener(self):
+	def validate_user_listener(self,thread):
 		
-		if self.thread.is_alive():
+		if thread.is_alive():
 			return True
 		
-		if not self.login_ret[0]:
-			self.login_msg_label.set_text("%s"%self.login_ret[1])
+		#if not self.login_ret[0]:
+			#self.login_msg_label.set_text("%s"%self.login_ret[1])
+		print("User validated is: %s"%self.core.n4d.user_validated)
+		if not self.core.n4d.user_validated:
+			self.login_msg_label.set_text(_("Invalid user, please only net admin users."))
 			self.validate_spinner.hide()
 			self.login_msg_label.show()
 			self.login_button.set_sensitive(True)
@@ -255,10 +256,10 @@ class LliurexRemoteInstaller:
 		
 		return False
 		
-		
-		
-	#def validate_user_thread
+	#def validate_user_listener
 	
+	
+
 	def check_changes(self,widget,event):
 		
 		

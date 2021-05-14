@@ -158,8 +158,10 @@ class DebBox(Gtk.VBox):
 				#print "paquete nuevo en lista, esta subido??"
 				#Compruebo que es accesible via apache, sino lo apunto para copiar cuando aplique.
 				exist_in_server=self.core.n4d.app_deb_exist(pkg, self.core.current_var["deb"]["url"])
+				self.core.dprint("(DebBox)(add_deb_button_clicked) self.core.n4d.app_deb_exist: %s"%exist_in_server)
 				if not exist_in_server[0]:
 					#print "No existe este deb lo debo de subir"
+					self.core.dprint("(DebBox)(add_deb_button_clicked) Package %s marked to upload to server"%pkg)
 					self.new_debs.append([pkg,deb_url])
 					self.list_new_debs.append(pkg)
 					
@@ -339,8 +341,11 @@ class DebBox(Gtk.VBox):
 						self.core.current_var["deb"]["url"]="http://server/llx-remote/"
 					url_dest=self.core.current_var["deb"]["url"].split('http://server/')[1]
 					url_dest="/var/www/"+str(url_dest)
-					ip_dest=self.core.n4d.server
-					self.core.n4d.send_file(ip_dest,deb_url,url_dest)
+					ip_dest=self.core.n4d.server_ip
+					uploaded=self.core.n4d.send_file(ip_dest,deb_url,url_dest)
+					if not uploaded:
+						self.error_up_dialog(pkg)
+
 				#Inicializo de nuevo la lista de paquetes, ya esta subido todo lo que se queria.
 				self.new_debs=[]
 				self.list_new_debs=[]
@@ -412,6 +417,19 @@ class DebBox(Gtk.VBox):
 		return True
 		
 	#def delete_package_dialog
+
+
+	def error_up_dialog(self,pkg_name):
+		
+		main_window=self.core.lri.main_window
+		dialog=Dialog.ErrorDialog(main_window,_("Error in publishing"),_("This %s package can't be uploaded to server.\nPlease review the parameters or inform to LliureX Team.")%pkg_name)
+		response=dialog.run()
+		dialog.destroy()
+		
+		
+		return True
+		
+	#def error_up_dialog
 	
 	
 	def delete_package_dialog(self,pkg_name):

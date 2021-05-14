@@ -59,6 +59,7 @@ class ZeroBox(Gtk.VBox):
 		self.zero_list_selected={}
 		self.core.current_var=None
 		self.current_id=None
+		self.list_to_organize_elements=[]
 		
 		self.thread_zero=threading.Thread()
 		self.thread_ret_zero=None
@@ -104,6 +105,7 @@ class ZeroBox(Gtk.VBox):
 		self.core.var=info
 		self.core.current_var=copy.deepcopy(self.core.var)
 		self.epi_list_dict={}
+		epi_list_aux=[]
 		try:
 			for key in self.core.current_var["epi"]["packages"]:
 				#generamos los botones con la info de la variable {epi:{packages:{nombre_epi.epi:[nombre.deb,custom_name]}}}
@@ -239,6 +241,7 @@ class ZeroBox(Gtk.VBox):
 		#if thread ends dialog is destroyed
 		dialog.destroy()
 
+		self.list_to_organize_elements=[]
 
 		if self.list_available[0]:
 			for element in self.list_available[1]:
@@ -250,9 +253,10 @@ class ZeroBox(Gtk.VBox):
 							epi_name=key
 							pkg_name=pkg['name']
 							custom_name=pkg['custom_name']
-							self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
-							zmd_value=[clave_name,pkg_name,custom_name,epi_name]
-							self.generate_element_list(zmd_value)
+							self.generate_list_to_organize_elements(clave_name,epi_name,pkg_name,custom_name)
+							#self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
+							#zmd_value=[clave_name,pkg_name,custom_name,epi_name]
+							#self.generate_element_list(zmd_value)
 							#### Ahora tengo que modificar generate element_list y todo lo que conlleva llevando como referencia self.list_available CUIDADO con esto.
 					else:
 						pkg=element[key]['pkg_list'][0]
@@ -260,10 +264,12 @@ class ZeroBox(Gtk.VBox):
 						epi_name=key
 						pkg_name=pkg['name']
 						custom_name=pkg['custom_name']
-						self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
-						zmd_value=[clave_name,pkg_name,custom_name,epi_name]
-						self.generate_element_list(zmd_value)
+						self.generate_list_to_organize_elements(clave_name,epi_name,pkg_name,custom_name)
+						#self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
+						#zmd_value=[clave_name,pkg_name,custom_name,epi_name]
+						#self.generate_element_list(zmd_value)
 
+			self.organize_elements_and_generate_elements(self.list_to_organize_elements)
 			self.new_zero_window.show()
 
 		else:
@@ -282,7 +288,30 @@ class ZeroBox(Gtk.VBox):
 		
 	#def check_add_zero_button_clicked_thread
 
+	
+	def generate_list_to_organize_elements(self,clave_name,epi_name,pkg_name,custom_name):
+		
+		self.list_to_organize_elements.append([clave_name,epi_name,pkg_name,custom_name])
 
+	#def generate_list_to_organize_elements
+
+
+
+	def organize_elements_and_generate_elements(self,elements_list):
+
+		list_ordered=sorted(elements_list, key=lambda x: x[2])
+		
+		for d in list_ordered:
+			clave_name=d[0]
+			epi_name=d[1]
+			pkg_name=d[2]
+			custom_name=d[3]
+			self.add_element_to_epi_list_dict(clave_name,epi_name,pkg_name,custom_name)
+			zmd_value=[clave_name,pkg_name,custom_name,epi_name]
+			self.generate_element_list(zmd_value)
+
+
+	#def organize_elements_and_generate_elements
 
 
 
