@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import xmlrpclib
+import xmlrpc.client
 import ssl
+import n4d.client
 import imp
 import syslog
 import time
@@ -40,7 +41,8 @@ class LliurexRemoteSystemd:
 	
 	def run(self):
 		
-		c=xmlrpclib.ServerProxy("https://localhost:9779")
+		#c=xmlrpclib.ServerProxy("https://localhost:9779")
+		c=n4d.client.Client("https://localhost:9779")
 		ok=False
 		
 		for i in range(0,10):

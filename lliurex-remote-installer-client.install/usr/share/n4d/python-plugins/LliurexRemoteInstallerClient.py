@@ -1,6 +1,6 @@
 import subprocess
 import os
-import urllib
+
 import apt
 import apt.debfile
 import types
@@ -8,6 +8,12 @@ import datetime
 import threading
 import datetime
 import shlex
+
+import urllib
+import requests
+
+import n4d.server.core as n4dcore
+import n4d.responses
 
 class LliureXRemoteInstallerClient:
 	
@@ -37,6 +43,9 @@ class LliureXRemoteInstallerClient:
 	LIST_APP_FINAL=[]
 	
 	def __init__(self):
+		
+		self.core=n4dcore.Core.get_core()
+		
 		self.dbg=1
 		
 		if self.dbg==1:
@@ -103,25 +112,33 @@ class LliureXRemoteInstallerClient:
 				dic[mod]=[]
 			COMMENT="[LLXRemoteInstallerClient] (create_dict) Dictionary is created %s"%(dic)
 			self._debug(COMMENT)
-			return [True,str(COMMENT),dic]
+			#return [True,str(COMMENT),dic]
+			return n4d.responses.build_successful_call_response([True,str(COMMENT),dic])
 		except Exception as e:
-			return[False,str(e)]
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (create_dict) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#def_create_dict
 	
 	def read_var (self,namevar=None,localhost=None):
 		try:
-			if not localhost:
+			'''if not localhost:
 				proxy="https://server:9779"
 			else:
 				proxy="https://localhost:9779"
 			import xmlrpclib as x
 			c=x.ServerProxy(proxy)
-			DICT=c.get_variable("","VariablesManager",namevar)
-			COMMENT="[LLXRemoteInstallerClient] (read_var) Value of N4D var %s of %s is %s"%(namevar,proxy,DICT)
+			DICT=c.get_variable("","VariablesManager",namevar)'''
+			proxy=False
+			DICT=self.core.get_variable(namevar)['return']
+			COMMENT="[LLXRemoteInstallerClient] (read_var) Value of N4D var %s of proxy:%s is %s"%(namevar,proxy,DICT)
 			self._debug(COMMENT)
-			return [True,str(COMMENT),DICT]
+			return_n4d= [True,str(COMMENT),DICT]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (read_var) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#def_read_list
 	
 	def initialize_n4dvar(self,list_dict):
@@ -140,9 +157,12 @@ class LliureXRemoteInstallerClient:
 					dic[x][self.LIST]=[]
 			COMMENT=("[LLXRemoteInstallerClient] (initialize_n4dvar) Dict initialized")
 			self._debug(COMMENT)
-			return [True,str(COMMENT),dic]
+			return_n4d= [True,str(COMMENT),dic]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (initialize_n4dvar) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	
 	#def_initialize_var
 	
@@ -151,46 +171,54 @@ class LliureXRemoteInstallerClient:
 		self._debug("test_var")
 		try:
 #			if localhost in ["",None]:
-			if not localhost:
+			'''if not localhost:
 				proxy="https://server:9779"
 			else:
 				proxy="https://localhost:9779"
-			self._debug("Proxy: "+proxy)
+			self._debug("Proxy: "+pr
 			self._debug("Localhost: "+str(localhost))
 			self._debug("Namevar: "+str(namevar))
 			import xmlrpclib as x
 			c=x.ServerProxy(proxy)
 			u=self.read_n4dkey()
-			VALOR=c.get_variable("","VariablesManager",namevar)
+			VALOR=c.get_variable("","VariablesManager",namevar)'''
+			VALOR=self.core.get_variable(namevar)['return']
 			self._debug("[LLXRemoteInstallerClient] (test_var) Value of N4d var "+str(namevar)+" is: "+str(VALOR))
 #			if  VALOR in [None,'','None']:
 			if  not VALOR:
 				list_dict=[self.APT,self.DEB,self.SH,self.UPDATE]
-				VALOR=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]			
+				VALOR=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])['return'][2]
 				#if objects["VariablesManager"].add_variable(namevar,VALOR,"",namevar,[],False,False)[0]:
-				if c.add_variable(u,"VariablesManager",namevar,VALOR,"",namevar,[],False,False)[0]:
+				#if c.add_variable(u,"VariablesManager",namevar,VALOR,"",namevar,[],False,False)[0]:
+
+				if self.core.set_variable(namevar,VALOR)['return']:
 					COMMENT = ("[LLXRemoteInstallerClient] (test_var) Added variable %s to VariablesManager with valor %s" %(namevar,VALOR))
 					self._debug(COMMENT)
-					return [True,str(COMMENT)]
+					return_n4d= [True,str(COMMENT)]
+					return n4d.responses.build_successful_call_response(return_n4d)
 				else:
 					COMMENT = ("[LLXRemoteInstallerClient] (test_var) Cannot create %s again in VariablesManager" %namevar)
 					self._debug(COMMENT)
-					return [True,str(COMMENT)]
+					return_n4d= [True,str(COMMENT)]
+					return n4d.responses.build_successful_call_response(return_n4d)
 			else:
 				COMMENT=("[LLXRemoteInstallerClient] (test_var) %s Variable exists in your system, it hasn't been created again" %namevar)
 				self._debug(COMMENT)
-				return [True,str(COMMENT)]
+				return_n4d= [True,str(COMMENT)]
+				return n4d.responses.build_successful_call_response(return_n4d)
 				
 		except Exception as e:
 			self._debug("ERROR test_var" + str(e))
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (test_var) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#def_test_var
 	
 	def reset_var (self,namevar=None,localhost=None):
 		self._debug("reset_var")
 		try:
 #			if localhost in ["",None]:
-			if not localhost:
+			'''if not localhost:
 				proxy="https://server:9779"
 			else:
 				proxy="https://localhost:9779"
@@ -199,21 +227,26 @@ class LliureXRemoteInstallerClient:
 			data=None
 			u=self.read_n4dkey()
 			#objects["VariablesManager"].set_variable(namevar,data)
-			c.set_variable(u,"VariablesManager",namevar,data)
+			c.set_variable(u,"VariablesManager",namevar,data)'''
+			self.core.set_variable(namevar,data)
 			COMMENT=("[LLXRemoteInstallerClient] (reset_var) %s has been updated" %namevar)
 			self._debug(COMMENT)
-			return [True,str(COMMENT)]
+			return_n4d=[True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 				
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (reset_var) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 		
 	#def_reset_var
 
-	def update_var_dict (self,namevar=None,dict={},localhost=None):
-		self._debug("update_var dict")
+	def update_var_dict (self,namevar=None,dict_var={},localhost=None):
+		self._debug("[LLXRemoteInstallerClient] (update_var dict) start function....")
 		try:
-			if self.test_var(namevar,localhost)[0]:
-				if localhost in ["",None]:
+			value_test=self.test_var(namevar,localhost)['return']
+			if value_test[0]:
+				'''if localhost in ["",None]:
 					proxy="https://server:9779"
 				else:
 					proxy="https://localhost:9779"
@@ -221,16 +254,32 @@ class LliureXRemoteInstallerClient:
 				c=x.ServerProxy(proxy)
 				u=self.read_n4dkey()
 				#objects["VariablesManager"].set_variable(namevar,dict)
-				c.set_variable(u,"VariablesManager",namevar,dict)
-				COMMENT="[LLXRemoteInstallerClient] (update_var_list) %s has been updated with this list of APP %s" %(namevar,dict)
-				self._debug(COMMENT)
-				return [True,str(COMMENT)]
+				c.set_variable(u,"VariablesManager",namevar,dict)'''
+				result=self.core.set_variable(namevar,dict_var)
+				if result['status']==0:
+					result=result['return']
+					self._debug("[LLXRemoteInstallerClient] (update_var_dict) core.set_variable: %s"%result)
+					COMMENT="[LLXRemoteInstallerClient] (update_var_dict) %s has been updated with this list of APP %s" %(namevar,dict_var)
+					self._debug(COMMENT)
+					return_n4d=[True,str(COMMENT)]
+					testing_operation=self.core.get_variable(namevar,localhost)
+					self._debug("[LLXRemoteInstallerClient] (update_var_dict) testing_operation: %s"%testing_operation)
+				else:
+					COMMENT="[LLXRemoteInstallerClient] (update_var_dict) Has errors: %s"%result
+					self._debug(COMMENT)
+					return_n4d=[False,str(COMMENT)]
+
+				
+				return n4d.responses.build_successful_call_response(return_n4d)
 			else:
-				COMMENT="[LLXRemoteInstallerClient] (update_var_list) Can't update variable"
+				COMMENT="[LLXRemoteInstallerClient] (update_var_dict) Can't update variable"
 				self._debug(COMMENT)
-				return [False,str(COMMENT)]
+				return_n4d=[False,str(COMMENT)]
+				return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (update_var_dict) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 		
 	#def_add_list
 	
@@ -246,13 +295,16 @@ class LliureXRemoteInstallerClient:
 					self._debug("(download) The FILE: "+file_app+" has been donwloaded before, it will be deleted now.")
 					os.remove(file_app)
 				self._debug("(download) The FILE: "+app+" is downloading now to directory "+file_app+" .....")
-				urllib.urlretrieve(url_complete,file_app)
-				os.chmod(file_app,0755)
+				urllib.request.urlretrieve(url_complete,file_app)
+				os.chmod(file_app,755)
 				
 			COMMENT="Your FILES: %s has been downloaded in %s"%(apps,source_dir)
-			return [True,str(COMMENT)]
+			return_n4d=[True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return[False,str(e)]
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (download) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	
 	#def_download
 	
@@ -279,9 +331,12 @@ class LliureXRemoteInstallerClient:
 			COMMENT="[LLXRemoteInstallerClient](repo_add) Your repo LLXRemoteInstallerClient has new lines %s"%sources	
 			self._debug(COMMENT)
 
-			return [True,str(COMMENT),sources]
+			return_n4d=[True,str(COMMENT),sources]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (repo_add) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 		
 	#def_repo_add
 	
@@ -295,14 +350,18 @@ class LliureXRemoteInstallerClient:
 				os.remove(f)
 			self.repo_update()
 			#Delete proxy settings
-			if os.path.exists("/etc/apt/apt.conf.d/98proxySettings"):
-				os.remove("/etc/apt/apt.conf.d/98proxySettings")
+			#if os.path.exists("/etc/apt/apt.conf.d/98proxySettings"):
+			#	os.remove("/etc/apt/apt.conf.d/98proxySettings")
 			COMMENT="[LLXRemoteInstallerClient](repo_restore) Repo from AddApplications has been deleted"	
 			#self._debug(COMMENT)
-			return [True,str(COMMENT)]
+			return_n4d= [True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 			
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (repo_restore) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
+			
 		
 	#def_repo_restore
 	
@@ -313,17 +372,25 @@ class LliureXRemoteInstallerClient:
 			#	COMMENT="[LLXRemoteInstallerClient] (repo_update) Exists %s CORRECTOOOOOOOOO!!!"%(self.file_sources)
 			#	os.path.copy(self.file_sources,'/home')
 			self._debug("(repo_update) Updating indices, please wait........")
-			proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+			#proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+			proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stderr=None, executable="/bin/bash")
 			proc.wait()
 			#self.cache.update()
+			self._debug('(repo_update) Updating indices, process finished****')
 			self.cache=apt.Cache()
+			#self.cache.update()
+			self._debug('(repo_update) Apt.cache updated')
 			#self.cache.update()
 			COMMENT="[LLXRemoteInstallerClient](repo_update) Your APT CACHE has updated with new indices"
 			#self._debug(COMMENT)
-			return [True,str(COMMENT)]
+			return_n4d=[True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 			
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (repo_update) Error: %e"%(e)
+			self._debug(COMMENT)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 		
 	#def_repo_update
 
@@ -339,9 +406,9 @@ class LliureXRemoteInstallerClient:
 				f.write(pinLine)
 			f.close()
 		#Setup proxy in apt.config.d
-		prefFile=open("/etc/apt/apt.conf.d/98proxySettings","w")
-		prefFile.write('Acquire::http::proxy "http://proxy:3128";')
-		prefFile.close()
+		#prefFile=open("/etc/apt/apt.conf.d/98proxySettings","w")
+		#prefFile.write('Acquire::http::proxy "http://proxy:3128";')
+		#prefFile.close()
 	#def repo_customize_apt
 
 	def repo_restore_config(self):
@@ -400,13 +467,17 @@ class LliureXRemoteInstallerClient:
 					if not virtual_deb:
 						COMMENT="[LLXRemoteInstallerClient](deb_solvedDependency) Your DEB: %s has unreliable dependencies: %s can not been installed"%(deb,name_deb)
 						#self._debug(COMMENT)
-						return[False,str(COMMENT)]
+						return_n4d=[False,str(COMMENT)]
+						return n4d.responses.build_successful_call_response(return_n4d)
 			
 			COMMENT="[LLXRemoteInstallerClient](deb_solvedDependency) Your DEPENDENCIES has been resolved. Now will continue installing: %s"%(deb)
 			#self._debug(COMMENT)
-			return[True,str(COMMENT)]
+			return_n4d=[True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (deb_solvedDependency) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 		
 	#def_debsolvedependence
 	
@@ -419,11 +490,12 @@ class LliureXRemoteInstallerClient:
 				self._debug("[LLXRemoteInstallerClient](deb_testDependencies) -------------- Testing this tupla "+str(x)+" ------------------")
 				#If dependency has more than one element is an "OR" dependency. Must resolv one of them
 				if len(x)<2:
-					if self.deb_solvedDependency(deb,x)[0] == 'False':
+					if self.deb_solvedDependency(deb,x)['return'][0] == 'False':
 						name_deb=x[0]
 						COMMENT="[LLXRemoteInstallerClient](deb_testDependencies) Your DEB: %s has dependences without solution with your actual repos, APP: %s can not been installed"%(deb,name_deb)
 						#self._debug(COMMENT)
-						return[False,str(COMMENT)]
+						return_n4d=[False,str(COMMENT)]
+						return n4d.responses.build_successful_call_response(return_n4d)
 				else:
 					#"OR" Dependency, one "True" is enough
 					OK=False
@@ -431,24 +503,28 @@ class LliureXRemoteInstallerClient:
 					for s in x:
 						s=[s]
 						name_deb=s[0][0]
-						if self.deb_solvedDependency(deb,s)[0]:
+						if self.deb_solvedDependency(deb,s)['return'][0]:
 							self._debug("(deb_testDependencies) Testing OR tupla: this dependency "+str(name_deb)+" can be installed, as solves the conflict")
 							OK=True
 							ok_solved=s
 					if not OK:
 						COMMENT="[LLXRemoteInstallerClient](deb_testDependencies) Testing OR tupla: can not resolve this OR dependency for %s"%(x)
 						#self._debug(COMMENT)
-						return[False,str(COMMENT)]
+						return_n4d=[False,str(COMMENT)]
+						return n4d.responses.build_successful_call_response(return_n4d)
 					else:
 						pass
 						self._debug("(deb_testDependencies) Testing OR tupla, can install this dependency: "+str(ok_solved)+" and can resolve OR dependency for "+str(x))
 			
 			COMMENT="[LLXRemoteInstallerClient](deb_testDependencies) Dependencies are resolved. Now you can install your DEB: %s"%(deb)
 			#self._debug(COMMENT)
-			return[True,str(COMMENT)]
+			return_n4d=[True,str(COMMENT)]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
 			self._debug("ERROR deb_testDependencies: "+str(e))
-			return [False,str(e)]
+			#return [False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (deb_testDependencies) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#deb_testDependencies
 	
 	def deb_install(self,list_deb=[],dir_deb=None):
@@ -466,7 +542,7 @@ class LliureXRemoteInstallerClient:
 				#Check if it's installable
 				if app.check():
 					self._debug("(deb_install) The deb can be installed, now will proceed to check dependencies, please wait....")
-					if self.deb_testDependencies(deb,app.depends)[0]:
+					if self.deb_testDependencies(deb,app.depends)['return'][0]:
 						#Install if all is OK
 						self._debug("(deb_install) The system are ready to install the DEB: "+deb)
 						app.install()
@@ -481,10 +557,13 @@ class LliureXRemoteInstallerClient:
 					list_not.append(deb)
 				
 			COMMENT="DEBS installed: %s . DEBS with problems:%s"%(list_ok, list_not)
-			return [True,str(COMMENT),list_ok,list_not]
+			return_n4d=[True,str(COMMENT),list_ok,list_not]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
 			self._debug("(deb_install) ERROR: "+str(e))
-			return[False,str(e)]
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (deb_install) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#deb_install
 	
 	def sh_install(self,list_sh=[],file_dir=""):
@@ -500,7 +579,7 @@ class LliureXRemoteInstallerClient:
 					proc.wait()
 					lines=subprocess.Popen(["LAGUAGE=en_EN; md5sum %s | awk '{print $1}'"%file_app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 					for line in lines.splitlines():
-						md5=line
+						md5=line.decode('utf-8')
 					list_ok.append([app,md5])
 				else:
 					self._debug("(sh_install) The script "+file_app+" not exists in your system.")
@@ -509,13 +588,17 @@ class LliureXRemoteInstallerClient:
 #			if list_ok not in ["",None,[]]:
 			if list_ok:
 				COMMENT="Your SCRIPTS: %s had been executed"%(list_ok)
-				return [True,str(COMMENT),list_ok,list_not]
+				return_n4d=[True,str(COMMENT),list_ok,list_not]
+				return n4d.responses.build_successful_call_response(return_n4d)
 			else:
 				COMMENT="Some scripts failed to execute, please check them %s"%(list_not)
-				return [True,str(COMMENT),list_ok,list_not]
+				return_n4d=[True,str(COMMENT),list_ok,list_not]
+				return n4d.responses.build_successful_call_response(return_n4d)
 			
 		except Exception as e:
-			return[False,str(e)]
+			r#eturn[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (sh_install) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 			
 	#sh_install
 	
@@ -531,6 +614,7 @@ class LliureXRemoteInstallerClient:
 				self._debug("[LLXRemoteInstallerClient](apt_install) Checking if app "+app+" is available and installable")
 				if app in self.cache:
 					pkg=self.cache[app]
+					self._debug("[LLXRemoteInstallerClient](apt_install) %s"%pkg.is_installed)
 					if pkg.is_installed:
 						self._debug("[LLXRemoteInstallerClient](apt_install) The APP: "+app+" is intalled in your system")
 						list_apt_system.append(app)
@@ -570,10 +654,13 @@ class LliureXRemoteInstallerClient:
 #					list_apt_ok.append(app)
 			self._debug(COMMENT)
 			self._debug("APT installed:"+str(list_apt_ok)+"  ---  APT not installed"+str(list_apt_not)+"  ---  APT in system:"+str(list_apt_system)+"  ---  APT TOTAL in system:"+str(list_apt_installed_total))
-			return [True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system,list_apt_installed_total]
+			return_n4d=[True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system,list_apt_installed_total]
+			return n4d.responses.build_successful_call_response(return_n4d)
 				
 		except Exception as e:
-			return[False,str(e)]
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (apt_install) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 			
 	#apt_install
 
@@ -587,30 +674,31 @@ class LliureXRemoteInstallerClient:
 		dir_deb=str(self.dir_tmp)+"/"+"deb"
 		#Check if the deb is installed
 		deb_aux=[]
-		self._debug("(test_system) Checking if any deb on the list is already installed "+str(list_deb))
+		self._debug("(deb_test) Checking if any deb on the list is already installed "+str(list_deb))
 		for deb in list_deb:
 			if deb not in dictOrig:
-				self._debug("(test_system)DEB: "+deb+" marked for install")
+				self._debug("(deb_test)DEB: "+deb+" marked for install")
 				deb_aux.append(deb)
 			else:
 				pass
-				self._debug("(test_system)DEB: "+deb+" is already installed")
+				self._debug("(deb_test)DEB: "+deb+" is already installed")
 		list_deb=deb_aux
 		#Download needed debs
 #		if list_deb not in ["",None,[]]:
 		if list_deb:
 			#Create token to indicator
 			self._manage_indicator_token("deb","create")
-			self._debug("(test_system) Debs list is "+str(list_deb)+" Download path is: "+url_deb)
+			self._debug("(deb_test) Debs list is "+str(list_deb)+" Download path is: "+url_deb)
 			self.download(list_deb,url_deb,dir_deb)
-			result_deb=self.deb_install(list_deb,dir_deb)
+			result_deb=self.deb_install(list_deb,dir_deb)['return']
 			#Delete token to indicator
 			self._manage_indicator_token("deb","delete")
 			
 		else:
-			self._debug("(test_system) Deb list is empty")
+			self._debug("(deb_test) Deb list is empty")
 			result_deb=["","","","",""]
-		return(result_deb)
+		return_n4d=(result_deb)
+		return n4d.responses.build_successful_call_response(return_n4d)
 	#def deb_test
 
 	def epi_test(self,appDict,dictOrig):
@@ -626,33 +714,33 @@ class LliureXRemoteInstallerClient:
 			epi_installed=[]
 			result_epi=[]
 
-			self._debug("(test_system) Checking if all EPI on the list are already installed "+str(list_epi))
+			self._debug("(epi_test) Checking if all EPI on the list are already installed "+str(list_epi))
 			for key in list_epi:
 				if key not in dictOrig:
-					self._debug("(test_system)EPI: "+key+" marked for install")
+					self._debug("(epi_test)EPI: "+key+" marked for install")
 					epi_aux.append(key)
 					epi_deb_aux.append(list_epi[key]['epi_deb_name'])
 				else:
-					self._debug("(test_system)EPI: "+key+" is already installed")
+					self._debug("(epi_test)EPI: "+key+" is already installed")
 					pass
 			#Install needed debs
 			#if list_deb not in ["",None,[]]:
 			if epi_aux:
 				#Create token to indicator
 				self._manage_indicator_token("epi","create")
-				self._debug("(test_system) EPI list to install is: %s "%epi_aux)
+				self._debug("(epi_test) EPI list to install is: %s "%epi_aux)
 				#Compruebo que los EPI no instalados existen en el sistema sino tendre que instalar el DEB que los provee
 				self._debug("(test_system) EPI DEBS list to install is: %s "%epi_deb_aux)
-				epi_deb_aux_solved=self.apt_install(epi_deb_aux)
+				epi_deb_aux_solved=self.apt_install(epi_deb_aux)['return']
 				#return [True,str(COMMENT),list_apt_ok,list_apt_not,list_apt_system]
 
 				#Si el resultado ha sido satisfactorio, tendremos una solucion factible
-				self._debug("(test_system) epi_deb_aux_solved: %s "%epi_deb_aux_solved)
+				self._debug("(epi_test) epi_deb_aux_solved: %s "%epi_deb_aux_solved)
 				if epi_deb_aux_solved[0]:
 					#Cada Epi programado para instalarse, si esta en la lista de debs instalados se istala con EPIC, el resto se marca como no instalados
 					for key in list_epi:
 						if list_epi[key]['epi_deb_name'] in epi_deb_aux_solved[4]:
-							self._debug("(test_system)EPI: Installing EPI: %s"%key)
+							self._debug("(epi_test)EPI: Installing EPI: %s"%key)
 							#epic install -u <nombre_epi> <pkg1> <pkg2>
 							epi_name=list_epi[key]['epi_name']
 							pkg_name=list_epi[key]['pkg_name']
@@ -675,24 +763,27 @@ class LliureXRemoteInstallerClient:
 						else:
 							epi_unavailable.append(key)
 				else:
-					self._debug("(test_system)EPI: Sorry but some EPI-deb has been problems and crash funcion")
+					self._debug("(epi_test)EPI: Sorry but some EPI-deb has been problems and crash funcion")
 					
 
 				#Delete token to indicator
 				self._manage_indicator_token("epi","delete")
 				
 			else:
-				self._debug("(test_system) EPI list is empty")
+				self._debug("(epi_test) EPI list is empty")
 				result_epi=['']
 
-			self._debug("(test_system) EPI Epi Installed: %s and Epi unavailable: %s"%(epi_installed,epi_unavailable))
+			self._debug("(epi_test) EPI Epi Installed: %s and Epi unavailable: %s"%(epi_installed,epi_unavailable))
 			dictOrig=epi_installed
 			self._debug('epi_installed_system: %s'%dictOrig)
-			return(dictOrig)
+			return_n4d=(dictOrig)
+			return n4d.responses.build_successful_call_response(return_n4d)
 
 		except Exception as e:
-			self._debug("(test_system) EPI error %s"%e)
-			return[False,str(e)]
+			self._debug("(epi_test) EPI error %s"%e)
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (epi_test) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	#def epi_test
 
 	def sh_test(self,appDict,dictOrig):
@@ -712,26 +803,27 @@ class LliureXRemoteInstallerClient:
 				sh=sh_tupla[0]
 				md5=sh_tupla[1]
 				if sh_tupla not in dictOrig:
-					self._debug("(test_system) SH: must install "+sh)
+					self._debug("(sh_test) SH: must install "+sh)
 					sh_aux.append(sh)
 				else:
-					self._debug("(test_system) SH: "+sh+" already installed")
+					self._debug("(sh_test) SH: "+sh+" already installed")
 			#Download and execute the scripts
 			list_sh=sh_aux	
-			self._debug("(test_system) Script list is "+str(list_sh)+" Download to: "+url_sh)
+			self._debug("(sh_test) Script list is "+str(list_sh)+" Download to: "+url_sh)
 			self.download(list_sh,url_sh,dir_sh)
 			if list_sh not in ["",None,[]]:
-				result_sh=self.sh_install(list_sh,dir_sh)
+				result_sh=self.sh_install(list_sh,dir_sh)['return']
 			else:
-				self._debug("(test_system) Script list is empty")
+				self._debug("(sh_test) Script list is empty")
 				result_sh=["","","","",""]
 			#Create token to indicator
 			self._manage_indicator_token("sh","delete")		
 			
 		else:
-			self._debug("(test_system) Script list is empty")
+			self._debug("(sh_test) Script list is empty")
 			result_sh=["","","","",""]
-		return(result_sh)
+		return_n4d=(result_sh)
+		return n4d.responses.build_successful_call_response(return_n4d)
 	#def sh_test
 	
 	
@@ -753,50 +845,61 @@ class LliureXRemoteInstallerClient:
 		self._debug("[LLXRemoteInstallerClient](update_test) Update Test: Starting......")
 			
 		version_installed=subprocess.Popen(["lliurex-version -n"],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
-		version_installed=version_installed.split()[0]
+		version_installed=version_installed.split()[0].decode('utf-8')
+		version_installed=str(version_installed)
 		version_programed=appDict[self.UPDATE]['version']
 		version_programed=version_programed.split()[0]
+		version_programed=str(version_programed)
 		
 		self._debug("[LLXRemoteInstallerClient](update_test) Update Test: Version installed %s"%version_installed)
 		self._debug("[LLXRemoteInstallerClient](update_test) Update Test: Version programed %s"%version_programed)
+		updated="False"
 		
 		if ( version_installed < version_programed ):
+			updated="True"
 			#actualizo repos y updateo
 			if appDict[self.UPDATE]['url']=='Lliurex.net':
 				self._debug("[LLXRemoteInstallerClient](update_test) Updating your system to Lliurex.net, please wait........")
 				#proc = subprocess.Popen(["lliurex-upgrade -u -r"],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
 				#ret=os.system("http_proxy=http://proxy:3128 /usr/sbin/lliurex-upgrade -u -r 2>/dev/null 1>/dev/null")
 				#ret=int(ret)
-				proc = subprocess.Popen('http_proxy=http://proxy:3128 /usr/sbin/lliurex-upgrade -u -r', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+				#proc = subprocess.Popen('http_proxy=http://proxy:3128 /usr/sbin/lliurex-upgrade -u -r', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+				proc = subprocess.Popen('/usr/sbin/lliurex-upgrade -u -r', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
 				proc.wait()
 				date=datetime.datetime.now()
 				date_update=date.strftime("%d-%m-%Y %H:%M:%S")
 				self._debug("[LLXRemoteInstallerClient](update_test) Actualizacion terminada...... %s"%date_update)
 				if proc.returncode == 1:
 					self._debug("[LLXRemoteInstallerClient](update_test) Fallo actulalizacion")
+					updated="False"
 			else:
-				proc = subprocess.Popen('http_proxy=http://proxy:3128 /usr/sbin/lliurex-upgrade -u', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+				#proc = subprocess.Popen('http_proxy=http://proxy:3128 /usr/sbin/lliurex-upgrade -u', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+				proc = subprocess.Popen('/usr/sbin/lliurex-upgrade -u', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
 				proc.wait()
 				date=datetime.datetime.now()
 				date_update=date.strftime("%d-%m-%Y %H:%M:%S")
 				self._debug("[LLXRemoteInstallerClient](update_test) Actualizacion terminada...... %s"%date_update)
 				if proc.returncode == 1:
 					self._debug("[LLXRemoteInstallerClient](update_test) Fallo actulalizacion")
+					updated="False"
 			
-			updated="True"
+			
 			update_url=appDict[self.UPDATE]['url']
 			new_version=subprocess.Popen(["lliurex-version -n"],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
-			new_version=new_version.split()[0]
+			new_version=new_version.split()[0].decode('utf-8')
 			date=datetime.datetime.now()
 			date_update=date.strftime("%d-%m-%Y %H:%M")
 			updateDict={'version':new_version,'datetime':date_update,'url':update_url}
 		
-		if updated == 'True':
-			self._debug("[LLXRemoteInstallerClient](update_test) Update Test: New dict %s"%updateDict)
+			if updated == 'True':
+				self._debug("[LLXRemoteInstallerClient](update_test) Update Test: New dict %s"%updateDict)
+			else:
+				self._debug("[LLXRemoteInstallerClient](update_test) Updated operation has errors.....")
 		else:
 			self._debug("[LLXRemoteInstallerClient](update_test) Updated is not necessary, your system has the required version")
 		
-		return [updateDict, updated]
+		return_n4d=[updateDict, updated]
+		return n4d.responses.build_successful_call_response(return_n4d)
 		
 	#def deb_test
 
@@ -807,8 +910,8 @@ class LliureXRemoteInstallerClient:
 		self._debug("[LLXRemoteInstallerClient] (_refine_apt_repoList)   --- Starting Function ----")
 		repoList=[]
 		list_apt=[]
-		lliurex_net=["deb http://lliurex.net/bionic bionic main restricted universe multiverse","deb http://lliurex.net/bionic bionic-security main restricted universe multiverse","deb http://lliurex.net/bionic bionic-updates main restricted universe multiverse"]
-		lliurex_mirror=["deb http://mirror/llx18 bionic main restricted universe multiverse","deb http://mirror/llx18 bionic-security main restricted universe multiverse","deb http://mirror/llx18 bionic-updates main restricted universe multiverse"]
+		lliurex_net=["deb http://lliurex.net/focal focal main restricted universe multiverse","deb http://lliurex.net/focal focal-security main restricted universe multiverse","deb http://lliurex.net/focal focal-updates main restricted universe multiverse"]
+		lliurex_mirror=["deb http://mirror/llx20 focal main restricted universe multiverse","deb http://mirror/llx20 focal-security main restricted universe multiverse","deb http://mirror/llx20 focal-updates main restricted universe multiverse"]
 		for source in appDict:
 			self._debug("[LLXRemoteInstallerClient](_refine_apt_repoList) Adding applist from: "+str(source))
 			aux_list_apt=appDict[source][self.LIST]
@@ -834,20 +937,21 @@ class LliureXRemoteInstallerClient:
 		appsRepoDict={'apt':list_apt,'repos':repoList}
 		self._debug("[LLXRemoteInstallerClient](_refine_apt_repoList) RESUME to install APT: %s "%appsRepoDict['apt'])
 		self._debug("")
-		return appsRepoDict
+		return_n4d=appsRepoDict
+		return n4d.responses.build_successful_call_response(return_n4d)
 	#def _refine_apt_repoList
 
 	def apt_test(self,appDict,dict_orig):
 		self._debug("apt_test")
 		#Get dict values
 		list_apt_resume=[]
-		ubuntu=["deb http://archive.ubuntu.com/ubuntu bionic main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu bionic-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu bionic-updates main restricted universe multiverse"]
+		ubuntu=["deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse"]
 		list_apt=[]
 		result_apt=["","","","",""]
 		#List with repos for pinning customize
 		repoList=ubuntu
 		#Get debs and repos
-		appsRepoDict=self._refine_apt_repoList(appDict[self.APT],dict_orig[self.APT])
+		appsRepoDict=self._refine_apt_repoList(appDict[self.APT],dict_orig[self.APT])['return']
 		repoList.extend(appsRepoDict['repos'])
 		list_apt=appsRepoDict['apt']
 		self.repo_customize_apt(repoList)	
@@ -855,23 +959,25 @@ class LliureXRemoteInstallerClient:
 			#Create token to indicator
 			self._manage_indicator_token("apt","create")
 			for url in repoList:
-				if self.repo_add(url):
-					self._debug("(test_system) New REPO has been added to your system")
-			if self.repo_update():
+				if self.repo_add(url)['return']:
+					self._debug("(apt_test) New REPO has been added to your system")
+			if self.repo_update()['return']:
 				self._debug("[LLXRemoteInstallerClient](apt_test) Your CACHE has been updated")
 			else:
 #				return [False,"failed repo_update"]
 				#Delete token to indicator
 				self._manage_indicator_token("apt","delete")
-				return result_apt
+				return_n4d=result_apt
+				return n4d.responses.build_successful_call_response(return_n4d)
 		else:
 #			return [False,"failed repo_add"]
 			#Delete token to indicator
 			self._manage_indicator_token("apt","delete")
-			return result_apt
+			return_n4d=result_apt
+			return n4d.responses.build_successful_call_response(return_n4d)
 			#Proceed with the list, repos are updated
 		self._debug("[LLXRemoteInstallerClient](apt_test) Calling apt_install with "+str(list_apt))
-		result_apt_solved=self.apt_install(list_apt)
+		result_apt_solved=self.apt_install(list_apt)['return']
 		result_apt=result_apt_solved[2]
 		result_apt_system=result_apt_solved[4]
 		#Delete token to indicator
@@ -900,14 +1006,15 @@ class LliureXRemoteInstallerClient:
 		self._debug("Call repo_restore_config")
 		self.repo_restore_config()	
 		result_apt=list_apt_resume
-		return(result_apt)
+		return_n4d=(result_apt)
+		return n4d.responses.build_successful_call_response(return_n4d)
 	#def apt_test
 
 	def _update_results(self,dict_orig,result_deb,result_epi,result_sh,result_apt,result_update,updated):
 		if not dict_orig:
 			#Create dict if doesn't exists
 			self._debug("[LLXRemoteInstallerClient](_update_results) Creando el diccionario.......")
-			dict_new=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]
+			dict_new=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])['return'][2]
 			dict_new[self.APT]=list(result_apt)
 			dict_new[self.DEB]=list(result_deb[2])
 			dict_net[self.EPI]=list(result_epi)
@@ -931,7 +1038,7 @@ class LliureXRemoteInstallerClient:
 			log="[LLXRemoteInstallerClient](_update_results) Will add APT: %s ** DEBS: %s ** SH: %s ** UPDATE: %s "%(result_apt,result_deb[2],result_sh[2],result_update)
 			self._debug(log)
 			#Check the dict against a tuple
-			dict_help=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])[2]
+			dict_help=self.create_dict ([self.APT,self.DEB,self.EPI,self.SH,self.UPDATE])['return'][2]
 			dict_help[self.APT]=list(result_apt)
 			dict_help[self.DEB]=list(result_deb[2])
 			dict_help[self.EPI]=list(result_epi)
@@ -964,7 +1071,8 @@ class LliureXRemoteInstallerClient:
 							self._debug(log)
 				except Exception as e:
 					self._debug("ERROR: "+str(e))
-		return (dict_new)
+		return_n4d=(dict_new)
+		return n4d.responses.build_successful_call_response(return_n4d)
 	#def _update_results
 
 	def test_system(self):
@@ -995,10 +1103,10 @@ class LliureXRemoteInstallerClient:
 			self._debug('++++++ FIN ++++++++')
 			#Get installed apps dict
 			self.test_var(self.N4D_INSTALLED,"localhost")
-			dict_orig=self.read_var(self.N4D_INSTALLED,"localhost")[2]
+			dict_orig=self.read_var(self.N4D_INSTALLED,"localhost")['return'][2]
 			#print dict_orig
 			#Get server dict
-			appDict=self.read_var(self.N4D_VAR)[2]
+			appDict=self.read_var(self.N4D_VAR)['return'][2]
 			#Check the server's dict for install
 			#if appDict in ["",None,"None"]:
 			#print appDict
@@ -1019,7 +1127,7 @@ class LliureXRemoteInstallerClient:
 			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call DEB_test")
-			result_deb=self.deb_test(appDict[self.DEB],dict_orig[self.DEB])
+			result_deb=self.deb_test(appDict[self.DEB],dict_orig[self.DEB])['return']
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end DEB_test <-----")
 			#TEST EPIs
 			self._debug("")
@@ -1034,19 +1142,19 @@ class LliureXRemoteInstallerClient:
 					dict_orig[self.EPI]=[]
 					self._debug("Create intial dictionary for EPI")
 			self.repo_update()
-			result_epi=self.epi_test(appDict[self.EPI],dict_orig[self.EPI])
+			result_epi=self.epi_test(appDict[self.EPI],dict_orig[self.EPI])['return']
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end EPI_test <-----")
 			#TEST SH
 			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call SH_test")
-			result_sh=self.sh_test(appDict[self.SH],dict_orig[self.SH])
+			result_sh=self.sh_test(appDict[self.SH],dict_orig[self.SH])['return']
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end SH_test <-----")
 			#TEST Apt
 			self._debug("")
 			self._debug("------------------------------------------------------------------")
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> call APT_test")
-			result_apt=self.apt_test(appDict,dict_orig)
+			result_apt=self.apt_test(appDict,dict_orig)['return']
 			self._debug("[LLXRemoteInstallerClient] (test_system) -----> end APT_test <-----")
 			#TEST UPDATE
 			self._debug("")
@@ -1055,14 +1163,17 @@ class LliureXRemoteInstallerClient:
 			#self._debug(appDict[self.UPDATE]['activate'])
 			if appDict[self.UPDATE]["activate"]=="True":
 				try:
-					result_update_vector=self.update_test(appDict,dict_orig)
+					self._debug('[LLXRemoteInstallerClient] (test_system) Calling to self.update_test ')
+					result_update_vector_solved=self.update_test(appDict,dict_orig)
+					self._debug('[LLXRemoteInstallerClient] (test_system) self.update_test: %s'%result_update_vector_solved)
+					result_update_vector=result_update_vector_solved['return']
 					#print result_update_vector
 					result_update=result_update_vector[0]
 					#print result_update
 					updated=result_update_vector[1]
 					#print updated
 				except Exception as e:
-					self._debug(str(e))
+					self._debug('[LLXRemoteInstallerClient] (test_system) Error in update_test: %s'%str(e))
 			else:
 				self._debug("AQUI ESTAMOS")
 				if len(dict_orig[self.UPDATE])>0:
@@ -1078,7 +1189,7 @@ class LliureXRemoteInstallerClient:
 			#Check that it's a list
 			sh_installed=list(result_sh[2])
 			#Add results to N4D dict
-			dict_new=self._update_results(dict_orig,result_deb,result_epi,result_sh,result_apt,result_update,updated)
+			dict_new=self._update_results(dict_orig,result_deb,result_epi,result_sh,result_apt,result_update,updated)['return']
 #			if dict_orig in ["",None,{}]:
 			log="[LLXRemoteInstallerClient] (test_system) Dict now is %s"%dict_new
 			#print log
@@ -1096,17 +1207,22 @@ class LliureXRemoteInstallerClient:
 			self._debug(COMMENT)
 			
 			#Add installed apps to N4D
+			self._debug('++++INICIO UPDATE VAR++++')
 			self.update_var_dict (self.N4D_INSTALLED,dict_new,"localhost")
+			self._debug('++++Fin UPDATE VAR++++')
 			if updated == 'False':
 				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s"%(result_apt,sh_installed,result_deb[2])
 			else:
 				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s * Updated to: %s"%(result_apt,sh_installed,result_deb[2],result_update['version'])
 			self._debug(COMMENT)
 			#print COMMENT
-			return [True,str(COMMENT),result_apt,result_sh[2],result_deb[2],updated,dict_new]
+			return_n4d=[True,str(COMMENT),result_apt,result_sh[2],result_deb[2],updated,dict_new]
+			return n4d.responses.build_successful_call_response(return_n4d)
 		except Exception as e:
 			self._debug("EXCEPTION "+str(e))
-			return[False,str(e)]
+			#return[False,str(e)]
+			COMMENT="[LLXRemoteInstallerClient] (test_system) Error: %e"%(e)
+			return n4d.responses.build_successful_call_response([False,str(COMMENT)])
 	
 	#def test_system
 
