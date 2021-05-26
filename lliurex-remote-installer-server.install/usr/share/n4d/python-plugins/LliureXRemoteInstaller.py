@@ -842,8 +842,9 @@ class LliureXRemoteInstaller:
 	def epi_deb(self,epi_pkg):
 		try:
 			output=subprocess.Popen(['python3 /usr/share/lliurex-remote-installer/helper_epi.py "get_epi_deb(\''+epi_pkg+'\')"'],shell=True,stdout=subprocess.PIPE).communicate()[0]
-			result=str(output).strip('\n')
+			result=str(output,'utf-8').strip('\n')
 			result=result.replace('"','')
+			result=result.split()[0]
 			#return [True,result]
 			return n4d.responses.build_successful_call_response([True,result])
 
