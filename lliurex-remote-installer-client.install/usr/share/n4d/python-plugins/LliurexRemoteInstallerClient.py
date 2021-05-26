@@ -1211,9 +1211,9 @@ class LliureXRemoteInstallerClient:
 			self.update_var_dict (self.N4D_INSTALLED,dict_new,"localhost")
 			self._debug('++++Fin UPDATE VAR++++')
 			if updated == 'False':
-				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s"%(result_apt,sh_installed,result_deb[2])
+				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s * Installed new EPIS: %s"%(result_apt,sh_installed,result_deb[2],result_epi)
 			else:
-				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s * Updated to: %s"%(result_apt,sh_installed,result_deb[2],result_update['version'])
+				COMMENT="The system has been configured with the APPS: %s * has executed the scripts: %s * Installed new DEBS: %s  * Installed new EPIS: %s * Updated to: %s"%(result_apt,sh_installed,result_deb[2],result_epi,result_update['version'])
 			self._debug(COMMENT)
 			#print COMMENT
 			return_n4d=[True,str(COMMENT),result_apt,result_sh[2],result_deb[2],updated,dict_new]
