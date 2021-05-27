@@ -11,7 +11,7 @@ class N4dManager:
 	def __init__(self):
 		
 		self.N4D_VAR="LLX_REMOTE_INSTALLER"
-		self.debug=True
+		self.debug=False
 		if self.debug:
 			print("[LliureXRemoteInstaller] Debug mode activated")
 
