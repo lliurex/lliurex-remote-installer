@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.15) focal; urgency=medium
+
+  * Debian postinstall files 
+
+ -- Daniel Duran <daduve@gmail.com>  Thu, 27 May 2021 17:48:38 +0200
+
 lliurex-remote-installer (0.5.14) focal; urgency=medium
 
   * Debug mode Unactive 
