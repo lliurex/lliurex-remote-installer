@@ -394,6 +394,7 @@ class LliureXRemoteInstaller:
 		try:
 			#exist=os.system("LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app)
 			exist=subprocess.Popen(["LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+			exist=exist.decode('utf-8')
 			self._debug ("[LLXRemoteInstaller] (app_repo_exist) APP candidate in your repo is: %s"%exist)
 			if exist in [None,"None","none",""]:
 				COMMENT="[LLXRemoteInstaller] (app_repo_exist) APP: %s doesn't exist in your repository, you can't add it to install list" %app
@@ -546,13 +547,16 @@ class LliureXRemoteInstaller:
 	def test_apt_list (self,dict_var=None):
 		
 		try:
+			self._debug ("[LLXRemoteInstaller](test_apt_list)")
 			list_apt=[]
 			list_apt_ok=[]
 			list_apt_testing=[]
 			restore=False
 			ubuntu=["deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse"]
 			lliurex_net=["deb http://lliurex.net/focal focal main restricted universe multiverse","deb http://lliurex.net/focal focal-security main restricted universe multiverse","deb http://lliurex.net/focal focal-updates main restricted universe multiverse"]
-			lliurex_mirror=["deb http://mirror/llx16 focal main restricted universe multiverse","deb http://mirror/llx16 focal-security main restricted universe multiverse","deb http://mirror/llx16 focal-updates main restricted universe multiverse"]
+			lliurex_mirror=["deb http://mirror/llx21 focal main restricted universe multiverse","deb http://mirror/llx21 focal-security main restricted universe multiverse","deb http://mirror/llx21 focal-updates main restricted universe multiverse"]
+			
+			self._debug ("[LLXRemoteInstaller](test_apt_list) dict_var[self.APT]: %s"%dict_var[self.APT])
 			for x in dict_var[self.APT]:
 				self._debug ("[LLXRemoteInstaller](test_apt_list) Comprobando el PPA: %s"%x)
 				#print "[LLXRemoteInstaller](dict_ok) Comprobando el listado de APP: %s"%list_apt
@@ -578,7 +582,7 @@ class LliureXRemoteInstaller:
 						restore=True
 						self._debug ("[LLXRemoteInstaller](test_apt_list) Anyadimos las APT del repo Mirror, nueva lista: %s"%(list_apt))
 					else:
-						if self.repo_add(url)[0]:
+						if self.repo_add(url)['return'][0]:
 							COMMENT="[LLXRemoteInstaller](test_apt_list) Repo %s esta ADDED"%url
 							self._debug (COMMENT)
 							list_apt=list_apt+list_apt_testing
@@ -628,7 +632,7 @@ class LliureXRemoteInstaller:
 			return n4d.responses.build_successful_call_response([True,dict_var,list_apt,list_apt_deleted,str(COMMENT)])
 			
 		except Exception as e:
-			self._debug ("[LLXRemoteInstaller] (test_apt_list) %s" %(str(e)))
+			self._debug ("[LLXRemoteInstaller] (test_apt_list) Error: %s" %(str(e)))
 			#return [False,str(e)]
 			return n4d.responses.build_successful_call_response([False,str(e)])
 		
