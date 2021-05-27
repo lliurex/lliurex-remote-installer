@@ -7,7 +7,7 @@ case "$1" in
    
 	
 	n4d-modules enable-plugin /etc/n4d/conf.d/LliureXRemoteInstaller.json || true
-	n4d-modules enable-control LliureXRemoteInstaller || true
+	#n4d-modules enable-control LliureXRemoteInstaller || true
    
 	
    ;;
