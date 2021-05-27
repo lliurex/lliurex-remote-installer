@@ -46,7 +46,7 @@ class LliureXRemoteInstallerClient:
 		
 		self.core=n4dcore.Core.get_core()
 		
-		self.dbg=1
+		self.dbg=0
 		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
