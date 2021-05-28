@@ -240,7 +240,7 @@ class LliurexRemoteInstaller:
 		
 		#if not self.login_ret[0]:
 			#self.login_msg_label.set_text("%s"%self.login_ret[1])
-		print("User validated is: %s"%self.core.n4d.user_validated)
+		#print("User validated is: %s"%self.core.n4d.user_validated)
 		if not self.core.n4d.user_validated:
 			self.login_msg_label.set_text(_("Invalid user, please only net admin users."))
 			self.validate_spinner.hide()
@@ -631,9 +631,12 @@ class LliurexRemoteInstaller:
 					
 					for c in self.zero_box.package_list_box.get_children():
 						self.zero_box.package_list_box.remove(c)
-			
-					for x in self.core.var["epi"]["packages"]:
-						self.zero_box.new_package_button(self.core.current_var["epi"]["packages"][x][1],x)
+
+					for key in self.core.var["epi"]["packages"]:
+						custom_name_epi=self.core.var["epi"]["packages"][key]['custom_name']
+						epi_key=key
+						#generamos los botones con la info de la variable {epi:{packages:{nombre_epi.epi:[nombre.deb,custom_name]}}}
+						self.zero_box.new_package_button(custom_name_epi,epi_key)
 			
 					
 					
