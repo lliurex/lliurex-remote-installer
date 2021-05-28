@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.18) focal; urgency=medium
+
+  * Dialog information Icon name change 
+
+ -- Daniel Duran <daduve@gmail.com>  Fri, 28 May 2021 09:08:15 +0200
+
 lliurex-remote-installer (0.5.17) focal; urgency=medium
 
   * bug solved adding repositories 
