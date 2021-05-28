@@ -56,7 +56,7 @@ class InfoDialog(Gtk.Dialog):
 		
 		hbox=Gtk.HBox()
 		label = Gtk.Label(msg)
-		image=Gtk.Image.new_from_icon_name("dialog-info",Gtk.IconSize.DIALOG)
+		image=Gtk.Image.new_from_icon_name("dialog-information",Gtk.IconSize.DIALOG)
 		hbox.pack_start(image,True,True,5)
 		hbox.pack_start(label,True,True,5)
 		
