@@ -49,6 +49,7 @@ class LlxRemoteIndicator:
 	TARGET_FILE_SH="/tmp/.LLXRemoteInstallerClient/llxremote_sh_token"
 	TARGET_FILE_DEB="/tmp/.LLXRemoteInstallerClient/llxremote_deb_token"
 	TARGET_FILE_APT="/tmp/.LLXRemoteInstallerClient/llxremote_apt_token"
+	TARGET_FILE_EPI="/tmp/.LLXRemoteInstallerClient/llxremote_epi_token"
 
 	def __init__(self,icon_name):
 
@@ -61,7 +62,7 @@ class LlxRemoteIndicator:
 		if not os.path.exists("/tmp/.LLXRemoteInstallerClient"):
 			os.mkdir("/tmp/.LLXRemoteInstallerClient")
 
-		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_SH) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_DEB) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_APT):
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_SH) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_DEB) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_APT) or os.path.exists(LlxRemoteIndicator.TARGET_FILE_EPI):
 			self.RemoteInstaller_running=True
 		else:
 			self.RemoteInstaller_running=False
@@ -144,7 +145,7 @@ class LlxRemoteIndicator:
 
 				tmp=os.path.expanduser(event.pathname)
 				try:
-					if tmp==LlxRemoteIndicator.TARGET_FILE_SH or tmp==LlxRemoteIndicator.TARGET_FILE_DEB or tmp==LlxRemoteIndicator.TARGET_FILE_APT:
+					if tmp==LlxRemoteIndicator.TARGET_FILE_SH or tmp==LlxRemoteIndicator.TARGET_FILE_DEB or tmp==LlxRemoteIndicator.TARGET_FILE_APT or tmp==LlxRemoteIndicator.TARGET_FILE_EPI:
 						
 						self.main.RemoteInstaller_running=True
 					
@@ -178,6 +179,7 @@ class LlxRemoteIndicator:
 		self.apt_token=False
 		self.deb_token=False
 		self.sh_token=False
+		self.epi_token=False
 		self.live=True
 		GLib.timeout_add(100,self.check_status)	
 				
@@ -196,6 +198,17 @@ class LlxRemoteIndicator:
 				self.sh_token=True
 		else:
 			self.sh_token=False
+
+		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_EPI):
+			self.debug('(check_status) EPI token exists')
+			if not self.epi_token:
+				label_item=label_item + _("EPI Mode")
+				for item in self.menu.get_children():
+					#item.set_label(label_item)
+					item.get_children()[0].get_children()[1].set_label(label_item)
+				self.epi_token=True
+		else:
+			self.epi_token=False
 		
 		if os.path.exists(LlxRemoteIndicator.TARGET_FILE_DEB):
 			if not self.deb_token:
@@ -215,7 +228,7 @@ class LlxRemoteIndicator:
 		else:
 			self.apt_token=False
 		
-		if self.sh_token or self.deb_token or self.apt_token:
+		if self.sh_token or self.deb_token or self.apt_token or self.epi_token:
 		
 			self.spinner_sync()
 			for item in self.menu.get_children():
