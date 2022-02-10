@@ -1,3 +1,10 @@
+lliurex-remote-installer (0.5.14) bionic; urgency=medium
+
+  * Adding support to Remote Cli
+  * Fix bug in Mirror name folder
+
+ -- Daniel Duran <daduve@gmail.com>  Thu, 10 Feb 2022 13:06:44 +0100
+
 lliurex-remote-installer (0.5.13) bionic-updates; urgency=medium
 
   * EPI monitorized by Indicator script.
