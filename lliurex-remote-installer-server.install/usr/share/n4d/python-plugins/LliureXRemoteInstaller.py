@@ -318,7 +318,7 @@ class LliureXRemoteInstaller:
 		try:
 			update_version="Ninguna"
 			if Mirror:
-				update_version=subprocess.Popen(["LANGUAGE=en_EN; find /net/mirror/llx16/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+				update_version=subprocess.Popen(["LANGUAGE=en_EN; find /net/mirror/llx19/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 			else:
 				pass
 			
@@ -482,7 +482,7 @@ class LliureXRemoteInstaller:
 			restore=False
 			ubuntu=["deb http://archive.ubuntu.com/ubuntu bionic main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu bionic-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu bionic-updates main restricted universe multiverse"]
 			lliurex_net=["deb http://lliurex.net/bionic bionic main restricted universe multiverse","deb http://lliurex.net/bionic bionic-security main restricted universe multiverse","deb http://lliurex.net/bionic bionic-updates main restricted universe multiverse"]
-			lliurex_mirror=["deb http://mirror/llx16 bionic main restricted universe multiverse","deb http://mirror/llx16 bionic-security main restricted universe multiverse","deb http://mirror/llx16 bionic-updates main restricted universe multiverse"]
+			lliurex_mirror=["deb http://mirror/llx19 bionic main restricted universe multiverse","deb http://mirror/llx19 bionic-security main restricted universe multiverse","deb http://mirror/llx19 bionic-updates main restricted universe multiverse"]
 			for x in dict[self.APT]:
 				self._debug ("[LLXRemoteInstaller](test_apt_list) Comprobando el PPA: %s"%x)
 				#print "[LLXRemoteInstaller](dict_ok) Comprobando el listado de APP: %s"%list_apt
@@ -552,6 +552,7 @@ class LliureXRemoteInstaller:
 			#Solo hago un update y restore del sources si este ha sido cambiado anteriormente.
 			if restore:	
 				self.repo_restore(self.file_sources)
+			#self._debug ([dict,list_apt,list_apt_deleted,COMMENT])
 			return [True,dict,list_apt,list_apt_deleted,COMMENT]
 			
 		except Exception as e:

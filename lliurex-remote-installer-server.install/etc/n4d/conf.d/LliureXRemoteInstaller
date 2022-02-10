@@ -21,3 +21,5 @@ net_mirror_version=admin,admins,sudo,teachers
 write_log=admin,admins,sudo,teachers
 list_available_epis=admin,admins,sudo,teachers
 epi_deb=admin,admins,sudo,teachers
+set_var_remote=admin,admins,sudo,teachers
+send_file=admin,admins,sudo,teachers
