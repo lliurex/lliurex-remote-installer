@@ -31,7 +31,7 @@ if __name__ == '__main__':
 		long_description="""""",
 		author='Lliurex Team',
 		author_email='daduve@gmail.com',
-		maintainer='Daniel Durán Vecino',
+		maintainer='Daniel Duran Vecino',
 		maintainer_email='daduve@gmail.com',
 		keywords=['software','instalar'],
 		url='http://www.lliurex.net',
