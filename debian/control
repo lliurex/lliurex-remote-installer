@@ -32,4 +32,8 @@ Depends: ${misc:Depends}
 Description: Indicator for the menu bar 
  - to notify the user that LliureX Remote Installer is running
  
-
+Package: llxremote-cli
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}
+Description:LliureX Remote Installer.CLI tool
+  Provides a version for terminal of LliureX Remote Installer
