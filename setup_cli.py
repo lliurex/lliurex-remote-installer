@@ -25,7 +25,7 @@ import sys
 
 if __name__ == '__main__':
 	
-	setup(name='llxremote_cli',
+	setup(name='llxremote-cli',
 		version='0.1',
 		description='Lliurex Remote Installer.CLI tool',
 		long_description="""""",
