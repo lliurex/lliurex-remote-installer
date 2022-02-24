@@ -43,13 +43,17 @@ class REMOTE(object):
 
 
 
-	def read_n4dkey(self):
+	def read_n4dkey(self,user='netadmin', pswd='None'):
 		try:
 			#f=open("/etc/n4d/key")
 			#key=f.readline().strip("\n")
 			#f.close()
-			user='netadmin'
-			pswd = getpass.getpass('Please type NETADMIN password: ')
+			if pswd == 'None':
+				user='netadmin'
+				pswd = getpass.getpass('Please type NETADMIN password or cancel to change user: ')
+				if pswd == 'cancel':
+					user = getpass.getpass('Please type user with netadmin permissions: ')
+					pswd = getpass.getpass('Please type password: ')
 			key=(user,pswd)
 			programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
 			if 'PASSWORD ERROR' in programmed:
@@ -71,7 +75,9 @@ class REMOTE(object):
 			if len(programmed['deb']['packages'])>0:
 				self.programmed_deb=programmed['deb']['packages']
 			if len(programmed['sh']['packages'])>0:
-				self.programmed_sh=programmed['sh']['packages']
+				self.programmed_sh=[]
+				for item in programmed['sh']['packages']:
+					self.programmed_sh.append(item[0])
 			if programmed['update']['activate']=='False':
 				self.programmed_update=programmed['update']['activate']
 			else:
@@ -723,7 +729,7 @@ class REMOTE(object):
 				resume=('  SH Programmed   ')
 				resume=resume+('\n----------------------')
 				for item in programmed['sh']['packages']:
-					resume=resume+('\n - %s'%item)
+					resume=resume+('\n - %s'%item[0])
 			else:
 				resume=(' SH packages are not programmed.')
 			return [True,resume]
@@ -740,28 +746,29 @@ class REMOTE(object):
 			u=self.read_n4dkey()
 			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
-			if del_name in programmed['sh']['packages']:
-				if (self.continue_question('You are deleting this SH:%s .Are you sure??'%(del_name))):
-					#Si queremos borrar la programacion del DEB tenemos que comprobar que existe en el servidor, borrar ese fichero y por último eliminar la programacion.
-					exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",del_name,programmed['sh']['url'])
-					if exist_in_server[0]:
-						url_dest="/var/www/llx-remote/"+str(del_name)
-						deb_deleted=self.client.remove_file(u,"LliureXRemoteInstaller",url_dest)
-						if deb_deleted[0]:
-							pass
-						else:
-							return[False, 'ERROR: The connection to server to delete the package name has failed.']
+			for item in programmed['sh']['packages']:
+				if del_name in item[0]:
+					if (self.continue_question('You are deleting this SH:%s .Are you sure??'%(del_name))):
+						#Si queremos borrar la programacion del DEB tenemos que comprobar que existe en el servidor, borrar ese fichero y por último eliminar la programacion.
+						exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",del_name,programmed['sh']['url'])
+						if exist_in_server[0]:
+							url_dest="/var/www/llx-remote/"+str(del_name)
+							deb_deleted=self.client.remove_file(u,"LliureXRemoteInstaller",url_dest)
+							if deb_deleted[0]:
+								pass
+							else:
+								return[False, 'ERROR: The connection to server to delete the package name has failed.']
 
-					programmed['sh']['packages'].remove(del_name)
-					set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-					if set_programmed[0]:
-						return[True,'Saved new options.']
+						programmed['sh']['packages'].remove(item)
+						set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
+						if set_programmed[0]:
+							return[True,'Saved new options.']
+						else:
+							return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
 					else:
-						return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
+						return[True,'Cancelled by the user.']
 				else:
-					return[True,'Cancelled by the user.']
-			else:
-				resume=(' Review the name of SH, because is not in LliureX Remote.')
+					resume=(' Review the name of SH, because is not in LliureX Remote.')
 			return [True,resume]
 		except Exception as e:
 			self._debug ("(del_sh): %s" %(str(e)))
@@ -803,7 +810,11 @@ class REMOTE(object):
 			if pkg in programmed['sh']['packages']:
 				return[True,'Your SH had been added before to LliureX Remote, do nothing.']
 			else:
-				programmed['sh']['packages'].append(pkg)
+				lines=subprocess.Popen(["LAGUAGE=en_EN; md5sum %s | awk '{print $1}'"%deb_name],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+				for line in lines.splitlines():
+					md5=line
+				pkg_tupla=[pkg,md5]
+				programmed['sh']['packages'].append(pkg_tupla)
 				set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
 				if set_programmed[0]:
 					return[True,'Your SH is added to LliureX Remote.']
@@ -812,6 +823,6 @@ class REMOTE(object):
 
 			
 		except Exception as e:
-			self._debug ("(add_deb): %s" %(str(e)))
-			return [False,"(add_deb): %s" %(str(e))]
+			self._debug ("(add_sh): %s" %(str(e)))
+			return [False,"(add_sh): %s" %(str(e))]
 	# add_deb
