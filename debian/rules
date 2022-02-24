@@ -9,11 +9,18 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+export PYBUILD_NAME=llxremote
+
 %:
 	#dh $@ --with n4d-vars,llxdev,llxsrc,systemd
-	dh $@ --with n4d-vars,i18n,zero,llxsrc,systemd,python3
+	dh $@ --with n4d-vars,i18n,zero,llxsrc,systemd,python3 --buildsystem pybuild
 
-override_dh_systemd_start:
-	dh_systemd_start --no-restart-on-upgrade --no-start
+override_dh_auto_install:
+	dh_auto_install
 	python3 setup_cli.py install --root $(CURDIR)/debian/llxremote-cli --prefix=/usr
 	python3 setup_cli.py clean --all
+
+#override_dh_systemd_start:
+#	dh_systemd_start --no-restart-on-upgrade --no-start
+#	python3 setup_cli.py install --root $(CURDIR)/debian/llxremote-cli --prefix=/usr
+#	python3 setup_cli.py clean --all
