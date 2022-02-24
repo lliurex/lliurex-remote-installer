@@ -808,7 +808,7 @@ class LliureXRemoteInstallerClient:
 		repoList=[]
 		list_apt=[]
 		lliurex_net=["deb http://lliurex.net/bionic bionic main restricted universe multiverse","deb http://lliurex.net/bionic bionic-security main restricted universe multiverse","deb http://lliurex.net/bionic bionic-updates main restricted universe multiverse"]
-		lliurex_mirror=["deb http://mirror/llx18 bionic main restricted universe multiverse","deb http://mirror/llx18 bionic-security main restricted universe multiverse","deb http://mirror/llx18 bionic-updates main restricted universe multiverse"]
+		lliurex_mirror=["deb http://mirror/llx19 bionic main restricted universe multiverse","deb http://mirror/llx19 bionic-security main restricted universe multiverse","deb http://mirror/llx19 bionic-updates main restricted universe multiverse"]
 		for source in appDict:
 			self._debug("[LLXRemoteInstallerClient](_refine_apt_repoList) Adding applist from: "+str(source))
 			aux_list_apt=appDict[source][self.LIST]
