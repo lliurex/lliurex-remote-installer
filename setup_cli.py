@@ -37,8 +37,8 @@ if __name__ == '__main__':
 		url='http://www.lliurex.net',
 		license='GPL',
 		platforms='UNIX',
-		packages = ['llxremote'],
-		package_dir = {'llxremotecli':'llxremote-cli'},
+		packages = ['llxremotecli'],
+		package_dir = {'llxremote':'llxremote-cli'},
 		data_files = [('sbin',['llxremote-cli/llxremote'])],
 		classifiers=[
 			'Development Status :: 1 - Beta',
