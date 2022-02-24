@@ -19,8 +19,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from distutils.core import setup
-import sys
+from setuptools import setup, find_packages
+#import sys
 
 
 if __name__ == '__main__':
@@ -37,9 +37,9 @@ if __name__ == '__main__':
 		url='http://www.lliurex.net',
 		license='GPL',
 		platforms='UNIX',
-		packages = ['llxremote'],
-		package_dir = {'llxremote':'llxremote-cli'},
-		data_files = [('sbin',['llxremote-cli/llxremote'])],
+		packages = find_packages['llxremote-cli'],
+			package_dir = {'':'llxremote-cli'},
+		data_files = [],
 		classifiers=[
 			'Development Status :: 1 - Beta',
 			'Environment :: Console'
