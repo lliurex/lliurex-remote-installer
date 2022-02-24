@@ -34,6 +34,6 @@ Description: Indicator for the menu bar
  
 Package: llxremote-cli
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}, python3-clint, python3-html2text
 Description:LliureX Remote Installer.CLI tool
   Provides a version for terminal of LliureX Remote Installer
