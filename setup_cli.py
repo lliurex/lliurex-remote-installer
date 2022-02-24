@@ -38,7 +38,7 @@ if __name__ == '__main__':
 		license='GPL',
 		platforms='UNIX',
 		packages = ['llxremotecli'],
-		package_dir = {'llxremote':'llxremote-cli'},
+		package_dir = {'llxremotecli':'llxremote-cli'},
 		data_files = [('sbin',['llxremote-cli/llxremote'])],
 		classifiers=[
 			'Development Status :: 1 - Beta',
