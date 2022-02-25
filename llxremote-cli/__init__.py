@@ -65,7 +65,6 @@ class REMOTE(object):
 			if 'PASSWORD ERROR' in programmed:
 				print('Your passwd is wrong or your connection with server is broken.')
 				exit()
-			print('You have acess.')
 			return key
 		except Exception as e:
 			self._debug ("(read_n4dkey): %s" %(str(e)))
@@ -422,7 +421,7 @@ class REMOTE(object):
 					date=datetime.datetime.now()
 					date_update=date.strftime("%d-%m-%Y %H:%M")
 					programmed['update']['datetime']=date_update
-			if choice == 'lliurex':
+			if choice in ['lliurex','lliurex.net']:
 				net_mirror_version=self.client.net_mirror_version(u,"LliureXRemoteInstaller")
 				if net_mirror_version[0]:
 					programmed['update']['activate']='True'

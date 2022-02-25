@@ -26,10 +26,10 @@ def usage():
 			puts("set-zmd 'ZMD_NAME': Save your new zmd option to install in clients with LliureX Remote.")
 			puts("del-zmd 'ZMD_NAME': Delete your zmd option to not install in clients with LliureX Remote.")
 			puts("list-deb: Show the DEBs programmed in LliureX Remote.")
-			puts("ad-deb 'DEB_NAME': Save your new DEB package to install in clients with LliureX Remote.")
+			puts("add-deb 'DEB_NAME': Save your new DEB package to install in clients with LliureX Remote.")
 			puts("del-deb 'DEB_NAME': Delete DEB package from server to not install in clients with LliureX Remote.")
 			puts("list-sh: Show the SH scripts programmed in LliureX Remote.")
-			puts("ad-sh 'SH_NAME': Save your new SH script  to install in clients with LliureX Remote.")
+			puts("add-sh 'SH_NAME': Save your new SH script  to install in clients with LliureX Remote.")
 			puts("del-sh 'SH_NAME': Delete SH script from server to not install in clients with LliureX Remote.")
 
 		puts("Flags")
@@ -125,10 +125,10 @@ if __name__ == '__main__':
 					print(solved[1])
 					sys.exit(1)
 			else:
-				print("Sorry is bad. Please note like this example:\nsudo llxremote add_apt 'name_repo' 'package_name'")
+				print("Sorry is bad. Please note like this example:\nllxremote add_apt 'name_repo' 'package_name'")
 				sys.exit(1)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote add_apt 'name_repo' 'package_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote add_apt 'name_repo' 'package_name'")
 			sys.exit(1)
 	elif action == "del-apt":
 		if len(args.all) == 1:
@@ -142,10 +142,10 @@ if __name__ == '__main__':
 					print(solved[1])
 					sys.exit(1)
 			else:
-				print("Sorry is bad. Please note like this example:\nsudo llxremote del_apt 'package_name'")
+				print("Sorry is bad. Please note like this example:\nllxremote del_apt 'package_name'")
 				sys.exit(1)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote del_apt 'package_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote del_apt 'package_name'")
 			sys.exit(1)
 	elif action=="list-update":
 		solved=remote.list_update()
@@ -174,7 +174,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote set-update 'source'\n source can be 'mirror' or 'lliurex' or 'cancel'")
+			print("Sorry is bad. Please note like this example:\nllxremote set-update 'source'\n source can be 'mirror' or 'lliurex' or 'cancel'")
 			sys.exit(1)
 	elif action=="list-zmd":
 		solved=remote.list_zmd()
@@ -203,7 +203,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote set-zmd 'zmd_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote set-zmd 'zmd_name'")
 			sys.exit(1)
 	elif action=="del-zmd":
 		if len(args.all) == 1:
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote del-zmd 'zmd_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote del-zmd 'zmd_name'")
 			sys.exit(1)
 	elif action=="add-zmd":
 		if len(args.all) == 1:
@@ -229,7 +229,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote add-zmd 'zmd_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote add-zmd 'zmd_name'")
 			sys.exit(1)
 	elif action=="list-deb":
 		solved=remote.list_deb()
@@ -250,7 +250,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote del-deb 'deb_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote del-deb 'deb_name'")
 			sys.exit(1)
 	elif action=="add-deb":
 		if len(args.all) == 1:
@@ -263,7 +263,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote add-deb 'deb_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote add-deb 'deb_name'")
 			sys.exit(1)
 	elif action=="list-sh":
 		solved=remote.list_sh()
@@ -284,7 +284,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote del-sh 'sh_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote del-sh 'sh_name'")
 			sys.exit(1)
 	elif action=="add-sh":
 		if len(args.all) == 1:
@@ -297,7 +297,7 @@ if __name__ == '__main__':
 				print(solved[1])
 				sys.exit(0)
 		else:
-			print("Sorry is bad. Please note like this example:\nsudo llxremote add-sh 'sh_name'")
+			print("Sorry is bad. Please note like this example:\nllxremote add-sh 'sh_name'")
 			sys.exit(1)
 	else:
 		usage()	
