@@ -37,7 +37,7 @@ class LliureXRemoteInstallerClient:
 	LIST_APP_FINAL=[]
 	
 	def __init__(self):
-		self.dbg=1
+		self.dbg=0
 		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
