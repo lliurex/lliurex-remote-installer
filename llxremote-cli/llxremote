@@ -36,6 +36,8 @@ def usage():
 		with indent(4):
 			puts("-h --help : Show help")
 			puts("-d --debug: Run the install/uninstall in debug mode")
+			puts("-u --user: validate with this user")
+			puts("-p --password: validate with this password")
 	sys.exit(1)
 
 #def usage	
@@ -44,6 +46,8 @@ if __name__ == '__main__':
 	args = arguments.Args().copy
 	app_file=None
 	debug=False
+	user='netadmin'
+	passwd='None'
 	pkgsToInstall=[]
 
 	if args.contains(["-h","--help"]) or len(args.all) == 0 :
@@ -52,10 +56,21 @@ if __name__ == '__main__':
 		debug=True
 		index = args.first(["-d","--debug"])
 		args.pop(index)
-	
+	if args.contains(["-u","--user"]):
+		index = args.first(["-u","--user"])
+		user=args[index+1]
+		args.pop(index+1)
+		args.pop(index)
+	if args.contains(["-p","--password"]):
+		index = args.first(["-p","--password"])
+		passwd=args[index+1]
+		args.pop(index+1)
+		args.pop(index)
+
 	action = args.pop(0)
 
-	remote = REMOTE(debug)
+
+	remote = REMOTE(debug,user,passwd)
 	if action=="programmed":
 		sys.exit(remote.programed_actions())
 	elif action=="list-repos":

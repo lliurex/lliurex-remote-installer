@@ -17,10 +17,12 @@ class REMOTE(object):
 	dbg=False
 
 
-	def __init__(self,dbg):
+	def __init__(self,dbg,usr='netadmin',passwd='None'):
 		context=ssl._create_unverified_context()
 		proxy="https://server:9779"
 		self.client=x.ServerProxy(proxy,allow_none=True,context=context)
+		self.user=usr
+		self.pswd=passwd
 		if dbg:
 			self.dbg=True
 			print ("")
@@ -43,22 +45,27 @@ class REMOTE(object):
 
 
 
-	def read_n4dkey(self,user='netadmin', pswd='None'):
+	def read_n4dkey(self):
 		try:
 			#f=open("/etc/n4d/key")
 			#key=f.readline().strip("\n")
 			#f.close()
-			if pswd == 'None':
-				user='netadmin'
-				pswd = getpass.getpass('Please type NETADMIN password or cancel to change user: ')
-				if pswd == 'cancel':
-					user = getpass.getpass('Please type user with netadmin permissions: ')
-					pswd = getpass.getpass('Please type password: ')
-			key=(user,pswd)
+			if self.pswd == 'None':
+				self.user='netadmin'
+				self.pswd = getpass.getpass('Please type NETADMIN password or cancel to change user: ')
+				if self.pswd == 'cancel':
+					self.user = getpass.getpass('Please type user with netadmin permissions: ')
+					self.pswd = getpass.getpass('Please type password: ')
+			key=(self.user,self.pswd)
+			print('testing user and passwd, please wait...')
 			programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
+			if 'USER DOES NOT EXIST' in programmed:
+				print('Your user is wrong or your connection with server is broken.')
+				exit()
 			if 'PASSWORD ERROR' in programmed:
 				print('Your passwd is wrong or your connection with server is broken.')
 				exit()
+			print('You have acess.')
 			return key
 		except Exception as e:
 			self._debug ("(read_n4dkey): %s" %(str(e)))
