@@ -1,8 +1,8 @@
-lliurex-remote-installer (0.5.16) bionic; urgency=medium
+lliurex-remote-installer (0.5.18) bionic; urgency=medium
 
-  * Adding Lliurex Remote Installer CLI
+  * New Remote Installer Cli
 
- -- Daniel Duran <daduve@gmail.com>  Thu, 10 Feb 2022 13:59:56 +0100
+ -- Daniel Duran <daduve@gmail.com>  Mon, 28 Feb 2022 17:36:39 +0100
 
 lliurex-remote-installer (0.5.14) bionic; urgency=medium
 
