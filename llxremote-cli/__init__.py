@@ -59,6 +59,9 @@ class REMOTE(object):
 			key=(self.user,self.pswd)
 			print('testing user and passwd, please wait...')
 			programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
+			if programmed is None:
+				self.client.test_var(key,"LliureXRemoteInstaller",self.REMOTE_VAR)
+				programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
 			if 'USER DOES NOT EXIST' in programmed:
 				print('Your user is wrong or your connection with server is broken.')
 				exit()
@@ -70,7 +73,6 @@ class REMOTE(object):
 			self._debug ("(read_n4dkey): %s" %(str(e)))
 			return [False,"(read_n4dkey): %s" %(str(e))]
 	# def_read_n4dkey
-
 
 
 	def programed_actions(self):
