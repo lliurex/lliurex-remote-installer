@@ -1,0 +1,303 @@
+#! /usr/bin/python3
+import sys
+
+from clint import arguments
+from clint.textui import puts, indent, colored
+
+from llxremote import REMOTE
+
+def usage():
+	puts("Usage")
+	with indent(4):
+		puts("llxremote [FLAGS...] ACTION")
+		puts("Actions")
+		with indent(4):	
+			puts("programmed : Shows alls prommamed actions")
+			puts("list-repos : Shows information about repositories actives in lliurex remote installer.")
+			puts("add-repo 'REPO_NAME' 'ROUTE_DEB_HTTP' : Add new repositorie to  LliureX Remote Installer.")
+			puts("del-repo  'REPO_NAME': Delete this especific repositorie with all packages in it.")
+			puts("add-apt  'REPO_NAME' 'NAME_PACKAGE': Add new package to install from that repositorie.")
+			puts("del-apt 'NAME_PACKAGE': Delete programmed package from apt resources.")
+			puts("list-update: Show the updated programmed in LliureX Remote.")
+			puts("op-update: Show the options to update the clients with LliureX Remote.")
+			puts("set-update 'ORIGIN or CANCEL': Set your upgrade selection in clients with LliureX Remote.")
+			puts("list-zmd: Show the ZMD programmed in LliureX Remote.")
+			puts("op-zmd: Show the options to install ZMD in clients with LliureX Remote.")
+			puts("set-zmd 'ZMD_NAME': Save your new zmd option to install in clients with LliureX Remote.")
+			puts("del-zmd 'ZMD_NAME': Delete your zmd option to not install in clients with LliureX Remote.")
+			puts("list-deb: Show the DEBs programmed in LliureX Remote.")
+			puts("add-deb 'DEB_NAME': Save your new DEB package to install in clients with LliureX Remote.")
+			puts("del-deb 'DEB_NAME': Delete DEB package from server to not install in clients with LliureX Remote.")
+			puts("list-sh: Show the SH scripts programmed in LliureX Remote.")
+			puts("add-sh 'SH_NAME': Save your new SH script  to install in clients with LliureX Remote.")
+			puts("del-sh 'SH_NAME': Delete SH script from server to not install in clients with LliureX Remote.")
+
+		puts("Flags")
+		with indent(4):
+			puts("-h --help : Show help")
+			puts("-d --debug: Run the install/uninstall in debug mode")
+			puts("-u --user: validate with this user")
+			puts("-p --password: validate with this password")
+	sys.exit(1)
+
+#def usage	
+
+if __name__ == '__main__':
+	args = arguments.Args().copy
+	app_file=None
+	debug=False
+	user='netadmin'
+	passwd='None'
+	pkgsToInstall=[]
+
+	if args.contains(["-h","--help"]) or len(args.all) == 0 :
+		usage()
+	if args.contains(["-d","--debug"]):
+		debug=True
+		index = args.first(["-d","--debug"])
+		args.pop(index)
+	if args.contains(["-u","--user"]):
+		index = args.first(["-u","--user"])
+		user=args[index+1]
+		args.pop(index+1)
+		args.pop(index)
+	if args.contains(["-p","--password"]):
+		index = args.first(["-p","--password"])
+		passwd=args[index+1]
+		args.pop(index+1)
+		args.pop(index)
+
+	action = args.pop(0)
+
+
+	remote = REMOTE(debug,user,passwd)
+	if action=="programmed":
+		sys.exit(remote.programed_actions())
+	elif action=="list-repos":
+		sys.exit(remote.list_repos())
+	elif action=="list-apt":
+		sys.exit(remote.list_apt())
+	elif action == "add-repo":
+		if len(args.all) == 2:
+			repo_name=args.pop(0)
+			url=args.pop(0)
+			if len(args.all)==0 and type(url)==str:
+				solved=remote.add_repo(repo_name,url)
+				if solved[0]:
+					print(solved[1])
+					sys.exit(0)
+				else:
+					print(solved[1])
+					sys.exit(1)
+			else:
+				print("Sorry but the url for repo is bad. Please note like this example:\n'deb http://ppa.launchpad.net/phoerious/keepassxc/ubuntu bionic main'")
+				sys.exit(1)
+		else:
+			print("Sorry but the name or url for repo is bad. Please note like this example:\n'name_repo' 'deb http://ppa.launchpad.net/phoerious/keepassxc/ubuntu bionic main'")
+			sys.exit(1)
+	elif action == "del-repo":
+		if len(args.all) == 1:
+			repo_name=args.pop(0)
+			if len(args.all)==0 and type(repo_name)==str:
+				solved=remote.del_repo(repo_name)
+				if solved[0]:
+					print(solved[1])
+					sys.exit(0)
+				else:
+					print(solved[1])
+					sys.exit(1)
+			else:
+				print("Sorry but the NAME/URL for repo is bad. Please note like this example:\n'repo name' or like this:\n'deb http://ppa.launchpad.net/phoerious/keepassxc/ubuntu bionic main'")
+				sys.exit(1)
+		else:
+			print("Sorry but the NAME/URL for repo is bad. Please note like this example:\n'repo name' or like this:\n'deb http://ppa.launchpad.net/phoerious/keepassxc/ubuntu bionic main'")
+			sys.exit(1)
+	elif action == "add-apt":
+		if len(args.all) == 2:
+			repo_name=args.pop(0)
+			pkg_name=args.pop(0)
+			if len(args.all)==0 and type(repo_name)==str:
+				solved=remote.add_apt(repo_name,pkg_name)
+				if solved[0]:
+					print(solved[1])
+					sys.exit(0)
+				else:
+					print(solved[1])
+					sys.exit(1)
+			else:
+				print("Sorry is bad. Please note like this example:\nllxremote add_apt 'name_repo' 'package_name'")
+				sys.exit(1)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote add_apt 'name_repo' 'package_name'")
+			sys.exit(1)
+	elif action == "del-apt":
+		if len(args.all) == 1:
+			pkg_name=args.pop(0)
+			if len(args.all)==0 and type(pkg_name)==str:
+				solved=remote.del_apt(pkg_name)
+				if solved[0]:
+					print(solved[1])
+					sys.exit(0)
+				else:
+					print(solved[1])
+					sys.exit(1)
+			else:
+				print("Sorry is bad. Please note like this example:\nllxremote del_apt 'package_name'")
+				sys.exit(1)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote del_apt 'package_name'")
+			sys.exit(1)
+	elif action=="list-update":
+		solved=remote.list_update()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="op-update":
+		solved=remote.op_update()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="set-update":
+		if len(args.all) == 1:
+			source_up=args.pop(0)
+			solved=remote.set_update(source_up)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote set-update 'source'\n source can be 'mirror' or 'lliurex' or 'cancel'")
+			sys.exit(1)
+	elif action=="list-zmd":
+		solved=remote.list_zmd()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="op-zmd":
+		solved=remote.op_zmd()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="set-zmd":
+		if len(args.all) == 1:
+			zmd_pkg=args.pop(0)
+			solved=remote.set_zmd(zmd_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote set-zmd 'zmd_name'")
+			sys.exit(1)
+	elif action=="del-zmd":
+		if len(args.all) == 1:
+			zmd_pkg=args.pop(0)
+			solved=remote.del_zmd(zmd_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote del-zmd 'zmd_name'")
+			sys.exit(1)
+	elif action=="add-zmd":
+		if len(args.all) == 1:
+			zmd_pkg=args.pop(0)
+			solved=remote.add_zmd(zmd_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote add-zmd 'zmd_name'")
+			sys.exit(1)
+	elif action=="list-deb":
+		solved=remote.list_deb()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="del-deb":
+		if len(args.all) == 1:
+			deb_pkg=args.pop(0)
+			solved=remote.del_deb(deb_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote del-deb 'deb_name'")
+			sys.exit(1)
+	elif action=="add-deb":
+		if len(args.all) == 1:
+			deb_pkg=args.pop(0)
+			solved=remote.add_deb(deb_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote add-deb 'deb_name'")
+			sys.exit(1)
+	elif action=="list-sh":
+		solved=remote.list_sh()
+		if solved[0]:
+			print(solved[1])
+			sys.exit(0)
+		else:
+			print(solved[1])
+			sys.exit(0)
+	elif action=="del-sh":
+		if len(args.all) == 1:
+			sh_pkg=args.pop(0)
+			solved=remote.del_sh(sh_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote del-sh 'sh_name'")
+			sys.exit(1)
+	elif action=="add-sh":
+		if len(args.all) == 1:
+			sh_pkg=args.pop(0)
+			solved=remote.add_sh(sh_pkg)
+			if solved[0]:
+				print(solved[1])
+				sys.exit(0)
+			else:
+				print(solved[1])
+				sys.exit(0)
+		else:
+			print("Sorry is bad. Please note like this example:\nllxremote add-sh 'sh_name'")
+			sys.exit(1)
+	else:
+		usage()	
