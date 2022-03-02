@@ -162,6 +162,14 @@
 		"admin",
 		"teachers"
             ]
+        },
+        "send_file": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+        "admin",
+        "teachers"
+            ]
         }
     }
 }
