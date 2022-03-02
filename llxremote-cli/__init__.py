@@ -6,6 +6,7 @@ import subprocess
 import datetime
 import os
 import getpass
+import n4d.client
 
 class REMOTE(object):
 	REMOTE_VAR="LLX_REMOTE_INSTALLER"
@@ -19,10 +20,11 @@ class REMOTE(object):
 
 	def __init__(self,dbg,usr='netadmin',passwd='None'):
 		context=ssl._create_unverified_context()
-		proxy="https://server:9779"
-		self.client=x.ServerProxy(proxy,allow_none=True,context=context)
-		self.user=usr
-		self.pswd=passwd
+		self.proxy="https://server:9779"
+		#New N4D
+		#self.client=x.ServerProxy(proxy,allow_none=True,context=context)
+		#self.user=usr
+		#self.pswd=passwd
 		if dbg:
 			self.dbg=True
 			print ("")
@@ -56,29 +58,32 @@ class REMOTE(object):
 				if self.pswd == 'cancel':
 					self.user = getpass.getpass('Please type user with netadmin permissions: ')
 					self.pswd = getpass.getpass('Please type password: ')
-			key=(self.user,self.pswd)
+			#key=(self.user,self.pswd)
 			print('testing user and passwd, please wait...')
-			programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
+			self.client = n4d.client.Client(self.proxy, self.user, self.pswd)
+			#programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
+			#New N4D funcion
+			ret=self.client.validate_user()
+			programmed=self.client.get_variable(self.REMOTE_VAR)
 			if programmed is None:
 				self.client.test_var(key,"LliureXRemoteInstaller",self.REMOTE_VAR)
 				programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
-			if 'USER DOES NOT EXIST' in programmed:
-				print('Your user is wrong or your connection with server is broken.')
-				exit()
-			if 'PASSWORD ERROR' in programmed:
-				print('Your passwd is wrong or your connection with server is broken.')
-				exit()
-			return key
+			return [True,programmed]
 		except Exception as e:
 			self._debug ("(read_n4dkey): %s" %(str(e)))
-			return [False,"(read_n4dkey): %s" %(str(e))]
+			return [False,"ERROR: %s" %(str(e))]
 	# def_read_n4dkey
 
 
 	def programed_actions(self):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			self._debug(programmed)
 			if len(programmed['deb']['packages'])>0:
 				self.programmed_deb=programmed['deb']['packages']
@@ -130,7 +135,12 @@ class REMOTE(object):
 		try:
 			apt_repos=None
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				for item in programmed['apt']:
@@ -149,7 +159,12 @@ class REMOTE(object):
 		try:
 			apt_repos=None
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				for item in programmed['apt']:
@@ -170,7 +185,12 @@ class REMOTE(object):
 	def add_repo(self,name,url):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				for item in programmed['apt']:
@@ -183,7 +203,9 @@ class REMOTE(object):
 			programmed['apt'][name]={}
 			programmed['apt'][name]['url']=url
 			programmed['apt'][name]['packages']=[]
-			set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
+			#set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
+			#New N4D function
+			set_programmed=self.client.LliureXRemoteInstaller.set_var_remote(self.REMOTE_VAR,programmed)
 			if set_programmed[0]:
 				return[True,'New repositorie %s is added to LliureX Remote Installer'%(name)]
 			else:
