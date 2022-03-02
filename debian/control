@@ -3,7 +3,7 @@ Section: admin
 Priority: optional
 Maintainer: Equipo LliureX <lliurex@gva.es>
 Uploaders: David Montalva Furio <montalva_dav@gva.es>, Hector Garcia Huerta <lliurex_devel1@edu.gva.es>, Daniel Duran Vecino <daduve@gmail.com>
-Build-Depends: llxsrchelper,debhelper (>= 9), n4d-dev, python3-pkexec-debhelper, python3-poinstaller, zero-dev, dh-systemd
+Build-Depends: llxsrchelper,debhelper (>= 9), n4d-dev, python3-pkexec-debhelper, python3-poinstaller, zero-dev, dh-systemd, python3-setuptools
 Standards-Version: 3.9.5
 
 Package: lliurex-remote-installer-server
@@ -31,5 +31,11 @@ Architecture: all
 Depends: ${misc:Depends}
 Description: Indicator for the menu bar 
  - to notify the user that LliureX Remote Installer is running
+
+Package: llxremote-cli
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}
+Description:LliureX Remote Installer.CLI tool
+  Provides a version for terminal of LliureX Remote Installer
  
 
