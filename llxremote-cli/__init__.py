@@ -23,8 +23,8 @@ class REMOTE(object):
 		self.proxy="https://server:9779"
 		#New N4D
 		#self.client=x.ServerProxy(proxy,allow_none=True,context=context)
-		#self.user=usr
-		#self.pswd=passwd
+		self.user=usr
+		self.pswd=passwd
 		if dbg:
 			self.dbg=True
 			print ("")
@@ -59,15 +59,16 @@ class REMOTE(object):
 					self.user = getpass.getpass('Please type user with netadmin permissions: ')
 					self.pswd = getpass.getpass('Please type password: ')
 			#key=(self.user,self.pswd)
-			print('testing user and passwd, please wait...')
+			print('Connecting to server, please wait...')
 			self.client = n4d.client.Client(self.proxy, self.user, self.pswd)
 			#programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
 			#New N4D funcion
 			ret=self.client.validate_user()
-			programmed=self.client.get_variable(self.REMOTE_VAR)
-			if programmed is None:
-				self.client.test_var(key,"LliureXRemoteInstaller",self.REMOTE_VAR)
-				programmed=self.client.get_variable(key,"VariablesManager",self.REMOTE_VAR)
+			if self.client.variable_exists(self.REMOTE_VAR):
+				programmed=self.client.get_variable(self.REMOTE_VAR)
+			else:
+				self.client.LliureXRemoteInstaller.test_var(self.REMOTE_VAR)
+				programmed=self.client.get_variable(self.REMOTE_VAR)
 			return [True,programmed]
 		except Exception as e:
 			self._debug ("(read_n4dkey): %s" %(str(e)))
@@ -78,6 +79,7 @@ class REMOTE(object):
 	def programed_actions(self):
 		try:
 			u=self.read_n4dkey()
+			#validacion usuario & recuperacion variable remote programmed en server
 			if u[0]:
 				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 				programmed=u[1]
@@ -113,8 +115,8 @@ class REMOTE(object):
 				resume=True
 				for item in programmed['epi']['packages']:
 					#self.programmed_apt=programmed['apt']['packages']
-					if len(programmed['epi']['packages'][item]['custom_name'])>0:
-						resume=programmed['epi']['packages'][item]['custom_name']
+					if len(programmed['epi']['packages'][item]['pkg_name'])>0:
+						resume=programmed['epi']['packages'][item]['pkg_name']
 						if resume==True:
 							pass
 						else:
@@ -135,6 +137,7 @@ class REMOTE(object):
 		try:
 			apt_repos=None
 			u=self.read_n4dkey()
+			#validacion usuario & recuperacion variable remote programmed en server
 			if u[0]:
 				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 				programmed=u[1]
@@ -159,6 +162,7 @@ class REMOTE(object):
 		try:
 			apt_repos=None
 			u=self.read_n4dkey()
+			#validacion usuario & recuperacion variable remote programmed en server
 			if u[0]:
 				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 				programmed=u[1]
@@ -185,6 +189,7 @@ class REMOTE(object):
 	def add_repo(self,name,url):
 		try:
 			u=self.read_n4dkey()
+			#validacion usuario & recuperacion variable remote programmed en server
 			if u[0]:
 				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 				programmed=u[1]
@@ -205,8 +210,8 @@ class REMOTE(object):
 			programmed['apt'][name]['packages']=[]
 			#set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
 			#New N4D function
-			set_programmed=self.client.LliureXRemoteInstaller.set_var_remote(self.REMOTE_VAR,programmed)
-			if set_programmed[0]:
+			set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+			if set_programmed:
 				return[True,'New repositorie %s is added to LliureX Remote Installer'%(name)]
 			else:
 				return[False, "Your repositorie can't be added becasuse you have an error adding new value to REMOTE_VAR"]
@@ -219,8 +224,18 @@ class REMOTE(object):
 
 	def del_repo(self,name):
 		try:
+			test_name=name.lower()
+			if test_name in ['lliurex','mirror']:
+				return[True,"This repo can't be deleted by the system."]
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				for item in programmed['apt']:
@@ -234,8 +249,10 @@ class REMOTE(object):
 						if packages_programmed>0:
 							if (self.continue_question('Some package in your repositorie: %s\nContinue deleting repositorie and all programmed packages??'%programmed['apt'][item]['packages'])):
 								programmed['apt'].pop(item)
-								set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-								if set_programmed[0]:
+								#set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
+								#New N4D function
+								set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+								if set_programmed:
 									return[True,'%s repositorie has been deleted from LliureX Remote Installer'%(name)]
 								else:
 									return[False, "Your repositorie can't be deleted becasuse you have an error adding new value to REMOTE_VAR"]
@@ -243,8 +260,10 @@ class REMOTE(object):
 								return[True,'Cancelled by the user.']
 						else:
 							programmed['apt'].pop(item)
-							set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-							if set_programmed[0]:
+							#set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
+							#New N4D function
+							set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+							if set_programmed:
 								return[True,'Repo is empty, deleted without confirmation.']
 							else:
 								return[False, 'Error adding new value to REMOTE_VAR']
@@ -287,7 +306,14 @@ class REMOTE(object):
 	def add_apt(self,ppa,name):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				apt_programmed=False
@@ -305,14 +331,16 @@ class REMOTE(object):
 						else:
 							programmed['apt'][item]['packages'].append(name)
 							print('Testing new app in your repositories.... please wait')
-							solved=self.client.test_apt_list(u,"LliureXRemoteInstaller",programmed)
+							#solved=self.client.test_apt_list(u,"LliureXRemoteInstaller",programmed)
+							#New N4D Function
 							#solved=[True,dict,list_apt,list_apt_deleted,COMMENT]
+							solved=self.client.LliureXRemoteInstaller.test_apt_list(programmed)
 							if solved[0]:
 								if name in solved[3]:
 									return[False, 'Error adding new value to REMOTE_VAR because your app is unavailable in this repositorie.\nPlease review it: %s'%name]
 								else:
-									set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-									if set_programmed[0]:
+									set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+									if set_programmed:
 										return[True,'Package %s is added to ppa: %s.'%(name,ppa)]
 									else:
 										return[False, 'Your app can be added because you have an error adding new value to REMOTE_VAR']
@@ -335,7 +363,14 @@ class REMOTE(object):
 	def del_apt(self,name):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['apt'])>0:
 				apt_repos=''
 				apt_programmed=False
@@ -354,8 +389,8 @@ class REMOTE(object):
 							return[True,'Cancelled by the user.']
 
 				if apt_programmed:
-					set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-					if set_programmed[0]:
+					set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+					if set_programmed:
 						return[True,'Package %s is deleted from ppa: %s.'%(name,item_deleted)]
 					else:
 						return[False, 'Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -377,7 +412,14 @@ class REMOTE(object):
 	def list_update(self):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'update': {'url': 'Lliurex.net', 'activate': 'True', 'version': '19.220118', 'datetime': '21-01-2022 12:36'}
 			if len(programmed['update'])>0:
 				if programmed['update']['activate']=='True':
@@ -395,8 +437,12 @@ class REMOTE(object):
 	def op_update(self):
 		try:
 			u=self.read_n4dkey()
-			mirror_version=self.client.mirror_version(u,"LliureXRemoteInstaller")
-			net_mirror_version=self.client.net_mirror_version(u,"LliureXRemoteInstaller")
+			#mirror_version=self.client.mirror_version(u,"LliureXRemoteInstaller")
+			#New N4D Function
+			mirror_version=self.client.LliureXRemoteInstaller.mirror_version()
+			#net_mirror_version=self.client.net_mirror_version(u,"LliureXRemoteInstaller")
+			#New N4D Function
+			net_mirror_version=self.client.LliureXRemoteInstaller.net_mirror_version()
 			if mirror_version[1]=='False':
 				resume=(' 1 - Mirror Version: Not exists')
 			else:
@@ -417,7 +463,14 @@ class REMOTE(object):
 	def set_update(self,source_up):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			#mirror_version=self.client.mirror_version(u,"LliureXRemoteInstaller")
 			#net_mirror_version=self.client.net_mirror_version(u,"LliureXRemoteInstaller")
 			valid = ['Mirror','mirror','MIRROR','lliurex','lliurex.net','cancel', 'false']
@@ -434,7 +487,7 @@ class REMOTE(object):
 			if choice == 'cancel' or choice == 'false':
 				programmed['update']['activate']='False'
 			if choice == 'mirror':
-				mirror_version=self.client.mirror_version(u,"LliureXRemoteInstaller")
+				mirror_version=self.client.LliureXRemoteInstaller.mirror_version()
 				if mirror_version[1]=='False':
 					resume=(' Mirror not exists, please select lliurex or generate mirror in LliureX Server.')
 					return[True,resume]
@@ -446,7 +499,7 @@ class REMOTE(object):
 					date_update=date.strftime("%d-%m-%Y %H:%M")
 					programmed['update']['datetime']=date_update
 			if choice in ['lliurex','lliurex.net']:
-				net_mirror_version=self.client.net_mirror_version(u,"LliureXRemoteInstaller")
+				net_mirror_version=self.client.LliureXRemoteInstaller.net_mirror_version()
 				if net_mirror_version[0]:
 					programmed['update']['activate']='True'
 					programmed['update']['url']='Lliurex.net'
@@ -466,8 +519,8 @@ class REMOTE(object):
 				resume=resume+('\nUpdate is not programmed.')
 
 			if (self.continue_question('%s\n\nAre you sure with this configuration??'%(resume))):
-				set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-				if set_programmed[0]:
+				set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+				if set_programmed:
 					return[True,'Saved new options.']
 				else:
 					return[False, 'Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -483,7 +536,14 @@ class REMOTE(object):
 	def list_zmd(self):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['epi']['packages'])>0:
 				resume=('  ZMDs Programmed   ')
 				resume=resume+('\n----------------------')
@@ -492,7 +552,7 @@ class REMOTE(object):
 					if len(programmed['epi']['packages'][item]['custom_name'])>0:
 						resume=resume+(' : %s'%programmed['epi']['packages'][item]['custom_name'])
 			else:
-				resume=('No zero programs are accesible.')
+				resume=('No zero programs are programmed.')
 			return[True,resume]
 		except Exception as e:
 			self._debug ("(list_zmd): %s" %(str(e)))
@@ -504,14 +564,21 @@ class REMOTE(object):
 	def del_zmd(self,del_name):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			if len(programmed['epi']['packages'])>0:
 				for item in programmed['epi']['packages']:
 					if str(programmed['epi']['packages'][item]['pkg_name'])==str(del_name) or str(programmed['epi']['packages'][item]['custom_name'])==str(del_name):
 						if (self.continue_question('You are deleting this ZMD:%s .Are you sure??'%(del_name))):
 							programmed['epi']['packages'].pop(item)
-							set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-							if set_programmed[0]:
+							set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+							if set_programmed:
 								return[True,'Saved new options.']
 							else:
 								return[False, 'Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -531,7 +598,7 @@ class REMOTE(object):
 			#'epi': {'packages': {'fonts.epi_fonts-ecolier-court': {'epi_deb_name': 'zero-lliurex-fonts', 'pkg_name': 'fonts-ecolier-court', 'epi_name': 'fonts.epi', 'custom_name': 'fonts-ecolier-court', 'check': True}}}
 			u=self.read_n4dkey()
 			print('Testing ZMDs availables in server, please wait...')
-			self.list_available=self.client.list_available_epis(u,"LliureXRemoteInstaller")
+			self.list_available=self.client.LliureXRemoteInstaller.list_available_epis()
 			list_zmd_programmed=self.list_zmd()
 			if list_zmd_programmed[0]:
 				if list_zmd_programmed[1]=='None':
@@ -575,11 +642,18 @@ class REMOTE(object):
 			u=self.read_n4dkey()
 			print('Testing ZMDs availables in server, please wait...')
 			
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			for item in programmed['epi']['packages']:
 				if str(programmed['epi']['packages'][item]['pkg_name'])==str(epi_del) or str(programmed['epi']['packages'][item]['custom_name'])==str(epi_del):
 					return[True, 'Impossible to programmed. You has programmed this app before, review it.']
-			self.list_available=self.client.list_available_epis(u,"LliureXRemoteInstaller")
+			self.list_available=self.client.LliureXRemoteInstaller.list_available_epis()
 			list_zmd_programmed=self.list_zmd()
 			if list_zmd_programmed[0]:
 				if list_zmd_programmed[1]=='None':
@@ -620,12 +694,12 @@ class REMOTE(object):
 					programmed['epi']['packages'][clave_name]['custom_name']=custom_name
 					programmed['epi']['packages'][clave_name]['check']=check
 					print('Testing if package is available, please wait...')
-					epi_deb=self.client.epi_deb(u,"LliureXRemoteInstaller",epi_name)
+					epi_deb=self.client.LliureXRemoteInstaller.epi_deb(epi_name)
 					if epi_deb[0]:
 						epi_deb_name=epi_deb[1]
 						programmed['epi']['packages'][clave_name]['epi_deb_name']=epi_deb_name
-						set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-						if set_programmed[0]:
+						set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+						if set_programmed:
 							self._debug(programmed)
 							return[True,'ZMD %s is programmed to install in all clients.'%(epi_del)]
 						else:
@@ -646,7 +720,14 @@ class REMOTE(object):
 	def list_deb(self):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			if len(programmed['deb']['packages'])>0:
 				resume=('  DEBs Programmed   ')
@@ -666,23 +747,30 @@ class REMOTE(object):
 	def del_deb(self,del_name):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			if del_name in programmed['deb']['packages']:
 				if (self.continue_question('You are deleting this DEB:%s .Are you sure??'%(del_name))):
 					#Si queremos borrar la programacion del DEB tenemos que comprobar que existe en el servidor, borrar ese fichero y por último eliminar la programacion.
-					exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",del_name,programmed['deb']['url'])
+					exist_in_server=self.client.LliureXRemoteInstaller.app_deb_exist(del_name,programmed['deb']['url'])
 					if exist_in_server[0]:
 						url_dest="/var/www/llx-remote/"+str(del_name)
-						deb_deleted=self.client.remove_file(u,"LliureXRemoteInstaller",url_dest)
+						deb_deleted=self.client.LliureXRemoteInstaller.remove_file(url_dest)
 						if deb_deleted[0]:
 							pass
 						else:
 							return[False, 'ERROR: The connection to server to delete the package name has failed.']
 
 					programmed['deb']['packages'].remove(del_name)
-					set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-					if set_programmed[0]:
+					set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+					if set_programmed:
 						return[True,'Saved new options.']
 					else:
 						return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -714,10 +802,17 @@ class REMOTE(object):
 				return[True,'Sorry but your path file not exist in your computer, review it.']
 				
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			#Existe en el server??
-			exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",pkg,programmed['deb']['url'])
+			exist_in_server=self.client.LliureXRemoteInstaller.app_deb_exist(pkg,programmed['deb']['url'])
 			if exist_in_server[0]:
 				pass
 			else:
@@ -725,8 +820,8 @@ class REMOTE(object):
 				url_dest=programmed["deb"]["url"].split('http://server/')[1]
 				url_dest="/var/www/"+str(url_dest)
 				ip_dest="server"
-				file_sent=self.client.send_file(u,"ScpManager",u[0],u[1],ip_dest,deb_name,url_dest)
-				if file_sent['status']:
+				file_sent=self.client.ScpManager.send_file(self.user,self.pswd,ip_dest,deb_name,url_dest)
+				if file_sent:
 					pass
 				else:
 					return[True,'Failed to send file to server...connection failed.']
@@ -736,8 +831,8 @@ class REMOTE(object):
 				return[True,'Your DEB had been added before to LliureX Remote, do nothing.']
 			else:
 				programmed['deb']['packages'].append(pkg)
-				set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-				if set_programmed[0]:
+				set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+				if set_programmed:
 					return[True,'Your DEB is added to LliureX Remote.']
 				else:
 					return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -753,7 +848,14 @@ class REMOTE(object):
 	def list_sh(self):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			if len(programmed['sh']['packages'])>0:
 				resume=('  SH Programmed   ')
@@ -774,24 +876,31 @@ class REMOTE(object):
 	def del_sh(self,del_name):
 		try:
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			for item in programmed['sh']['packages']:
-				if del_name in item[0]:
+				if del_name == item[0]:
 					if (self.continue_question('You are deleting this SH:%s .Are you sure??'%(del_name))):
 						#Si queremos borrar la programacion del DEB tenemos que comprobar que existe en el servidor, borrar ese fichero y por último eliminar la programacion.
-						exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",del_name,programmed['sh']['url'])
+						exist_in_server=self.client.LliureXRemoteInstaller.app_deb_exist(del_name,programmed['sh']['url'])
 						if exist_in_server[0]:
 							url_dest="/var/www/llx-remote/"+str(del_name)
-							deb_deleted=self.client.remove_file(u,"LliureXRemoteInstaller",url_dest)
+							deb_deleted=self.client.LliureXRemoteInstaller.remove_file(url_dest)
 							if deb_deleted[0]:
 								pass
 							else:
 								return[False, 'ERROR: The connection to server to delete the package name has failed.']
 
 						programmed['sh']['packages'].remove(item)
-						set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-						if set_programmed[0]:
+						set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+						if set_programmed:
 							return[True,'Saved new options.']
 						else:
 							return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
@@ -819,10 +928,17 @@ class REMOTE(object):
 				return[True,'Sorry but your path file not exist in your computer, review it.']
 
 			u=self.read_n4dkey()
-			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+			#validacion usuario & recuperacion variable remote programmed en server
+			if u[0]:
+				#programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
+				programmed=u[1]
+			else:
+				print(u[1])
+				exit()
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			#Existe en el server??
-			exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",pkg,programmed['sh']['url'])
+			exist_in_server=self.client.LliureXRemoteInstaller.app_deb_exist(pkg,programmed['sh']['url'])
 			if exist_in_server[0]:
 				pass
 			else:
@@ -830,8 +946,8 @@ class REMOTE(object):
 				url_dest=programmed["sh"]["url"].split('http://server/')[1]
 				url_dest="/var/www/"+str(url_dest)
 				ip_dest="server"
-				file_sent=self.client.send_file(u,"ScpManager",u[0],u[1],ip_dest,deb_name,url_dest)
-				if file_sent['status']:
+				file_sent=self.client.ScpManager.send_file(self.user,self.pswd,ip_dest,deb_name,url_dest)
+				if file_sent:
 					pass
 				else:
 					return[True,'Failed to send file to server...connection failed.']
@@ -845,8 +961,8 @@ class REMOTE(object):
 					md5=line
 				pkg_tupla=[pkg,md5]
 				programmed['sh']['packages'].append(pkg_tupla)
-				set_programmed=self.client.set_var_remote(u,"LliureXRemoteInstaller",self.REMOTE_VAR,programmed)
-				if set_programmed[0]:
+				set_programmed=self.client.set_variable(self.REMOTE_VAR,programmed)
+				if set_programmed:
 					return[True,'Your SH is added to LliureX Remote.']
 				else:
 					return[False, 'ERROR: Your app can be deleted becasuse you have an error adding new value to REMOTE_VAR']
