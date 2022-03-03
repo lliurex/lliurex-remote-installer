@@ -197,6 +197,9 @@ class REMOTE(object):
 
 	def del_repo(self,name):
 		try:
+			test_name=name.lower()
+			if test_name in ['lliurex','mirror']:
+				return[True,"This repo can't be deleted by the system."]
 			u=self.read_n4dkey()
 			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 			if len(programmed['apt'])>0:
@@ -470,7 +473,7 @@ class REMOTE(object):
 					if len(programmed['epi']['packages'][item]['custom_name'])>0:
 						resume=resume+(' : %s'%programmed['epi']['packages'][item]['custom_name'])
 			else:
-				resume=('No zero programs are accesible.')
+				resume=('No zero programs are programmed.')
 			return[True,resume]
 		except Exception as e:
 			self._debug ("(list_zmd): %s" %(str(e)))
@@ -755,7 +758,7 @@ class REMOTE(object):
 			programmed=self.client.get_variable(u,"VariablesManager",self.REMOTE_VAR)
 			# 'deb': {'url': 'http://server/llx-remote/', 'packages': ['openprinting-ppds-postscript-ricoh_20161206-1lsb3.2_all.deb']}
 			for item in programmed['sh']['packages']:
-				if del_name in item[0]:
+				if del_name == item[0]:
 					if (self.continue_question('You are deleting this SH:%s .Are you sure??'%(del_name))):
 						#Si queremos borrar la programacion del DEB tenemos que comprobar que existe en el servidor, borrar ese fichero y por último eliminar la programacion.
 						exist_in_server=self.client.app_deb_exist(u,"LliureXRemoteInstaller",del_name,programmed['sh']['url'])
