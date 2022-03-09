@@ -13,6 +13,7 @@ def usage():
 		puts("Actions")
 		with indent(4):	
 			puts("programmed : Shows alls prommamed actions")
+			puts("list-apt : Show the APT programmed in LliureX Remote.")
 			puts("list-repos : Shows information about repositories actives in lliurex remote installer.")
 			puts("add-repo 'REPO_NAME' 'ROUTE_DEB_HTTP' : Add new repositorie to  LliureX Remote Installer.")
 			puts("del-repo  'REPO_NAME': Delete this especific repositorie with all packages in it.")
@@ -26,10 +27,10 @@ def usage():
 			puts("set-zmd 'ZMD_NAME': Save your new zmd option to install in clients with LliureX Remote.")
 			puts("del-zmd 'ZMD_NAME': Delete your zmd option to not install in clients with LliureX Remote.")
 			puts("list-deb: Show the DEBs programmed in LliureX Remote.")
-			puts("add-deb 'DEB_NAME': Save your new DEB package to install in clients with LliureX Remote.")
+			puts("add-deb 'DEB_PATH': Save your new DEB package to install in clients with LliureX Remote.")
 			puts("del-deb 'DEB_NAME': Delete DEB package from server to not install in clients with LliureX Remote.")
 			puts("list-sh: Show the SH scripts programmed in LliureX Remote.")
-			puts("add-sh 'SH_NAME': Save your new SH script  to install in clients with LliureX Remote.")
+			puts("add-sh 'SH_PATH': Save your new SH script  to install in clients with LliureX Remote.")
 			puts("del-sh 'SH_NAME': Delete SH script from server to not install in clients with LliureX Remote.")
 
 		puts("Flags")
