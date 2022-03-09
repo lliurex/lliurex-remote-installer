@@ -52,6 +52,9 @@ class REMOTE(object):
 			#f=open("/etc/n4d/key")
 			#key=f.readline().strip("\n")
 			#f.close()
+			if self.user != 'netadmin':
+				if self.pswd == 'None':
+					self.pswd = getpass.getpass('Please type %s password or cancel to change user: '%self.user)
 			if self.pswd == 'None':
 				self.user='netadmin'
 				self.pswd = getpass.getpass('Please type NETADMIN password or cancel to change user: ')
