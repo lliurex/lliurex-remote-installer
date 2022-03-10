@@ -1,4 +1,4 @@
-lliurex-remote-installer (0.5.21) bionic; urgency=medium
+lliurex-remote-installer (0.5.21) focal; urgency=medium
 
   * Fix bug add-zmd 
 
