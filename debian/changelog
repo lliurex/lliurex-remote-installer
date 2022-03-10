@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.21) bionic; urgency=medium
+
+  * Fix bug add-zmd 
+
+ -- Daniel Duran <daduve@gmail.com>  Thu, 10 Mar 2022 12:43:16 +0100
+
 lliurex-remote-installer (0.5.20) focal; urgency=medium
 
   * Adding llxremote cli 
