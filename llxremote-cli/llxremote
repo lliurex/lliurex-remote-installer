@@ -24,7 +24,7 @@ def usage():
 			puts("set-update 'ORIGIN or CANCEL': Set your upgrade selection in clients with LliureX Remote.")
 			puts("list-zmd: Show the ZMD programmed in LliureX Remote.")
 			puts("op-zmd: Show the options to install ZMD in clients with LliureX Remote.")
-			puts("set-zmd 'ZMD_NAME': Save your new zmd option to install in clients with LliureX Remote.")
+			puts("add-zmd 'ZMD_NAME': Save your new zmd option to install in clients with LliureX Remote.")
 			puts("del-zmd 'ZMD_NAME': Delete your zmd option to not install in clients with LliureX Remote.")
 			puts("list-deb: Show the DEBs programmed in LliureX Remote.")
 			puts("add-deb 'DEB_PATH': Save your new DEB package to install in clients with LliureX Remote.")
@@ -193,10 +193,10 @@ if __name__ == '__main__':
 		else:
 			print(solved[1])
 			sys.exit(0)
-	elif action=="set-zmd":
+	elif action=="add-zmd":
 		if len(args.all) == 1:
 			zmd_pkg=args.pop(0)
-			solved=remote.set_zmd(zmd_pkg)
+			solved=remote.add_zmd(zmd_pkg)
 			if solved[0]:
 				print(solved[1])
 				sys.exit(0)
