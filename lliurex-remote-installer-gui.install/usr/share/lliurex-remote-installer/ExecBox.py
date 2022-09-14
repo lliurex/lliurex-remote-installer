@@ -12,6 +12,7 @@ import threading
 import sys
 import os
 import subprocess
+import hashlib
 
 _=gettext.gettext
 gettext.textdomain('lliurex-remote-installer-gui')
@@ -130,6 +131,24 @@ class ExecBox(Gtk.VBox):
 			
 			
 		return path
+
+	
+
+	def getmd5(self,file_path):
+
+		try:
+			m = hashlib.md5()
+			with open(file_path,'rb') as f:
+				lines = f.read()
+				m.update(lines)
+			md5code = m.hexdigest()
+			return md5code
+
+		except Exception as e:
+			print(e)
+			return False
+
+	#def getmd5
 	
 	
 	def add_exec_button_clicked(self,widget):
@@ -145,9 +164,13 @@ class ExecBox(Gtk.VBox):
 			exec_url=fcb.get_filename()
 			fcb.destroy()
 			pkg=os.path.basename(exec_url)
-			lines=subprocess.Popen(["LAGUAGE=en_EN; md5sum %s | awk '{print $1}'"%exec_url],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
-			for line in lines.splitlines():
-				md5=line.decode('utf-8')
+			#lines=subprocess.Popen(["LAGUAGE=en_EN; md5sum %s | awk '{print $1}'"%exec_url],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+			#for line in lines.splitlines():
+				#md5=line.decode('utf-8')
+			#md5python=self.getmd5(exec_url)
+			#print('md5 BASH: %s'%md5)
+			#print('md5 PYTHON: %s'%md5python)
+			md5=self.getmd5(exec_url)
 			pkg_tupla=[pkg,md5]
 			#Compruebo si existe el paquete en la lista
 			if any(pkg in element for element in self.core.current_var["sh"]["packages"]):
