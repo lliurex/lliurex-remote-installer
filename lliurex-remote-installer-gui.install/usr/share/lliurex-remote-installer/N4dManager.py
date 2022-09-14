@@ -214,7 +214,7 @@ class N4dManager:
 			#local_n4d=xmlrpc.client.ServerProxy("https://localhost:9779",allow_none=True,context=context)
 			#file_sent=local_n4d.send_file(self.user,"ScpManager",self.user[0],self.user[1],ip,url_source,url_dest)
 			self.mprint('(send_file) Calling to scpmanager User: %s - Passwd: %s - IP: %s - Url_Source: %s - Url_dest: %s'%(self.user[0],self.user[1],ip,url_source,url_dest))
-			file_sent=self.client.ScpManager.send_file(self.user[0],self.user[1],ip,url_source,url_dest)
+			file_sent=self.local_client.ScpManager.send_file(self.user[0],self.user[1],ip,url_source,url_dest)
 			self.mprint('(send_file) %s'%file_sent)
 			#list_apt_ok.wait()
 			if file_sent:
