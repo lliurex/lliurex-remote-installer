@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.23) focal; urgency=medium
+
+  * Fix Bug in URLS with blanks or spaces 
+
+ -- Daniel Duran <daduve@gmail.com>  Wed, 14 Sep 2022 15:17:04 +0200
+
 lliurex-remote-installer (0.5.22) focal; urgency=medium
 
   * Fix bug in send file by scpmanager function 
