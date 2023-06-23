@@ -42,7 +42,21 @@ class LliurexRemoteSystemd:
 	def run(self):
 		
 		#c=xmlrpclib.ServerProxy("https://localhost:9779")
+		# wait until n4d local is active
 		c=n4d.client.Client("https://localhost:9779")
+		ok=False
+		
+		for i in range(0,10):
+			try:
+				c.get_methods()
+				ok=True
+				break
+			except:
+				time.sleep(2)
+
+
+		# wait until n4d server connection is active
+		c=n4d.client.Client("https://server:9779")
 		ok=False
 		
 		for i in range(0,10):
