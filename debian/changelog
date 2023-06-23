@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.24) focal; urgency=medium
+
+  * Adding client test to wait n4d server connectio 
+
+ -- Daniel Duran <daduve@gmail.com>  Fri, 23 Jun 2023 12:52:22 +0200
+
 lliurex-remote-installer (0.5.23) focal; urgency=medium
 
   * Fix Bug in URLS with blanks or spaces 
