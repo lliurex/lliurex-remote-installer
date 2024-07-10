@@ -39,8 +39,8 @@ class LliureXRemoteInstaller:
 	URL='url'
 	UPDATE='update'
 	SHARE_DIRECTORY='/var/www/llx-remote'
-	MIRROR_DIRECTORY='/net/mirror/llx21'
-	NET_MIRROR_DIRECTORY='http://lliurex.net/focal'
+	MIRROR_DIRECTORY='/net/mirror/llx23'
+	NET_MIRROR_DIRECTORY='http://lliurex.net/jammy'
 	TIMESTAMP_DIRECTORY='/pool/main/l/lliurex-version-timestamp/'
 	LOG_FILE='/var/log/lliurex-remote-installer.log'
 	
@@ -552,9 +552,9 @@ class LliureXRemoteInstaller:
 			list_apt_ok=[]
 			list_apt_testing=[]
 			restore=False
-			ubuntu=["deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse"]
-			lliurex_net=["deb http://lliurex.net/focal focal main restricted universe multiverse","deb http://lliurex.net/focal focal-security main restricted universe multiverse","deb http://lliurex.net/focal focal-updates main restricted universe multiverse"]
-			lliurex_mirror=["deb http://mirror/llx21 focal main restricted universe multiverse","deb http://mirror/llx21 focal-security main restricted universe multiverse","deb http://mirror/llx21 focal-updates main restricted universe multiverse"]
+			ubuntu=["deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse"]
+			lliurex_net=["deb http://lliurex.net/jammy jammy main restricted universe multiverse","deb http://lliurex.net/jammy jammy-security main restricted universe multiverse","deb http://lliurex.net/jammy jammy-updates main restricted universe multiverse"]
+			lliurex_mirror=["deb http://mirror/llx23 jammy main restricted universe multiverse","deb http://mirror/llx23 jammy-security main restricted universe multiverse","deb http://mirror/llx23 jammy-updates main restricted universe multiverse"]
 			
 			self._debug ("[LLXRemoteInstaller](test_apt_list) dict_var[self.APT]: %s"%dict_var[self.APT])
 			for x in dict_var[self.APT]:

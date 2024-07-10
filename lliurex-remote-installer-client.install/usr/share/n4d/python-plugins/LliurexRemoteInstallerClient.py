@@ -910,8 +910,8 @@ class LliureXRemoteInstallerClient:
 		self._debug("[LLXRemoteInstallerClient] (_refine_apt_repoList)   --- Starting Function ----")
 		repoList=[]
 		list_apt=[]
-		lliurex_net=["deb http://lliurex.net/focal focal main restricted universe multiverse","deb http://lliurex.net/focal focal-security main restricted universe multiverse","deb http://lliurex.net/focal focal-updates main restricted universe multiverse"]
-		lliurex_mirror=["deb http://mirror/llx20 focal main restricted universe multiverse","deb http://mirror/llx20 focal-security main restricted universe multiverse","deb http://mirror/llx20 focal-updates main restricted universe multiverse"]
+		lliurex_net=["deb http://lliurex.net/jammy jammy main restricted universe multiverse","deb http://lliurex.net/jammy jammy-security main restricted universe multiverse","deb http://lliurex.net/jammy jammy-updates main restricted universe multiverse"]
+		lliurex_mirror=["deb http://mirror/llx23 jammy main restricted universe multiverse","deb http://mirror/llx23 jammy-security main restricted universe multiverse","deb http://mirror/llx23 jammy-updates main restricted universe multiverse"]
 		for source in appDict:
 			self._debug("[LLXRemoteInstallerClient](_refine_apt_repoList) Adding applist from: "+str(source))
 			aux_list_apt=appDict[source][self.LIST]
@@ -945,7 +945,7 @@ class LliureXRemoteInstallerClient:
 		self._debug("apt_test")
 		#Get dict values
 		list_apt_resume=[]
-		ubuntu=["deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu focal-updates main restricted universe multiverse"]
+		ubuntu=["deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu jammy-security main restricted universe multiverse","deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse"]
 		list_apt=[]
 		result_apt=["","","","",""]
 		#List with repos for pinning customize
