@@ -1,0 +1,41 @@
+Source: lliurex-remote-installer
+Section: admin
+Priority: optional
+Maintainer: Equipo LliureX <lliurex@gva.es>
+Uploaders: David Montalva Furio <montalva_dav@gva.es>, Hector Garcia Huerta <lliurex_devel1@edu.gva.es>, Daniel Duran Vecino <daduve@gmail.com>
+Build-Depends: llxsrchelper,debhelper (>= 9), n4d-dev, python3-pkexec-debhelper, python3-poinstaller, zero-dev, python3-setuptools, dh-python, python3-all
+Standards-Version: 3.9.5
+
+Package: lliurex-remote-installer-server
+Architecture: all
+Depends: ${misc:Depends}, n4d, n4d-lliurex-base (>= 0.16)
+Description: AddAplications facility install list in classroom
+ - APT, DEBS And Scripts in a list can be installed in client classroom
+
+Package: lliurex-remote-installer-gui
+Architecture: all
+Depends: ${misc:Depends}, n4d
+Description: GUI aplication to manage LliureX Remote Installer
+ - APT, DEBS And Scripts in a list can be installed in client classroom
+
+Package: lliurex-remote-installer-client
+Architecture: all
+Depends: ${misc:Depends}, n4d, python3-apt
+Recommends: lliurex-remote-installer-indicator
+Description: AddAplications facility install list in classroom
+ - APT, DEBS And Scripts in a list can be installed in client classroom
+
+
+Package: lliurex-remote-installer-indicator
+Architecture: all
+Depends: ${misc:Depends}
+Description: Indicator for the menu bar 
+ - to notify the user that LliureX Remote Installer is running
+
+Package: llxremote-cli
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}
+Description:LliureX Remote Installer.CLI tool
+  Provides a version for terminal of LliureX Remote Installer
+ 
+
