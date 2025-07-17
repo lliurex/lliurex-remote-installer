@@ -12,6 +12,9 @@ import threading
 import sys
 import os
 
+import xmlrpc.client
+import ssl
+
 gettext.textdomain('lliurex-remote-installer-gui')
 _=gettext.gettext
 
@@ -41,6 +44,9 @@ class DebBox(Gtk.VBox):
 		self.apply_deb_button=builder.get_object("apply_deb_button")
 		
 		
+		self.server="localhost"
+		self.context=ssl._create_unverified_context()
+		self.client=xmlrpc.client.ServerProxy("https://%s:9779"%self.server,allow_none=True,context=self.context)
 
 		self.add(self.main_box)
 		
@@ -249,15 +255,14 @@ class DebBox(Gtk.VBox):
 			#Compruebo que es accesible via apache, y pregunto si lo borro tambien del servidor
 			exist_in_server=self.core.n4d.app_deb_exist(pkg, self.core.current_var["deb"]["url"])
 			if exist_in_server[0]:
-				if self.remove_file_dialog(pkg):
-					self.thread=threading.Thread(target=self.delete_package_thread(pkg))
-					self.thread.daemon=True
-					self.thread.start()
-					
-					main_window=self.core.lri.main_window
-					dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_("Deleting files......."))
-					dialog.show()
-					GLib.timeout_add(500,self.check_delete_thread,dialog)
+				self.thread=threading.Thread(target=self.delete_package_thread(pkg))
+				self.thread.daemon=True
+				self.thread.start()
+				
+				main_window=self.core.lri.main_window
+				dialog=Dialog.ApplyingChangesDialog(main_window,title="Lliurex Remote Installer",msg=_("Deleting files......."))
+				dialog.show()
+				GLib.timeout_add(500,self.check_delete_thread,dialog)
 			
 			# ######### #
 	
@@ -268,12 +273,31 @@ class DebBox(Gtk.VBox):
 	
 		try:
 			self.core.dprint("Deleting file...")
-	
-			url_dest="/var/www/llx-remote/"+str(pkg)
-			self.deleted=self.core.n4d.remove_file(url_dest)
-			if not self.deleted[0]:
+
+			#OLD DELETE MODE
+			#url_dest="/var/www/llx-remote/"+str(pkg)
+			#self.deleted=self.core.n4d.remove_file(url_dest)
+
+			var_dest="llx-remote"
+			package_list=self.client.get_download_list()
+			self.core.dprint("[DebBox][delete_package_thread] Package to delete:%s"%pkg)
+			self.core.dprint("[DebBox][delete_package_thread] Reading shared package_list:%s"%package_list)
+			url_dest=""
+			for elem in package_list['return'][var_dest]:
+				if pkg in elem:
+					self.core.dprint("[DebBox][delete_package_thread] Deleting elem:%s"%elem)
+					url_dest=elem
+
+			self.deleted=self.core.n4d.delete_download(var_dest,url_dest)
+
+
+			if not self.deleted["return"]:
 				comment=_("The file %s cannot be deleted")%pkg
 				self.remove_file_info_dialog(comment)
+			else:
+				self.core.dprint("[DebBox][delete_package_thread] Removing file :%s"%url_dest)
+				os.remove(url_dest)
+
 				
 			self.thread_ret={"status":True,"msg":"BROKEN"}
 			
@@ -295,7 +319,7 @@ class DebBox(Gtk.VBox):
 			
 		for x in self.core.current_var["deb"]["packages"]:
 			self.new_package_button("%s"%x)
-		if self.deleted[0]:
+		if self.deleted["return"]:
 			self.core.var=copy.deepcopy(self.core.current_var)
 			self.core.n4d.set_variable(self.core.var)
 			
@@ -331,20 +355,36 @@ class DebBox(Gtk.VBox):
 		
 		try:
 			
-			print("Testing.....")
+			print("[DebBox] Testing.....")
 			if  self.new_debs not in [None,"",[]]:
-				self.core.dprint("Sending files to server...")
+				self.core.dprint("[DebBox] Sending files to server...")
 				for deb in self.new_debs:
+
 					pkg=deb[0]
 					deb_url=deb[1]
-					if self.core.current_var["deb"]["url"] in [None,"",[]]:
-						self.core.current_var["deb"]["url"]="http://server/llx-remote/"
-					url_dest=self.core.current_var["deb"]["url"].split('http://server/')[1]
-					url_dest="/var/www/"+str(url_dest)
-					ip_dest=self.core.n4d.server_ip
-					uploaded=self.core.n4d.send_file(ip_dest,deb_url,url_dest)
-					if not uploaded:
+					url_dest="/var/www/"
+					var_dest="llx-remote"
+
+					#OLD UPLOAD FILES
+					#if self.core.current_var["deb"]["url"] in [None,"",[]]:
+					#	self.core.current_var["deb"]["url"]=url_dest
+					#url_dest=self.core.current_var["deb"]["url"].split('http://server/')[1]
+					#ip_dest=self.core.n4d.server_ip
+					
+
+					url_dest=url_dest+str(var_dest)
+					uploaded=self.core.n4d.send_file(self.server,deb_url,url_dest)
+					self.core.dprint("[DebBox][apply_changes_thread] CORE:N4D.SEND_FILE: %s"%uploaded)
+
+					if uploaded:
+						url_deb=url_dest+'/'+str(pkg)
+						self.core.dprint("[DebBox][apply_changes_thread] URL_DEB to share with add download: %s"%url_deb)
+						uploaded=self.core.n4d.add_download(var_dest,url_deb)
+						self.core.dprint("[DebBox][apply_changes_thread] N4D Uploaded: %s"%uploaded)
+
+					if not uploaded["return"]:
 						self.error_up_dialog(pkg)
+
 
 				#Inicializo de nuevo la lista de paquetes, ya esta subido todo lo que se queria.
 				self.new_debs=[]
@@ -370,6 +410,9 @@ class DebBox(Gtk.VBox):
 		
 		dialog.destroy()
 		#Se pudo testear la lista de debs, es un  [True,dict,list_debs_ok,list_debs_fail]
+		self.core.dprint("[DebBox][check_apply_thread] test_deb: %s"%self.test_deb)
+		self.core.dprint("[DebBox][check_apply_thread] DEBS to add: %s"%self.test_deb[2])
+		self.core.dprint("[DebBox][check_apply_thread] DEBS fail: %s"%self.test_deb[3])
 		if self.test_deb[0]:
 			if self.test_deb[3] not in [None,"","[]",[]]:
 				if self.delete_test_deb_dialog(self.test_deb[3]):
@@ -377,10 +420,10 @@ class DebBox(Gtk.VBox):
 					self.core.var=copy.deepcopy(self.test_deb[1])
 					self.core.current_var=copy.deepcopy(self.test_deb[1])
 				else:
-					self.core.var["deb"]["url"]="http://server/llx-remote/"
+					self.core.var["deb"]["url"]="https://server:9779/llx-remote/"
 					self.core.n4d.set_variable(self.core.var)
 			else:
-					self.core.var["deb"]["url"]="http://server/llx-remote/"
+					self.core.var["deb"]["url"]="https://server:9779/llx-remote/"
 					self.core.n4d.set_variable(self.core.var)
 			
 		else:
