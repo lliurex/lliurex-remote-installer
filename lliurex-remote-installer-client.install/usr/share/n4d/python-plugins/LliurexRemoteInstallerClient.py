@@ -14,15 +14,16 @@ import requests
 
 import n4d.server.core as n4dcore
 import n4d.responses
+import xmlrpc.client as n4dclient
+import ssl
 
 class LliureXRemoteInstallerClient:
-
-	NATFREE_STARTUP=True
 	
 	dir_tmp="/tmp/.LLXRemoteInstallerClient"
 	N4D_VAR="LLX_REMOTE_INSTALLER"
 	N4D_INSTALLED="LLX_REMOTE_INSTALLER_INSTALLED"
 	logFile="/var/log/remoteInstaller.log"
+	NATFREE_STARTUP=True
 	
 	#REPO ADDAPLICATION_SOURCES value
 	dir_sources="/etc/apt/sources.list.d/"
@@ -48,8 +49,7 @@ class LliureXRemoteInstallerClient:
 		
 		self.core=n4dcore.Core.get_core()
 		
-		
-		self.dbg=0
+		self.dbg=1
 		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
@@ -132,8 +132,18 @@ class LliureXRemoteInstallerClient:
 			import xmlrpclib as x
 			c=x.ServerProxy(proxy)
 			DICT=c.get_variable("","VariablesManager",namevar)'''
+
 			proxy=False
-			DICT=self.core.get_variable(namevar)['return']
+			COMMENT="[LLXRemoteInstallerClient] (read_var)Testing VAR: %s in localhost: %s"%(namevar,localhost)
+			self._debug(COMMENT)
+			if not localhost:
+				self._debug("[LLXRemoteInstallerClient] (read_var) SERVER reading....")
+				context=ssl._create_unverified_context()
+				client=n4dclient.ServerProxy('https://server:9779',context=context,allow_none=True)
+				DICT=client.get_variable(namevar)['return']
+			else:
+				self._debug("[LLXRemoteInstallerClient] (read_var) LOCALHOST reading....")
+				DICT=self.core.get_variable(namevar)['return']
 			COMMENT="[LLXRemoteInstallerClient] (read_var) Value of N4D var %s of proxy:%s is %s"%(namevar,proxy,DICT)
 			self._debug(COMMENT)
 			return_n4d= [True,str(COMMENT),DICT]
@@ -298,6 +308,7 @@ class LliureXRemoteInstallerClient:
 					self._debug("(download) The FILE: "+file_app+" has been donwloaded before, it will be deleted now.")
 					os.remove(file_app)
 				self._debug("(download) The FILE: "+app+" is downloading now to directory "+file_app+" .....")
+				ssl._create_default_https_context = ssl._create_unverified_context
 				urllib.request.urlretrieve(url_complete,file_app)
 				os.chmod(file_app,755)
 				
