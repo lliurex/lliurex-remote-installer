@@ -1,3 +1,9 @@
+lliurex-remote-installer (1.0.0.0) jammy; urgency=medium
+
+  * New version in new Aula Model.
+
+ -- Daniel Duran <daduve@gmail.com>  Thu, 17 Jul 2025 12:57:36 +0200
+
 lliurex-remote-installer (0.5.24.24) jammy; urgency=medium
 
   * Fixed some repositories to run in LliureX 23
