@@ -1,0 +1,175 @@
+{
+    "SETUP": {
+        "type": "python",
+        "path": "LliurexRemoteInstallerClient.py",
+        "class": "LliureXRemoteInstallerClient"
+    },
+    "METHODS": {
+        "read_n4dkey": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "create_dict": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "read_var": {
+            "allowed_groups": [
+                "anonymous"
+            ]
+        },
+        "initialize_n4dvar": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "test_var": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "reset_var": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "update_var_dict": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "download": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "repo_add": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "repo_restore": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "repo_update": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "repo_customize_apt": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "repo_restore_config": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "deb_solvedDependency": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "deb_testDependencies": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "deb_install": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "sh_install": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "apt_install": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "deb_test": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "epi_test": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "sh_test": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "update_test": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "apt_test": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        },
+        "test_system": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+                "teachers"
+            ]
+        }
+    }
+}
