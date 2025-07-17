@@ -11,7 +11,7 @@ class N4dManager:
 	def __init__(self):
 		
 		self.N4D_VAR="LLX_REMOTE_INSTALLER"
-		self.debug=False
+		self.debug=True
 		if self.debug:
 			print("[LliureXRemoteInstaller] Debug mode activated")
 
@@ -329,6 +329,40 @@ class N4dManager:
 			return False
 		
 	#def epi_deb
+
+
+	def add_download(self,var_shared,url_shared):
+		
+		try:
+			server="server"
+			context=ssl._create_unverified_context()
+			client=xmlrpc.client.ServerProxy("https://%s:9779"%server,allow_none=True,context=context)
+			ret=client.add_download(self.user,var_shared,url_shared)
+			return ret
+		
+		except Exception as e:
+			self.mprint("[LlXRemote][N4DManager][add_download] %s"%e)
+			return False
+		
+	#def add_download
+
+
+
+
+	def delete_download(self,var_shared,url_shared):
+		
+		try:
+			server="server"
+			context=ssl._create_unverified_context()
+			client=xmlrpc.client.ServerProxy("https://%s:9779"%server,allow_none=True,context=context)
+			ret=client.delete_download(self.user,var_shared,url_shared)
+			return ret
+		
+		except Exception as e:
+			self.mprint("[LlXRemote][N4DManager][delete_download] %s"%e)
+			return False
+		
+	#def delete_download
 	
 	
 #class n4dmanager

@@ -16,6 +16,8 @@ import n4d.server.core as n4dcore
 import n4d.responses
 
 class LliureXRemoteInstallerClient:
+
+	NATFREE_STARTUP=True
 	
 	dir_tmp="/tmp/.LLXRemoteInstallerClient"
 	N4D_VAR="LLX_REMOTE_INSTALLER"
@@ -45,6 +47,7 @@ class LliureXRemoteInstallerClient:
 	def __init__(self):
 		
 		self.core=n4dcore.Core.get_core()
+		
 		
 		self.dbg=0
 		

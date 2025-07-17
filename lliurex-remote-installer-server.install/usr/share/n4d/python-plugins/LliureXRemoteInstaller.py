@@ -12,13 +12,16 @@ import requests
 
 import n4d.server.core as n4dcore
 import n4d.responses
+import urllib3
+
+
 
 
 
 class LliureXRemoteInstaller:
-	
+	urllib3.disable_warnings()
 	N4D_VAR="LLX_REMOTE_INSTALLER"
-	initial_dict={'deb': {'url': 'http://server/llx-remote/', 'packages': []}, 'epi': {'packages': {}}, 'sh': {'url': 'http://server/llx-remote/', 'packages': []}, 'apt': {'Mirror':{'url':'mirror', 'packages': []},'LliureX':{'url':'lliurex', 'packages': []}},'update':{'activate':'False', 'url':'Mirror', 'version':'0','datetime':'0'}}
+	initial_dict={'deb': {'url': 'https://server:9779/llx-remote/', 'packages': []}, 'epi': {'packages': {}}, 'sh': {'url': 'https://server:9779/llx-remote/', 'packages': []}, 'apt': {'Mirror':{'url':'mirror', 'packages': []},'LliureX':{'url':'lliurex', 'packages': []}},'update':{'activate':'False', 'url':'Mirror', 'version':'0','datetime':'0'}}
 	
 	MIRROR_VERSION_ERROR=-20
 
@@ -49,7 +52,7 @@ class LliureXRemoteInstaller:
 
 		self.core=n4dcore.Core.get_core()
 
-		self.dbg=0
+		self.dbg=1
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
 			print ("-----------------------------------------------------" )
@@ -419,9 +422,13 @@ class LliureXRemoteInstaller:
 	def app_deb_exist (self,app=None, url=None):
 		try:
 			url_all=str(url)+str(app)
+			if not 'https' in url_all:
+				url_all=url_all.replace('http','https')
+			if not 'server:9779' in url_all:
+				url_all=url_all.replace('server','server:9779')
 			self._debug ("[LLXRemoteInstaller] (app_deb_exist) VAR URL_ALL: %s"%url_all)
 			#if ur.urlopen(url_all).code == 200:
-			if requests.get(url_all).status_code == 200:
+			if requests.get(url_all, verify=False).status_code == 200:
 				COMMENT="[LLXRemoteInstaller](app_deb_exist) APP: %s is avaiable and added to list to install it" %app
 				self._debug ("%s" %COMMENT)
 				#return [True,str(COMMENT)]
@@ -646,6 +653,8 @@ class LliureXRemoteInstaller:
 			#TEST DE LOS DEBS
 			list_debs=dict_var[self.DEB][self.LIST]
 			url=dict_var[self.DEB][self.URL]
+			if not 'https' in url:
+				url.replace('http','https')
 			#url=self.SHARE_DIRECTORY
 			os.system('chmod +r %s/*'%self.SHARE_DIRECTORY)
 			self._debug ("[LLXRemoteInstaller](test_deb_list) El listado de DEBS es %s i lo comprobaremos en la URL: %s"%(list_debs,url))
@@ -708,7 +717,7 @@ class LliureXRemoteInstaller:
 	#def test_deb_list
 	
 	
-		#initial_dict_var={'deb': {'url': 'http://server/llx-remote/', 'packages': []}, 'update':{'activate':'False', 'url':'Mirror', 'version':'0'}}
+		#initial_dict_var={'deb': {'url': 'https://server:9779/llx-remote/', 'packages': []}, 'update':{'activate':'False', 'url':'Mirror', 'version':'0'}}
 
 	
 	

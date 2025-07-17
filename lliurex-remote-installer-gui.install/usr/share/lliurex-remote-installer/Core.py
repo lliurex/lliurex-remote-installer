@@ -8,10 +8,11 @@ import N4dManager
 import os
 import sys
 
+
 class Core:
 	
 	singleton=None
-	DEBUG=False
+	DEBUG=True
 	os.chdir(sys.path[0])
 	
 	@classmethod
