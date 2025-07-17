@@ -170,6 +170,22 @@
         "admin",
         "teachers"
             ]
+        },
+        "add_download": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+        "admin",
+        "teachers"
+            ]
+        },
+        "delete_download": {
+            "allowed_groups": [
+                "sudo",
+                "admins",
+        "admin",
+        "teachers"
+            ]
         }
     }
 }
