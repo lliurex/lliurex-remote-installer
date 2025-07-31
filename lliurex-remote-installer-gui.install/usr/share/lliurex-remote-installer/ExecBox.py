@@ -14,6 +14,9 @@ import os
 import subprocess
 import hashlib
 
+import xmlrpc.client
+import ssl
+
 _=gettext.gettext
 gettext.textdomain('lliurex-remote-installer-gui')
 
@@ -28,6 +31,10 @@ class ExecBox(Gtk.VBox):
 		Gtk.VBox.__init__(self)
 		
 		self.core=Core.Core.get_core()
+
+		self.server="localhost"
+		self.context=ssl._create_unverified_context()
+		self.client=xmlrpc.client.ServerProxy("https://%s:9779"%self.server,allow_none=True,context=self.context)
 		
 		builder=Gtk.Builder()
 		builder.set_translation_domain('lliurex-remote-installer-gui')
@@ -302,14 +309,33 @@ class ExecBox(Gtk.VBox):
 	
 		try:
 			self.core.dprint("Deleting file...")
-	
-			url_dest="/var/www/llx-remote/"+str(pkg)
-			self.deleted=self.core.n4d.remove_file(url_dest)
-			if not self.deleted[0]:
+
+			#OLD DELETE MODE
+			#url_dest="/var/www/llx-remote/"+str(pkg)
+			#self.deleted=self.core.n4d.remove_file(url_dest)
+
+			var_dest="llx-remote"
+			package_list=self.client.get_download_list()
+			self.core.dprint("[ExecBox][delete_package_thread] Exec package to delete:%s"%pkg)
+			self.core.dprint("[ExecBox][delete_package_thread] Reading shared package_list:%s"%package_list)
+			url_dest=""
+			for elem in package_list['return'][var_dest]:
+				if pkg in elem:
+					self.core.dprint("[DebBox][delete_package_thread] Deleting elem:%s"%elem)
+					url_dest=elem
+
+			self.deleted=self.core.n4d.delete_download(var_dest,url_dest)
+
+
+			if not self.deleted["return"]:
 				comment=_("The file %s cannot be deleted")%pkg
 				self.remove_file_info_dialog(comment)
+			else:
+				self.core.dprint("[DebBox][delete_package_thread] Removing file :%s"%url_dest)
+				os.remove(url_dest)
+
 				
-			self.thread_ret={"status":True,"msg":"SE HA ROTO"}
+			self.thread_ret={"status":True,"msg":"BROKEN PROCESS"}
 			
 		except Exception as e:
 			print(e)
@@ -327,7 +353,7 @@ class ExecBox(Gtk.VBox):
 			self.package_list_box.remove(c)
 		for (x,md5) in self.core.current_var["sh"]["packages"]:
 			self.new_package_button("%s"%x)
-		if self.deleted[0]:
+		if self.deleted["return"]:
 			self.core.var=copy.deepcopy(self.core.current_var)
 			self.core.n4d.set_variable(self.core.var)
 			
@@ -373,14 +399,31 @@ class ExecBox(Gtk.VBox):
 					self.core.dprint("(ExecBox)(apply_changes_thread) Sending: %s"%sh)
 					pkg=sh[0]
 					exec_url=sh[1]
-					if self.core.current_var["sh"]["url"] in [None,"",[]]:
-						self.core.current_var["sh"]["url"]="http://server/llx-remote/"
-					url_dest=self.core.current_var["sh"]["url"].split('http://server/')[1]
-					url_dest="/var/www/"+str(url_dest)
-					ip_dest=self.core.n4d.server_ip
-					response=self.core.n4d.send_file(ip_dest,exec_url,url_dest)
+					url_dest="/var/www/"
+					var_dest="llx-remote"
+
+
+					#OLD UPLOAD FILES
+					#if self.core.current_var["sh"]["url"] in [None,"",[]]:
+					#	self.core.current_var["sh"]["url"]="http://server/llx-remote/"
+					#url_dest=self.core.current_var["sh"]["url"].split('http://server/')[1]
+					#url_dest="/var/www/"+str(url_dest)
+					#ip_dest=self.core.n4d.server_ip
+					#response=self.core.n4d.send_file(ip_dest,exec_url,url_dest)
+
+
+					url_dest=url_dest+str(var_dest)
+					uploaded=self.core.n4d.send_file(self.server,exec_url,url_dest)
+					self.core.dprint("[ExecBox][apply_changes_thread] CORE:N4D.SEND_FILE: %s"%uploaded)
+
+					if uploaded:
+						url_exec=url_dest+'/'+str(pkg)
+						self.core.dprint("[ExecBox][apply_changes_thread] URL_EXEC to share with add download: %s"%url_exec)
+						uploaded=self.core.n4d.add_download(var_dest,url_exec)
+						self.core.dprint("[ExecBox][apply_changes_thread] N4D Uploaded: %s"%uploaded)
+
 					#Ha fallado la subida del fichero
-					if not response:
+					if not uploaded["return"]:
 						self.not_sended_execs.append(pkg)
 						for (pkg_list,md5) in self.core.current_var["sh"]["packages"]:
 							if pkg_list in {pkg}:
@@ -392,6 +435,7 @@ class ExecBox(Gtk.VBox):
 			
 			self.core.dprint("(ExecBox)(apply_changes_thread) Applying changes...%s"%self.core.current_var)
 			self.test_exec=self.core.n4d.test_list(self.core.current_var,'sh')
+			self.core.dprint("(ExecBox)(apply_changes_thread) test_exec: %s"%self.test_exec)
 			self.core.var=copy.deepcopy(self.core.current_var)
 			self.thread_ret={"status":True,"msg":"SE HA ROTO"}
 
@@ -411,6 +455,9 @@ class ExecBox(Gtk.VBox):
 		
 		dialog.destroy()
 		#Se pudo testear la lista de execs, es un  [True,dict,list_execs_ok,list_execs_fail]
+		self.core.dprint("[ExecBox][check_apply_thread] test_exec: %s"%self.test_exec)
+		self.core.dprint("[ExecBox][check_apply_thread] EXEC to add: %s"%self.test_exec[2])
+		self.core.dprint("[ExecBox][check_apply_thread] EXEC fail: %s"%self.test_exec[3])
 		if self.test_exec[0]:
 			if self.test_exec[3] not in [None,"","[]",[]]:
 				if self.delete_test_exec_dialog(self.test_exec[3]):
@@ -418,10 +465,10 @@ class ExecBox(Gtk.VBox):
 					self.core.var=copy.deepcopy(self.test_exec[1])
 					self.core.current_var=copy.deepcopy(self.test_exec[1])
 				else:
-					self.core.var["sh"]["url"]="http://server/llx-remote/"
+					self.core.var["sh"]["url"]="https://server:9779/llx-remote/"
 					self.core.n4d.set_variable(self.core.var)
 			else:
-					self.core.var["sh"]["url"]="http://server/llx-remote/"
+					self.core.var["sh"]["url"]="https://server:9779/llx-remote/"
 					self.core.n4d.set_variable(self.core.var)
 			
 		else:
