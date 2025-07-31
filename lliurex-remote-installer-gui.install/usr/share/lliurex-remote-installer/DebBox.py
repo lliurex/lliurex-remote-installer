@@ -355,7 +355,7 @@ class DebBox(Gtk.VBox):
 		
 		try:
 			
-			print("[DebBox] Testing.....")
+			print("[DebBox] (apply_changes_thread) Testing.....")
 			if  self.new_debs not in [None,"",[]]:
 				self.core.dprint("[DebBox] Sending files to server...")
 				for deb in self.new_debs:
