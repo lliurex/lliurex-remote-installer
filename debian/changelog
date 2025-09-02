@@ -1,3 +1,9 @@
+lliurex-remote-installer (0.5.24.25) noble; urgency=medium
+
+  * New classroom model 
+
+ -- Daniel Duran <daduve@gmail.com>  Tue, 02 Sep 2025 10:42:40 +0200
+
 lliurex-remote-installer (0.5.24.24) noble; urgency=medium
 
   * First version in LliureX 25.
