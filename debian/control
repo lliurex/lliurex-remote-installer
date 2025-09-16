@@ -26,12 +26,6 @@ Description: AddAplications facility install list in classroom
  - APT, DEBS And Scripts in a list can be installed in client classroom
 
 
-Package: lliurex-remote-installer-indicator
-Architecture: all
-Depends: ${misc:Depends}
-Description: Indicator for the menu bar 
- - to notify the user that LliureX Remote Installer is running
-
 Package: llxremote-cli
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${python3:Depends}
