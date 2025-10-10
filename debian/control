@@ -20,7 +20,7 @@ Description: GUI aplication to manage LliureX Remote Installer
 
 Package: lliurex-remote-installer-client
 Architecture: all
-Depends: ${misc:Depends}, n4d, python3-apt
+Depends: ${misc:Depends}, n4d, python3-apt, sync-on-server
 Recommends: lliurex-remote-installer-indicator
 Description: AddAplications facility install list in classroom
  - APT, DEBS And Scripts in a list can be installed in client classroom
