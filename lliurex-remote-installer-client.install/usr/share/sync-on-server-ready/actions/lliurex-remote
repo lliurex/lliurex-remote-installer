@@ -3,11 +3,13 @@
 import xmlrpc.client
 import ssl
 import n4d.client
-import imp
 import syslog
 import time
 import sys
 
+#import imp # Domentado por raul
+from importlib.machinery import SourceFileLoader
+#
 
 DEBUG=True
 
@@ -33,9 +35,10 @@ def check_root():
 class LliurexRemoteSystemd:
 	
 	def __init__(self):
-		
-		RIC=imp.load_source("LliureXRemoteInstallerClient","/usr/share/n4d/python-plugins/LliurexRemoteInstallerClient.py")
-		self.lri=RIC.LliureXRemoteInstallerClient()
+	
+		#RIC=imp.load_source("LliureXRemoteInstallerClient","/usr/share/n4d/python-plugins/LliurexRemoteInstallerClient.py")
+		class_ = SourceFileLoader("LliureXRemoteInstallerClient_n4d", "/usr/share/n4d/python-plugins/LliurexRemoteInstallerClient.py").load_module()
+		self.lri=getattr(class_,"LliureXRemoteInstallerClient")()
 		
 	#def init
 	
