@@ -42,8 +42,8 @@ class LliureXRemoteInstaller:
 	URL='url'
 	UPDATE='update'
 	SHARE_DIRECTORY='/var/www/llx-remote'
-	MIRROR_DIRECTORY='/net/mirror/llx23'
-	NET_MIRROR_DIRECTORY='http://lliurex.net/jammy'
+	MIRROR_DIRECTORY='/net/mirror/llx25'
+	NET_MIRROR_DIRECTORY='http://lliurex.net/noble'
 	TIMESTAMP_DIRECTORY='/pool/main/l/lliurex-version-timestamp/'
 	LOG_FILE='/var/log/lliurex-remote-installer.log'
 	
