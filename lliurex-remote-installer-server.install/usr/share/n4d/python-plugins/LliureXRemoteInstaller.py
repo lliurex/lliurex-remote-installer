@@ -396,7 +396,10 @@ class LliureXRemoteInstaller:
 	def app_repo_exist (self,app=None):
 		try:
 			#exist=os.system("LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app)
-			exist=subprocess.Popen(["LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+			#os.system('apt policy %s'%app)
+			#os.system('apt-cache policy %s | grep -i candidate'%app)
+			exist=subprocess.Popen(["LANG=C apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+
 			exist=exist.decode('utf-8')
 			self._debug ("[LLXRemoteInstaller] (app_repo_exist) APP candidate in your repo is: %s"%exist)
 			if exist in [None,"None","none",""]:
@@ -536,8 +539,9 @@ class LliureXRemoteInstaller:
 		try:
 			COMMENT="[LLXRemoteInstaller](repo_restore) Actualizando los indices, espera........"
 			self._debug ("%s" %COMMENT)
-			proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
-			proc.wait()
+			#proc = subprocess.Popen('apt-get update', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+			#proc.wait()
+			os.system('apt-get update')
 			COMMENT="[LLXRemoteInstaller](repo_restore) Se han actualizado los indices"
 			self._debug ("%s" %COMMENT)
 			#return [True,str(COMMENT)]
