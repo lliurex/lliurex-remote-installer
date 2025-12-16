@@ -1,3 +1,9 @@
+lliurex-remote-installer (1.0.0.1) jammy; urgency=medium
+
+  *Adding new timeout to self.client in N4D 
+
+ -- Daniel Duran <daduve@gmail.com>  Tue, 16 Dec 2025 12:47:50 +0100
+
 lliurex-remote-installer (1.0.0.0) jammy; urgency=medium
 
   * New version in new Aula Model.
