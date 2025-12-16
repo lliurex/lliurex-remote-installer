@@ -278,14 +278,14 @@ class N4dManager:
 				session_user=os.environ["USER"]
 				self.ticket=self.client.get_ticket()
 				if self.ticket.valid():
-					self.client=n4d.client.Client(ticket=self.ticket)
+					self.client=n4d.client.Client(ticket=self.ticket,timeout=180)
 					msg_log="Session User: %s"%session_user+" LlXRemoreInstaller User: %s"%username
 					self.mprint(msg_log)
 					
-					self.local_client=n4d.client.Client("https://localhost:9779",username,password)
+					self.local_client=n4d.client.Client("https://localhost:9779",username,password,timeout=180)
 					local_t=self.local_client.get_ticket()
 					if local_t.valid():
-						self.local_client=n4d.client.Client(ticket=local_t)
+						self.local_client=n4d.client.Client(ticket=local_t,timeout=180)
 					else:
 						self.user_validated=False	
 				else:
