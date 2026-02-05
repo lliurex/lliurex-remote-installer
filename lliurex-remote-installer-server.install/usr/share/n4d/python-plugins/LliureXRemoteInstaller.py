@@ -374,7 +374,7 @@ class LliureXRemoteInstaller:
 		try:
 			update_version="Ninguna"
 			if Mirror:
-				update_version=subprocess.Popen(["LANGUAGE=en_EN; find /net/mirror/llx16/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+				update_version=subprocess.Popen(["LANG=C; find /net/mirror/llx16/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 			else:
 				pass
 			
