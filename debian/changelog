@@ -1,3 +1,9 @@
+lliurex-remote-installer (1.0.0.2) jammy; urgency=medium
+
+  * Changing LANGUAGE to LANG to N4D responses 
+
+ -- Daniel Duran <daduve@gmail.com>  Thu, 05 Feb 2026 12:47:19 +0100
+
 lliurex-remote-installer (1.0.0.1) jammy; urgency=medium
 
   *Adding new timeout to self.client in N4D 
