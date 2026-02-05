@@ -396,7 +396,11 @@ class LliureXRemoteInstaller:
 	def app_repo_exist (self,app=None):
 		try:
 			#exist=os.system("LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app)
+<<<<<<< HEAD
 			exist=subprocess.Popen(["LANG=C; apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+=======
+			exist=subprocess.Popen(["LANG=C apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+>>>>>>> jammy
 			exist=exist.decode('utf-8')
 			self._debug ("[LLXRemoteInstaller] (app_repo_exist) APP candidate in your repo is: %s"%exist)
 			if exist in [None,"None","none",""]:
