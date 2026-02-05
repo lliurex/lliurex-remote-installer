@@ -374,7 +374,7 @@ class LliureXRemoteInstaller:
 		try:
 			update_version="Ninguna"
 			if Mirror:
-				update_version=subprocess.Popen(["LANGUAGE=en_EN; find /net/mirror/llx16/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+				update_version=subprocess.Popen(["LANG=C; find /net/mirror/llx16/pool/main/l/lliurex-version-timestamp -name 'lliurex-version-timestamp*.deb' | tail -n 1 | cut -d_ -f2" ],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 			else:
 				pass
 			
@@ -396,7 +396,7 @@ class LliureXRemoteInstaller:
 	def app_repo_exist (self,app=None):
 		try:
 			#exist=os.system("LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app)
-			exist=subprocess.Popen(["LANGUAGE=en_EN; apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
+			exist=subprocess.Popen(["LANG=C; apt-cache policy %s | grep -i candidate" %app],shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0]
 			exist=exist.decode('utf-8')
 			self._debug ("[LLXRemoteInstaller] (app_repo_exist) APP candidate in your repo is: %s"%exist)
 			if exist in [None,"None","none",""]:
