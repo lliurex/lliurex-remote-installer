@@ -429,7 +429,7 @@ class AptBox(Gtk.VBox):
 		main_window=self.core.lri.main_window
 		dialog=Dialog.ApplyingChangesDialog(main_window,"Lliurex Remote installer",_("Updating repositories and testing packages..."))
 		dialog.show()
-		GLib.timeout_add(500,self.check_apply_thread,dialog)
+		GLib.timeout_add(5000,self.check_apply_thread,dialog)
 		
 	#def apply_changes_button_clicked
 	
