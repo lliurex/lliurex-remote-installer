@@ -1,3 +1,9 @@
+lliurex-remote-installer (1.0.0.3) jammy; urgency=medium
+
+  * Adding more timeout to APT UPDATE REPOSITORIES 
+
+ -- Daniel Duran <daduve@gmail.com>  Fri, 06 Feb 2026 11:56:05 +0100
+
 lliurex-remote-installer (1.0.0.2) jammy; urgency=medium
 
   * Changing LANGUAGE to LANG to N4D responses 
