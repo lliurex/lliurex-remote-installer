@@ -14,6 +14,8 @@ import requests
 
 import n4d.server.core as n4dcore
 import n4d.responses
+import xmlrpc.client as n4dclient
+import ssl
 
 class LliureXRemoteInstallerClient:
 	
@@ -21,6 +23,7 @@ class LliureXRemoteInstallerClient:
 	N4D_VAR="LLX_REMOTE_INSTALLER"
 	N4D_INSTALLED="LLX_REMOTE_INSTALLER_INSTALLED"
 	logFile="/var/log/remoteInstaller.log"
+	NATFREE_STARTUP=True
 	
 	#REPO ADDAPLICATION_SOURCES value
 	dir_sources="/etc/apt/sources.list.d/"
@@ -46,7 +49,11 @@ class LliureXRemoteInstallerClient:
 		
 		self.core=n4dcore.Core.get_core()
 		
-		self.dbg=0
+		self.dbg=1
+		
+		#Delete file_sources if exists
+		if os.path.isfile(self.file_sources):
+			os.remove(self.file_sources)
 		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
@@ -129,8 +136,18 @@ class LliureXRemoteInstallerClient:
 			import xmlrpclib as x
 			c=x.ServerProxy(proxy)
 			DICT=c.get_variable("","VariablesManager",namevar)'''
+
 			proxy=False
-			DICT=self.core.get_variable(namevar)['return']
+			COMMENT="[LLXRemoteInstallerClient] (read_var)Testing VAR: %s in localhost: %s"%(namevar,localhost)
+			self._debug(COMMENT)
+			if not localhost:
+				self._debug("[LLXRemoteInstallerClient] (read_var) SERVER reading....")
+				context=ssl._create_unverified_context()
+				client=n4dclient.ServerProxy('https://server:9779',context=context,allow_none=True)
+				DICT=client.get_variable(namevar)['return']
+			else:
+				self._debug("[LLXRemoteInstallerClient] (read_var) LOCALHOST reading....")
+				DICT=self.core.get_variable(namevar)['return']
 			COMMENT="[LLXRemoteInstallerClient] (read_var) Value of N4D var %s of proxy:%s is %s"%(namevar,proxy,DICT)
 			self._debug(COMMENT)
 			return_n4d= [True,str(COMMENT),DICT]
@@ -295,6 +312,7 @@ class LliureXRemoteInstallerClient:
 					self._debug("(download) The FILE: "+file_app+" has been donwloaded before, it will be deleted now.")
 					os.remove(file_app)
 				self._debug("(download) The FILE: "+app+" is downloading now to directory "+file_app+" .....")
+				ssl._create_default_https_context = ssl._create_unverified_context
 				urllib.request.urlretrieve(url_complete,file_app)
 				os.chmod(file_app,755)
 				
@@ -635,6 +653,7 @@ class LliureXRemoteInstallerClient:
 					#				self._debug("(apt_install) Please wait while installing: "+str(list_apt_ok))
 				self._debug("[LLXRemoteInstallerClient](apt_install) Please wait while installing: "+str(list_apt_ok))
 				self.cache.commit()
+				self._debug("[LLXRemoteInstallerClient](apt_install) cache.commit Finished.")
 #				if list_apt_not in ["",None,[]]:
 				if not list_apt_not:
 					COMMENT="[LLXRemoteInstallerClient](apt_install) The system has been updated with this APP list: %s"%(list_apt_system)
@@ -748,12 +767,16 @@ class LliureXRemoteInstallerClient:
 							self._debug('Command: %s'%(command))
 
 							self._debug(command)
-							p=subprocess.call(command,shell=True)
+							#p=subprocess.call(command,shell=True)
+							# La libreria EPIC necesita conocer el usuario dentro del entorno, se lo pasamos
+							my_env=os.environ.copy()
+							my_env["USER"]="root"
+							p=subprocess.run([command], env=my_env, capture_output=True,shell=True)
 							solved_code =p
+							self._debug('Epic instruction solved_code: %s '%(solved_code.returncode))
+							#self._debug('Epic instruction solved_code: %s - stdout: %s - Error: %s'%(solved_code.returncode,solved_code.stdout,solved_code.stderr))
 
-							self._debug('Epic instruction solved_code: %s'%(solved_code))
-
-							if solved_code==0 :
+							if str(solved_code.returncode)=="0" :
 								epi_installed.append(key)
 							else:
 								epi_unavailable.append(key)
@@ -929,6 +952,7 @@ class LliureXRemoteInstallerClient:
 			list_apt.extend(apt_aux)
 			#configure pinning for new repos
 			if source in ["LliureX"]:
+				pass
 				repoList.extend(lliurex_net)
 			elif source in ["Mirror"]:
 				repoList.extend(lliurex_mirror)
