@@ -51,6 +51,10 @@ class LliureXRemoteInstallerClient:
 		
 		self.dbg=1
 		
+		#Delete file_sources if exists
+		if os.path.isfile(self.file_sources):
+			os.remove(self.file_sources)
+		
 		if self.dbg==1:
 			print ("-----------------------------------------------------" )
 			print ("-----------------------------------------------------" )
@@ -649,6 +653,7 @@ class LliureXRemoteInstallerClient:
 					#				self._debug("(apt_install) Please wait while installing: "+str(list_apt_ok))
 				self._debug("[LLXRemoteInstallerClient](apt_install) Please wait while installing: "+str(list_apt_ok))
 				self.cache.commit()
+				self._debug("[LLXRemoteInstallerClient](apt_install) cache.commit Finished.")
 #				if list_apt_not in ["",None,[]]:
 				if not list_apt_not:
 					COMMENT="[LLXRemoteInstallerClient](apt_install) The system has been updated with this APP list: %s"%(list_apt_system)
@@ -762,12 +767,16 @@ class LliureXRemoteInstallerClient:
 							self._debug('Command: %s'%(command))
 
 							self._debug(command)
-							p=subprocess.call(command,shell=True)
+							#p=subprocess.call(command,shell=True)
+							# La libreria EPIC necesita conocer el usuario dentro del entorno, se lo pasamos
+							my_env=os.environ.copy()
+							my_env["USER"]="root"
+							p=subprocess.run([command], env=my_env, capture_output=True,shell=True)
 							solved_code =p
+							self._debug('Epic instruction solved_code: %s '%(solved_code.returncode))
+							#self._debug('Epic instruction solved_code: %s - stdout: %s - Error: %s'%(solved_code.returncode,solved_code.stdout,solved_code.stderr))
 
-							self._debug('Epic instruction solved_code: %s'%(solved_code))
-
-							if solved_code==0 :
+							if str(solved_code.returncode)=="0" :
 								epi_installed.append(key)
 							else:
 								epi_unavailable.append(key)
@@ -943,6 +952,7 @@ class LliureXRemoteInstallerClient:
 			list_apt.extend(apt_aux)
 			#configure pinning for new repos
 			if source in ["LliureX"]:
+				pass
 				repoList.extend(lliurex_net)
 			elif source in ["Mirror"]:
 				repoList.extend(lliurex_mirror)
