@@ -49,7 +49,7 @@ class LliureXRemoteInstallerClient:
 		
 		self.core=n4dcore.Core.get_core()
 		
-		self.dbg=1
+		self.dbg=0
 		
 		#Delete file_sources if exists
 		if os.path.isfile(self.file_sources):
