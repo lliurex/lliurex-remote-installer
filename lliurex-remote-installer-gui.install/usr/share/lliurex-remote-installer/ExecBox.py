@@ -53,6 +53,7 @@ class ExecBox(Gtk.VBox):
 		
 		self.thread=threading.Thread()
 		self.thread_ret=None
+		self.test_exec=[False,None,None,None]
 		
 		
 		
@@ -375,12 +376,21 @@ class ExecBox(Gtk.VBox):
 					exec_url=sh[1]
 					if self.core.current_var["sh"]["url"] in [None,"",[]]:
 						self.core.current_var["sh"]["url"]="http://server/llx-remote/"
-					url_dest=self.core.current_var["sh"]["url"].split('http://server/')[1]
-					url_dest="/var/www/"+str(url_dest)
+					url_dest="/var/www/llx-remote"
+					#url_dest=self.core.current_var["sh"]["url"].split(\'http://server/\')[1]
+					#url_dest="/var/www/"+str(url_dest)
 					ip_dest=self.core.n4d.server_ip
 					response=self.core.n4d.send_file(ip_dest,exec_url,url_dest)
+
+					if response:
+						url_file=url_dest+"/"+str(pkg)
+						response_add=self.core.n4d.add_download("llx-remote",url_file)
+						if not response_add or (isinstance(response_add, dict) and not response_add.get("return", False)):
+							response=False
+
 					#Ha fallado la subida del fichero
 					if not response:
+
 						self.not_sended_execs.append(pkg)
 						for (pkg_list,md5) in self.core.current_var["sh"]["packages"]:
 							if pkg_list in {pkg}:
@@ -555,9 +565,12 @@ class ExecBox(Gtk.VBox):
 		
 		main_window=self.core.lri.main_window
 		lista=[]
-		for (pkg_name_orig,md5) in pkg_list_tupla:
-			lista.append(pkg_name_orig)
-		pkg_name='\n'.join(lista)
+		for item in pkg_list_tupla:
+			if isinstance(item, (list, tuple)) and len(item) >= 1:
+				lista.append(str(item[0]))
+			else:
+				lista.append(str(item))
+		pkg_name="\n".join(lista)
 		dialog=Dialog.QuestionDialog(main_window,_("Delete Executable list"),_("This Executable list is unavaiable from your server:\n%s\nDo you want delete it?")%pkg_name)
 		response=dialog.run()
 		dialog.destroy()
