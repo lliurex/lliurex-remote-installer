@@ -14,6 +14,9 @@ import os
 import subprocess
 import hashlib
 
+import xmlrpc.client
+import ssl
+
 _=gettext.gettext
 gettext.textdomain('lliurex-remote-installer-gui')
 
@@ -41,7 +44,9 @@ class ExecBox(Gtk.VBox):
 		self.data_vp=builder.get_object("exec_list_viewport")
 		self.apply_exec_button=builder.get_object("apply_exec_button")
 		
-		
+		self.server="localhost"
+		self.context=ssl._create_unverified_context()
+		self.client=xmlrpc.client.ServerProxy("https://%s:9779"%self.server,allow_none=True,context=self.context)
 
 		self.add(self.main_box)
 		
@@ -373,18 +378,23 @@ class ExecBox(Gtk.VBox):
 					self.core.dprint("(ExecBox)(apply_changes_thread) Sending: %s"%sh)
 					pkg=sh[0]
 					exec_url=sh[1]
-					if self.core.current_var["sh"]["url"] in [None,"",[]]:
-						self.core.current_var["sh"]["url"]="http://server/llx-remote/"
-					url_dest=self.core.current_var["sh"]["url"].split('http://server/')[1]
-					url_dest="/var/www/"+str(url_dest)
-					ip_dest=self.core.n4d.server_ip
-					response=self.core.n4d.send_file(ip_dest,exec_url,url_dest)
-					#Ha fallado la subida del fichero
-					if not response:
-						self.not_sended_execs.append(pkg)
-						for (pkg_list,md5) in self.core.current_var["sh"]["packages"]:
-							if pkg_list in {pkg}:
-								self.core.current_var["sh"]["packages"].remove([pkg_list,md5])
+					url_dest="/var/www/"
+					var_dest="llx-remote"
+
+					url_dest=url_dest+str(var_dest)
+					os.chmod(exec_url, 0o755)
+					uploaded=self.core.n4d.send_file(self.server,exec_url,url_dest)
+					self.core.dprint("[ExecBox][apply_changes_thread] CORE:N4D.SEND_FILE: %s"%uploaded)
+					
+					#Ha fallado la subida del fichero?
+					if uploaded:
+						url_exec=url_dest+'/'+str(pkg)
+						self.core.dprint("[ExecBox][apply_changes_thread] URL_EXEC to share with add download: %s"%url_exec)
+						uploaded=self.core.n4d.add_download(var_dest,url_exec)
+						self.core.dprint("[ExecBox][apply_changes_thread] N4D Uploaded: %s"%uploaded)
+
+					if not uploaded["return"]:
+						self.error_up_dialog(pkg)
 
 				#Inicializo de nuevo la lista de paquetes, ya esta subido todo lo que se queria.
 				self.new_execs=[]
