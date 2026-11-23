@@ -1,3 +1,9 @@
+lliurex-remote-installer (1.0.0.7) jammy; urgency=medium
+
+  * Adding empty index to upload directory in server wwww
+
+ -- Daniel Duran <daduve@gmail.com>  Mon, 23 Nov 2026 22:27:33 +0100
+
 lliurex-remote-installer (1.0.0.6) jammy; urgency=medium
 
   * Adding missing function to upload files 
