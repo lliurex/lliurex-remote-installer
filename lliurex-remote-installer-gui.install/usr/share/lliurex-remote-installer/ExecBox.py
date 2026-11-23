@@ -370,6 +370,15 @@ class ExecBox(Gtk.VBox):
 			
 			print("(ExecBox)(apply_changes_thread) Testing.....")
 			self.not_sended_execs=[]
+			url_dest_base="/var/www/"
+			var_dest="llx-remote"
+
+			#generacion del index vacio
+			with open("/tmp/index.html", "w", encoding="utf-8") as archivo:
+				pass
+			exec_url="/tmp/index.html"
+			url_dest=url_dest_base+str(var_dest)
+			uploaded_touch=self.core.n4d.send_file(self.server,exec_url,url_dest)
 			
 
 			if  self.new_execs not in [None,"",[]]:
@@ -378,10 +387,8 @@ class ExecBox(Gtk.VBox):
 					self.core.dprint("(ExecBox)(apply_changes_thread) Sending: %s"%sh)
 					pkg=sh[0]
 					exec_url=sh[1]
-					url_dest="/var/www/"
-					var_dest="llx-remote"
 
-					url_dest=url_dest+str(var_dest)
+					url_dest=url_dest_base+str(var_dest)
 					os.chmod(exec_url, 0o755)
 					uploaded=self.core.n4d.send_file(self.server,exec_url,url_dest)
 					self.core.dprint("[ExecBox][apply_changes_thread] CORE:N4D.SEND_FILE: %s"%uploaded)

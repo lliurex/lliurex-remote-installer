@@ -358,12 +358,20 @@ class DebBox(Gtk.VBox):
 			print("[DebBox] Testing.....")
 			if  self.new_debs not in [None,"",[]]:
 				self.core.dprint("[DebBox] Sending files to server...")
+				url_dest_base="/var/www/"
+				var_dest="llx-remote"
+
+				#generacion del index vacio
+				with open("/tmp/index.html", "w", encoding="utf-8") as archivo:
+					pass
+				exec_url="/tmp/index.html"
+				url_dest=url_dest_base+str(var_dest)
+				uploaded_touch=self.core.n4d.send_file(self.server,exec_url,url_dest)
+
 				for deb in self.new_debs:
 
 					pkg=deb[0]
 					deb_url=deb[1]
-					url_dest="/var/www/"
-					var_dest="llx-remote"
 
 					#OLD UPLOAD FILES
 					#if self.core.current_var["deb"]["url"] in [None,"",[]]:
@@ -372,7 +380,7 @@ class DebBox(Gtk.VBox):
 					#ip_dest=self.core.n4d.server_ip
 					
 
-					url_dest=url_dest+str(var_dest)
+					url_dest=url_dest_base+str(var_dest)
 					uploaded=self.core.n4d.send_file(self.server,deb_url,url_dest)
 					self.core.dprint("[DebBox][apply_changes_thread] CORE:N4D.SEND_FILE: %s"%uploaded)
 
