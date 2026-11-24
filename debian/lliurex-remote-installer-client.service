@@ -1,0 +1,11 @@
+[Unit]
+Description=Lliurex Remote Installer Client Update
+DefaultDependencies=yes
+Wants=n4d.service
+After=n4d.service
+
+[Service]
+ExecStart=/usr/sbin/lliurex-remote-installer-client-update
+
+[Install]
+WantedBy=multi-user.target
