@@ -12,7 +12,7 @@ import sys
 class Core:
 	
 	singleton=None
-	DEBUG=True
+	DEBUG=False
 	os.chdir(sys.path[0])
 	
 	@classmethod
