@@ -1,3 +1,10 @@
+lliurex-remote-installer (0.5.25.8) noble; urgency=medium
+
+  * Deleting debug TRUE
+  * Adding blank index file in www directory 
+
+ -- Daniel Duran <daduve@gmail.com>  Tue, 24 Nov 2026 09:46:23 +0100
+
 lliurex-remote-installer (0.5.25.7) noble; urgency=medium
 
   * Adding timeout to self.client in new N4D ticket validation
